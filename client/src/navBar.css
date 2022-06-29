@@ -21,9 +21,14 @@
   
   border:none;
   text-decoration: none;
+  user-select: none;
 }
 
-.navbar_child:hover{
+.navbar_clickable{
+  cursor:pointer;
+}
+
+.navbar_clickable:hover{
   color:blue;
 }
 

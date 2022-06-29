@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-router.post('/createAccount', function(req, res, next) {
+var database = require('../custom_modules/database.js');
+
+router.post('/register', function(req, res, next) {
   let input = req.body;
   let output = {};
 
@@ -22,7 +24,7 @@ router.post('/createAccount', function(req, res, next) {
   res.send(output);
 });
 
-router.post('/checkUsername', function(req, res, next) {
+router.post('/testUsername', function(req, res, next) {
   let input = req.body;
   let output = {};
   
@@ -30,7 +32,17 @@ router.post('/checkUsername', function(req, res, next) {
 
   verifyUsername(input.username, output);
 
+  database.testUsername();
+
   res.send(output);
+});
+
+router.post('/login', function(req, res, next) {
+
+});
+
+router.post('/logout', function(req, res, next) {
+  req.session.destroy();
 });
 
 function verifyUsername(username, output){

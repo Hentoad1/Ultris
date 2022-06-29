@@ -35,7 +35,7 @@ class Login extends React.Component {
     updateInputFilled(e){
         let copy = Object.assign({},this.state);
         let attr = e.target.id + 'Filled';
-        copy[attr] = (e.target.value != '');
+        copy[attr] = (e.target.value !== '');
         
         this.updateSubmit(copy);
     }

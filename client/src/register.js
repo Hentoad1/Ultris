@@ -1,7 +1,6 @@
 import React from 'react';
 import './register.css';
 import CloseButton from 'react-bootstrap/CloseButton'
-import { ThemeConsumer } from 'react-bootstrap/esm/ThemeProvider';
 
 const defaultState = {
     display:false, 
@@ -50,6 +49,7 @@ class Register extends React.Component {
         let copy = Object.assign({},this.state);
         if (data.success === true){
             copy.display = false;
+            this.props.updateLoggedIn();
             //change navbar
         }else{
             delete data.success;
@@ -65,7 +65,7 @@ class Register extends React.Component {
         let attr = e.target.id + 'Value';
         copy[attr] = e.target.value;
 
-        this.state = copy; //page doesnt need to refresh; only storing data.
+        this.setState(copy);
     }
 
     updateUsernameValidity(e){
@@ -80,11 +80,11 @@ class Register extends React.Component {
 			message = (text + " '" + chars + "'");
 		}else if (e.target.value.length > 15){
 			message = ("Username Must be 15 Characters or less.");
-		}else if (e.target.value == ''){
+		}else if (e.target.value === ''){
 			message = ("Please Enter a Username.");
 		}else{
             valid = true;
-            fetch('http://localhost:9000/register/checkUsername', {
+            fetch('http://localhost:9000/account/testUsername', {
                 method: 'POST',
                 body: JSON.stringify({username:e.target.value}),
                 headers: {
@@ -156,7 +156,7 @@ class Register extends React.Component {
             email:this.state.emailValue
         };
 
-        fetch('http://localhost:9000/register/createAccount', {
+        fetch('http://localhost:9000/account/register', {
             credentials: 'same-origin',
             method: 'POST',
             body: JSON.stringify(data),

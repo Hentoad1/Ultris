@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
+var path = require('path');
 
-/* GET home page. */
+
+let dir = path.resolve(__dirname + '/../../client/build');
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.sendFile(dir + "/index.html");
 });
 
 module.exports = router;

@@ -12,6 +12,14 @@ require('dotenv').config();
 
 app.set("trust proxy", 1);
 
+
+// direct to public folder folder
+//app.use(express.static(path.resolve(__dirname + '/../../client/public')));
+
+// direct to build folder
+let dir = path.resolve(__dirname + '/../client/build');
+app.use(express.static(dir));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -29,10 +37,10 @@ var sessionMiddleware = sessions({
   saveUninitialized:true,
   resave:false,
   cookie: {
-    httpOnly: true,
+    //httpOnly: true,
     expires:30 * 24 * 60 * 60 * 1000,
     secure:false,
-    sameSite:'none'
+    sameSite:false
   }
 });
 
@@ -42,12 +50,19 @@ app.use(sessionMiddleware);
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var registerRouter = require('./routes/register');
+var accountRouter = require('./routes/account');
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/register', registerRouter);
+app.use('/account', accountRouter);
 
+/*
+acountRouter
+testUsername
+register
+login
+logout
+*/
 
 
 // catch 404 and forward to error handler
