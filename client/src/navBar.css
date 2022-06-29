@@ -1,4 +1,7 @@
 .navbar{
+  flex-grow:0;
+  flex-shrink:0;
+  
   display:flex;
   flex-flow:row;
   align-items: center;
@@ -6,20 +9,22 @@
 
   background:#191919;
   color:white;
-  
 }
 
-.navbar *{
+.navbar_child{
   padding: 1.5em;
-}
 
-.navbar a{
+  background:#191919;
   color:white;
+  
+  text-align:center;
+  
+  border:none;
   text-decoration: none;
 }
 
-.navbar a:hover{
-  background:#494949;
+.navbar_child:hover{
+  color:blue;
 }
 
 .navbar_left{

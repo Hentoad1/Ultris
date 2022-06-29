@@ -1,0 +1,74 @@
+.register_background{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;    
+
+    background:rgba(0, 0, 0, 0.4);
+}
+
+.register_inner{
+    background:#191919;
+    color:white;
+    
+    display:flex;
+    flex-flow:column;
+
+    border-radius:50px;
+    padding:2em;
+
+    user-select: none;
+}
+
+.registerHead{
+    font-size:2em;
+    padding:1.5em 3em;
+}
+
+.registerSection{
+    margin:1em 2em;
+}
+
+.registerLabel{
+    padding:1em;
+    text-align:left;
+}
+
+.registerInput{
+    text-align:left;
+    appearance:none;
+    border:none;
+
+    margin:0 0.5em 1em 0.5em;
+    padding:0.5em;
+
+}
+
+.registerSubmit{
+    appearance: none;
+    border:none;
+
+    background:white;
+    color:#191919;
+
+    border-radius: 50px;
+    margin-top:2em;
+    padding:1em;
+}
+
+.registerError{
+    font-size:0.9rem;
+}
+
+.registerSubmit:disabled{
+    opacity:0.5;
+}
+
+a{
+    color:white;
+    text-decoration:none;
+}

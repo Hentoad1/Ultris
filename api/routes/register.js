@@ -1,0 +1,97 @@
+var express = require('express');
+var router = express.Router();
+
+router.post('/createAccount', function(req, res, next) {
+  let input = req.body;
+  let output = {};
+
+  input.username = input.username.toUpperCase();
+
+  let valid = verifyUsername(input.username, output) &&
+  verifyPassword(input.password, output) &&
+  verifyEmail(input.email, output);
+  output.success = valid;
+
+  if (valid){
+		req.session.uuid = 'example';
+		req.session.userid = input.username;
+    console.log(req.session.userid);
+		req.session.save();
+  }
+
+  res.send(output);
+});
+
+router.post('/checkUsername', function(req, res, next) {
+  let input = req.body;
+  let output = {};
+  
+  input.username = input.username.toUpperCase();
+
+  verifyUsername(input.username, output);
+
+  res.send(output);
+});
+
+function verifyUsername(username, output){
+  let regex = /[^a-zA-Z0-9]/g;
+  let result = username.match(regex);
+  let valid = false;
+  let message = '';
+
+  if (result != null && result.length > 0){
+    let charSet = new Set(result); // make it into a set to avoid repeats
+    let chars = Array.from(charSet).join('');
+    let text = chars.length == 1 ? 'Invalid Character:' : 'Invalid Characters:';
+    message = (text + " '" + chars + "'");
+  }else if (username.length > 15){
+    message = ("Username Must be 15 Characters or less.");
+  }else if (username == ''){
+    message = ("Please Enter a Username.");
+  }else {
+    valid = true; //async database call here
+    output.usernameError = message;
+    output.usernameValid = valid;
+    return valid;
+  }
+
+  output.usernameError = message;
+  output.usernameValid = valid;
+  return valid;
+}
+
+function verifyPassword(password, output){
+  let error = '';
+  let valid = false;
+
+  if (password.length < 8){
+      error = 'Your password must have 8 or more characters.';
+  }else if (password.length >= 128){
+      error = 'Your password must be less than 128 characters.';
+  }else{
+      valid = true;
+  }
+  output.passwordValid = valid;
+  output.passwordError = error;
+
+  return valid;
+}
+
+function verifyEmail(email, output){
+  let atIndex = email.indexOf('@');
+  let singleAtSign = atIndex === email.lastIndexOf('@');
+
+  let dotIndex = email.lastIndexOf('.');
+
+  let correctPosition = dotIndex - atIndex > 1;
+
+  let valid = email === '' || (singleAtSign && correctPosition);
+  
+
+  output.emailValid = valid;
+  output.emailError = valid ? '' : 'Please Enter a Valid Email.';
+
+  return valid;
+}
+
+module.exports = router;

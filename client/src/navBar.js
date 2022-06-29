@@ -1,15 +1,17 @@
 import React from 'react';
 import './navBar.css';
 import { Outlet, NavLink } from "react-router-dom";
+import Login from './login.js'
+import Register from './register.js'
 
 function RenderUsername(props){
   if (props.loggedIn){
-    return <div className = 'navbar_right'>{props.username}</div>
+    return <div className = 'navbar_right navbar_child'>{props.username}</div>
   }else{
     return (
       <React.Fragment>
-        <NavLink to="/login" className = 'navbar_right'>Login</NavLink> 
-        <NavLink to="/register" className = 'navbar_right'>Register</NavLink>
+        <Login className = 'navbar_right navbar_child'/>
+        <Register className = 'navbar_right navbar_child'/>
       </React.Fragment>
     );
   }
@@ -19,25 +21,35 @@ class NavBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = { username: "", loggedIn: false };
+
+    this.processAPIResponse = this.processAPIResponse.bind(this);
   }
   
-  callAPI() {
-    fetch('http://localhost:9000/users')
-      .then(res => res.text())
-      .then(res => this.setState({ username: res, loggedIn: false }))
-      .catch(err => err);
+  processAPIResponse(data) {
+    console.log(data);
+    let copy = Object.assign({},this.state);
+
+    copy.loggedIn = data.loggedIn;
+    copy.username = data.username;
+
+    this.setState(copy);
   }
 
   componentDidMount(){
-    this.callAPI();
+    fetch('http://localhost:9000/users')
+      .then(res => res.json())
+      .then(this.processAPIResponse)
+      .catch(err => err);
   }
+
+
 
   render() {
     return (
         <nav className = "navbar">
-          <NavLink to="/play" className = 'navbar_left'>Play</NavLink>
-          <NavLink to="/leaderboard" className = 'navbar_left'>Leaderboard</NavLink>
-          <header className = 'navbar_title'>Ultris</header>
+          <NavLink to="/play" className = 'navbar_left navbar_child'>Play</NavLink>
+          <NavLink to="/leaderboard" className = 'navbar_left navbar_child'>Leaderboard</NavLink>
+          <header className = 'navbar_title navbar_child'>Ultris</header>
           <RenderUsername loggedIn = {this.state.loggedIn} username = {this.state.username}/>
         </nav>
     );
