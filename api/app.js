@@ -46,6 +46,7 @@ var sessionMiddleware = sessions({
 
 //socket io.use call goes here
 
+
 app.use(sessionMiddleware);
 
 var indexRouter = require('./routes/index');

@@ -1,6 +1,7 @@
 import React from 'react';
+import CloseButton from 'react-bootstrap/CloseButton';
+
 import './register.css';
-import CloseButton from 'react-bootstrap/CloseButton'
 
 const defaultState = {
     display:false, 
@@ -14,7 +15,8 @@ const defaultState = {
     passwordError:'',
     emailValue:'',
     emailValid:true,
-    emailError:''
+    emailError:'',
+    registerError:''
 };
 
 class Register extends React.Component {
@@ -76,7 +78,7 @@ class Register extends React.Component {
         if (result != null && result.length > 0){
             let charSet = new Set(result); // make it into a set to avoid repeats
 			let chars = Array.from(charSet).join('');
-			let text = chars.length == 1 ? 'Invalid Character:' : 'Invalid Characters:';
+			let text = chars.length === 1 ? 'Invalid Character:' : 'Invalid Characters:';
 			message = (text + " '" + chars + "'");
 		}else if (e.target.value.length > 15){
 			message = ("Username Must be 15 Characters or less.");
@@ -176,23 +178,24 @@ class Register extends React.Component {
                 <button className = {this.props.className} onClick = {this.displayDropDown}>
                     Regsiter
                 </button>
-                <div className = "register_background">
-                    <div className = "register_inner">
-                        
+                <div className = 'register_outer'>
+                    <div className = 'register_inner'>
+                    
                         <CloseButton variant = 'white' onClick = {this.closeDropDown}/>
-                        <header className = 'registerHead'>Register</header>
-                        <label htmlFor = 'username' className = 'registerLabel'>Username</label>
-                        <input id = 'username' type="text" className = 'registerInput' onInput = {this.updateInputFilled} onBlur = {this.updateUsernameValidity}></input>
-                        <span className = 'registerError'>{this.state.usernameError}</span>
-                        <label htmlFor = 'password'  className = 'registerLabel'>Password</label>
-                        <input id = 'password' type="password" className = 'registerInput' onInput = {this.updateInputFilled} onBlur = {this.updatePasswordValidity}></input>
-                        <label htmlFor = 'passwordConfirm'  className = 'registerLabel'>Confirm Password</label>
-                        <input id = 'passwordConfirm' type="password" className = 'registerInput' onInput = {this.updateInputFilled} onBlur = {this.updatePasswordValidity}></input>
-                        <span className = 'registerError'>{this.state.passwordError}</span>
-                        <label htmlFor = 'email'  className = 'registerLabel'>Email (Optional)</label>
-                        <input id = 'email' type="text" className = 'registerInput' onInput = {this.updateInputFilled} onBlur = {this.updateEmailValidity}></input>
-                        <span className = 'registerError'>{this.state.emailError}</span>
-                        <button disabled={!this.state.formfilled} className = 'registerSubmit' onClick = {this.submitInformation}>Register</button>
+                        <header className = 'register_head'>Register</header>
+                        <label htmlFor = 'username' className = 'register_label'>Username</label>
+                        <input id = 'username' type = "text" className = 'register_input' onInput = {this.updateInputFilled} onBlur = {this.updateUsernameValidity}></input>
+                        <span className = 'register_error'>{this.state.usernameError}</span>
+                        <label htmlFor = 'password'  className = 'register_label'>Password</label>
+                        <input id = 'password' type = "password" className = 'register_input' onInput = {this.updateInputFilled} onBlur = {this.updatePasswordValidity}></input>
+                        <label htmlFor = 'passwordConfirm'  className = 'register_label'>Confirm Password</label>
+                        <input id = 'passwordConfirm' type = "password" className = 'register_input' onInput = {this.updateInputFilled} onBlur = {this.updatePasswordValidity}></input>
+                        <span className = 'register_error'>{this.state.passwordError}</span>
+                        <label htmlFor = 'email'  className = 'register_label'>Email (Optional)</label>
+                        <input id = 'email' type="text" className = 'register_input' onInput = {this.updateInputFilled} onBlur = {this.updateEmailValidity}></input>
+                        <span className = 'register_error'>{this.state.emailError}</span>
+                        <span className = 'register_error'>{this.state.serverError}</span>
+                        <button disabled={!this.state.formfilled} className = 'register_submit' onClick = {this.submitInformation}>Register</button>
                     </div>
                 </div>
                 </React.Fragment>

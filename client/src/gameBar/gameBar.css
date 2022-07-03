@@ -1,0 +1,54 @@
+.gamebar_primary{
+  --background:#141414;
+  --color:white;
+
+  --background_hover:#191919;
+  --color_hover:white;
+
+  flex-grow:0;
+  flex-shrink:0;
+  padding:0;
+  
+  display:flex;
+  flex-flow:row;
+  align-items: center;
+  justify-content: center;
+
+  background:var(--background);
+  color:var(--color);
+}
+
+.gamebar_child{
+  padding: 1.5em;
+
+  background:var(--background);
+  color:var(--color);
+  
+  text-align:center;
+  position:relative;
+
+  border:none;
+  text-decoration: none;
+  user-select: none;
+}
+
+.gamebar_clickable{
+  cursor:pointer;
+}
+
+.gamebar_clickable:hover{
+  background:var(--background_hover);
+  color:var(--color_hover);
+}
+
+.gamebar_left{
+  float:left;
+}
+
+.gamebar_right{
+  float:right;
+}
+
+.gamebar_title{
+  flex-grow:1;
+}

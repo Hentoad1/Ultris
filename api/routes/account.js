@@ -5,23 +5,41 @@ var database = require('../custom_modules/database.js');
 
 router.post('/register', function(req, res, next) {
   let input = req.body;
-  let output = {};
+  let output = {success:true};
 
   input.username = input.username.toUpperCase();
 
-  let valid = verifyUsername(input.username, output) &&
+  output.success = verifyUsername(input.username, output) &&
   verifyPassword(input.password, output) &&
   verifyEmail(input.email, output);
-  output.success = valid;
 
-  if (valid){
-		req.session.uuid = 'example';
-		req.session.userid = input.username;
-    console.log(req.session.userid);
-		req.session.save();
+  if (!output.success){
+    res.send(output);
+    return; //end here because an error has occured.
   }
 
-  res.send(output);
+  database.testUsername(input.username, function(taken){
+    if (taken){
+      output.usernameError = 'This Username has already been taken.';
+      output.usernameValid = false;
+
+      res.send(output);
+      return; //end here because an error has occured.
+    }
+
+    database.register(input, function(success, result){
+      if (success){
+        req.session.uuid = result.uuid;
+        req.session.userid = result.username;
+        req.session.save();
+      }else{
+        output.success = false;
+        output.serverError = 'Account failed to be created.';
+        res.send(output);
+        res.end();
+      }
+    });
+  });
 });
 
 router.post('/testUsername', function(req, res, next) {
@@ -30,19 +48,54 @@ router.post('/testUsername', function(req, res, next) {
   
   input.username = input.username.toUpperCase();
 
-  verifyUsername(input.username, output);
+  let validFormatting = verifyUsername(input.username, output);
+  if (!validFormatting){
+    res.send(output);
+    return; //end here because an error has occured.
+  }
 
-  database.testUsername();
+  database.testUsername(input.username, function(taken){
+    if (taken){
+      output.usernameError = 'This Username has already been taken.';
+      output.usernameValid = false; 
+    }
 
-  res.send(output);
+    res.send(output);
+  });
 });
 
 router.post('/login', function(req, res, next) {
+  let input = req.body;
+  let output = {};
+  console.log(req.body.username);
 
+  input.username = input.username.toUpperCase();
+
+
+
+  database.login(input, function(valid, result){
+    output.success = valid;
+    if (valid){
+      req.session.uuid = result.uuid;
+      req.session.userid = result.username;
+      req.session.save();
+    }else{
+      output.serverError = 'Incorrect Login Information.';
+    }
+    console.log(output);
+    res.send(output);
+  });
 });
 
 router.post('/logout', function(req, res, next) {
-  req.session.destroy();
+  let output = {};
+  req.session.destroy(function(err){
+    if (err) throw err;
+
+
+    output.success = (err === undefined);
+    res.send(output);
+  });
 });
 
 function verifyUsername(username, output){

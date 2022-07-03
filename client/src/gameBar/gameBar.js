@@ -1,23 +1,26 @@
 import React from 'react';
-import './navBar.css';
 import { NavLink } from "react-router-dom";
-import Login from './login.js'
-import Register from './register.js'
+import Login from './login.js';
+import Register from './register.js';
+import User from './user.js';
+
+import './gameBar.css';
+
 
 function RenderUsername(props){
   if (props.loggedIn){
-    return <div className = 'navbar_right navbar_child'>{props.username}</div>
+    return <User className = 'gamebar_right gamebar_child gamebar_clickable' username = {props.username} updateLoggedIn = {props.fetchAPI}/>
   }else{
     return (
       <React.Fragment>
-        <Login className = 'navbar_right navbar_child navbar_clickable'/>
-        <Register className = 'navbar_right navbar_child navbar_clickable' updateLoggedIn = {props.fetchAPI}/>
+        <Login className = 'gamebar_right gamebar_child gamebar_clickable' updateLoggedIn = {props.fetchAPI}/>
+        <Register className = 'gamebar_right gamebar_child gamebar_clickable' updateLoggedIn = {props.fetchAPI}/>
       </React.Fragment>
     );
   }
 }
 
-class NavBar extends React.Component {
+class GameBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = { username: "", loggedIn: false };
@@ -27,7 +30,6 @@ class NavBar extends React.Component {
   }
   
   processAPIResponse(data) {
-    console.log(data);
     let copy = Object.assign({},this.state);
 
     copy.loggedIn = data.loggedIn;
@@ -49,14 +51,14 @@ class NavBar extends React.Component {
 
   render() {
     return (
-        <nav className = "navbar">
-          <NavLink to="/play" className = 'navbar_left navbar_child navbar_clickable'>Play</NavLink>
-          <NavLink to="/leaderboard" className = 'navbar_left navbar_child navbar_clickable'>Leaderboard</NavLink>
-          <header className = 'navbar_title navbar_child'>Ultris</header>
+        <nav className = 'gamebar_primary'>
+          <NavLink to="/play" className = 'gamebar_right gamebar_child gamebar_clickable'>Play</NavLink>
+          <NavLink to="/leaderboard" className = 'gamebar_right gamebar_child gamebar_clickable'>Leaderboard</NavLink>
+          <header className = 'gamebar_title gamebar_child'>Ultris</header>
           <RenderUsername loggedIn = {this.state.loggedIn} username = {this.state.username} fetchAPI = {this.fetchAPI}/>
         </nav>
     );
   }
 }
 
-export default NavBar;
+export default GameBar;

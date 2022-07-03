@@ -1,4 +1,4 @@
-.register_background{
+.login_outer{
     position:fixed;
     width:100%;
     height:100%;
@@ -11,7 +11,7 @@
     background:rgba(0, 0, 0, 0.4);
 }
 
-.register_inner{
+.login_inner{
     background:#191919;
     color:white;
     
@@ -24,21 +24,17 @@
     user-select: none;
 }
 
-.registerHead{
+.login_head{
     font-size:2em;
     padding:1.5em 3em;
 }
 
-.registerSection{
-    margin:1em 2em;
-}
-
-.registerLabel{
+.login_label{
     padding:1em;
     text-align:left;
 }
 
-.registerInput{
+.login_input{
     text-align:left;
     appearance:none;
     border:none;
@@ -48,7 +44,7 @@
 
 }
 
-.registerSubmit{
+.login_submit{
     appearance: none;
     border:none;
 
@@ -60,11 +56,11 @@
     padding:1em;
 }
 
-.registerError{
+.login_error{
     font-size:0.9rem;
 }
 
-.registerSubmit:disabled{
+.login_submit:disabled{
     opacity:0.5;
 }
 

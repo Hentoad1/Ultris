@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom";
 import './App.css';
-import NavBar from './navBar';
+import GameBar from './gameBar/gameBar.js';
 
 function App() {
   return (
     <div className="App">
-      <NavBar />
+      <GameBar />
       <Outlet />
     </div>
   );
