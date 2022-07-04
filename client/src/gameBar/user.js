@@ -13,7 +13,6 @@ class User extends React.Component {
 
         this.displayDropDown = this.displayDropDown.bind(this);
         this.closeDropDown = this.closeDropDown.bind(this);
-        this.processLogoutRequest = this.processLogoutRequest.bind(this);
         this.logout = this.logout.bind(this);
     }
 
@@ -32,16 +31,9 @@ class User extends React.Component {
 
     logout(){
         fetch('http://localhost:9000/account/logout',{method:'POST'})
-        .then(res => res.json())
-        .then(this.processLogoutRequest)
+        .then()
+        .then(this.props.updateLoggedIn)
         .catch(err => err);
-    }
-
-    processLogoutRequest(res){
-        this.props.updateLoggedIn();
-        if (!res.success){
-            alert('An error has occured.');
-        }
     }
 
     render() {
@@ -50,8 +42,7 @@ class User extends React.Component {
                 <button className = {this.props.className} onMouseEnter={this.displayDropDown}>
                     {this.props.username}
                     <div className = 'user_menu' onMouseLeave={this.closeDropDown}>
-                        <p className = 'user_child'>settings</p>
-                        <p className = 'user_child' onClick={this.logout}>logout</p>
+                        <p className = 'user_child' onClick={this.logout}>LOGOUT</p>
                     </div>
                 </button>
             )

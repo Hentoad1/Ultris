@@ -1,0 +1,83 @@
+.settings_outer{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;    
+
+    background:rgba(0, 0, 0, 0.4);
+}
+
+.settings_inner{
+    position:relative;
+    background:#191919;
+    color:white;
+    
+    display:flex;
+    flex-flow:column;
+
+    border-radius:50px;
+    padding:2em 2em 2em calc(2em + 50px);
+
+    user-select: none;
+}
+
+.settings_toggle{
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+
+    display:flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.settings_head{
+    font-size:2em;
+    padding:1.5em 3em;
+}
+
+.settings_label{
+    padding:1em;
+    text-align:left;
+}
+
+.settings_input{
+    text-align:left;
+    appearance:none;
+    border:none;
+
+    margin:0 0.5em 1em 0.5em;
+    padding:0.5em;
+
+}
+
+.settings_submit{
+    appearance: none;
+    border:none;
+
+    background:white;
+    color:#191919;
+
+    border-radius: 50px;
+    margin-top:2em;
+    padding:1em;
+}
+
+.settings_error{
+    font-size:0.9rem;
+}
+
+.settings_submit:disabled{
+    opacity:0.5;
+}
+
+a{
+    color:white;
+    text-decoration:none;
+}

@@ -88,13 +88,10 @@ router.post('/login', function(req, res, next) {
 });
 
 router.post('/logout', function(req, res, next) {
-  let output = {};
   req.session.destroy(function(err){
     if (err) throw err;
 
-
-    output.success = (err === undefined);
-    res.send(output);
+    res.end();
   });
 });
 

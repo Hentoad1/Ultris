@@ -1,10 +1,13 @@
 import React from 'react';
 import { NavLink } from "react-router-dom";
+
 import Login from './login.js';
 import Register from './register.js';
 import User from './user.js';
+import Settings from './settings.js';
 
 import './gameBar.css';
+
 
 
 function RenderUsername(props){
@@ -55,6 +58,7 @@ class GameBar extends React.Component {
           <NavLink to="/play" className = 'gamebar_right gamebar_child gamebar_clickable'>Play</NavLink>
           <NavLink to="/leaderboard" className = 'gamebar_right gamebar_child gamebar_clickable'>Leaderboard</NavLink>
           <header className = 'gamebar_title gamebar_child'>Ultris</header>
+          <Settings className = 'gamebar_right gamebar_child gamebar_clickable'/>
           <RenderUsername loggedIn = {this.state.loggedIn} username = {this.state.username} fetchAPI = {this.fetchAPI}/>
         </nav>
     );
