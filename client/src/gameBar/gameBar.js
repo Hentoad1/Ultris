@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import Login from './login.js';
 import Register from './register.js';
 import User from './user.js';
-import Settings from './settings.js';
+import Settings from './settings/settings.js';
 
 import './gameBar.css';
 
