@@ -8,6 +8,8 @@
     align-items:center;
     justify-content:center;    
 
+    z-index:10;
+
     background:rgba(0, 0, 0, 0.4);
 }
 
@@ -20,10 +22,16 @@
     flex-flow:column;
     align-items: center;
 
+    width:400px;
+
     border-radius:50px;
     padding:2em;
 
     user-select: none;
+}
+
+.accordion{
+    width:100%;
 }
 
 .accordion-item{
@@ -32,10 +40,10 @@
 }
 
 .accordion-button {
-  background-color: #191919 !important;
-  color:white !important;
-  border-radius:0 !important;
-  border-bottom: 1px solid #FFFFFF44 !important; 
+    background-color: #191919 !important;
+    color:white !important;
+    border-radius:0 !important;
+    border-bottom: 1px solid #FFFFFF44 !important; 
 }
 
 .accordion-button:after{

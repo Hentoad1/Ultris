@@ -48,15 +48,3 @@
   background:var(--background_click);
   color:var(--color_click);
 }
-
-.gamebar_left{
-  float:left;
-}
-
-.gamebar_right{
-  float:right;
-}
-
-.gamebar_title{
-  flex-grow:1;
-}

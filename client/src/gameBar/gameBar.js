@@ -7,17 +7,17 @@ import User from './user.js';
 import Settings from './settings/settings.js';
 
 import './gameBar.css';
-
+import '../global.css';
 
 
 function RenderUsername(props){
   if (props.loggedIn){
-    return <User className = 'gamebar_right gamebar_child gamebar_clickable' username = {props.username} updateLoggedIn = {props.fetchAPI}/>
+    return <User className = 'right gamebar_child gamebar_clickable' username = {props.username} updateLoggedIn = {props.fetchAPI}/>
   }else{
     return (
       <React.Fragment>
-        <Login className = 'gamebar_right gamebar_child gamebar_clickable' updateLoggedIn = {props.fetchAPI}/>
-        <Register className = 'gamebar_right gamebar_child gamebar_clickable' updateLoggedIn = {props.fetchAPI}/>
+        <Login className = 'right gamebar_child gamebar_clickable' updateLoggedIn = {props.fetchAPI}/>
+        <Register className = 'right gamebar_child gamebar_clickable' updateLoggedIn = {props.fetchAPI}/>
       </React.Fragment>
     );
   }
@@ -55,10 +55,10 @@ class GameBar extends React.Component {
   render() {
     return (
         <nav className = 'gamebar_primary'>
-          <NavLink to="/play" className = 'gamebar_right gamebar_child gamebar_clickable'>Play</NavLink>
-          <NavLink to="/leaderboard" className = 'gamebar_right gamebar_child gamebar_clickable'>Leaderboard</NavLink>
-          <header className = 'gamebar_title gamebar_child'>Ultris</header>
-          <Settings className = 'gamebar_right gamebar_child gamebar_clickable'/>
+          <NavLink to="/play" className = 'right gamebar_child gamebar_clickable'>Play</NavLink>
+          <NavLink to="/leaderboard" className = 'right gamebar_child gamebar_clickable'>Leaderboard</NavLink>
+          <header className = 'grow gamebar_child'>Ultris</header>
+          <Settings className = 'right gamebar_child gamebar_clickable'/>
           <RenderUsername loggedIn = {this.state.loggedIn} username = {this.state.username} fetchAPI = {this.fetchAPI}/>
         </nav>
     );
