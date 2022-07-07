@@ -8,6 +8,7 @@ import Settings from './settings/settings.js';
 
 import './gameBar.css';
 import '../global.css';
+import { toHaveDisplayValue } from '@testing-library/jest-dom/dist/matchers.js';
 
 
 function RenderUsername(props){
@@ -26,19 +27,14 @@ function RenderUsername(props){
 class GameBar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { username: "", loggedIn: false };
+    this.state = { username: "", loggedIn: false};
 
     this.processAPIResponse = this.processAPIResponse.bind(this);
     this.fetchAPI = this.fetchAPI.bind(this);
   }
   
   processAPIResponse(data) {
-    let copy = Object.assign({},this.state);
-
-    copy.loggedIn = data.loggedIn;
-    copy.username = data.username;
-
-    this.setState(copy);
+    this.setState({ username: data.username, loggedIn: data.loggedIn });
   }
 
   componentDidMount(){
@@ -58,7 +54,7 @@ class GameBar extends React.Component {
           <NavLink to="/play" className = 'right gamebar_child gamebar_clickable'>Play</NavLink>
           <NavLink to="/leaderboard" className = 'right gamebar_child gamebar_clickable'>Leaderboard</NavLink>
           <header className = 'grow gamebar_child'>Ultris</header>
-          <Settings className = 'right gamebar_child gamebar_clickable'/>
+          <Settings className = 'right gamebar_child gamebar_clickable' loggedIn = {this.state.loggedIn}/>
           <RenderUsername loggedIn = {this.state.loggedIn} username = {this.state.username} fetchAPI = {this.fetchAPI}/>
         </nav>
     );

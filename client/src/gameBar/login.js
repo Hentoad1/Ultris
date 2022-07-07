@@ -24,20 +24,15 @@ class Login extends React.Component {
     }
 
     displayDropDown(){
-        let copy = Object.assign({},this.state);
-        copy.display = true;
-
-        this.setState(copy);
+        this.setState({display:true});
     }
 
     closeDropDown(e){
-        let defaultCopy = Object.assign({},defaultState);
-
-        this.setState(defaultCopy);
+        this.setState(defaultState);
     }
 
     updateInputFilled(e){
-        let copy = Object.assign({},this.state);
+        let copy = {};
         let attr = e.target.id + 'Value';
         copy[attr] = e.target.value;
 

@@ -35,10 +35,7 @@ class Register extends React.Component {
     }
 
     displayDropDown(){
-        let copy = Object.assign({},this.state);
-        copy.display = true;
-
-        this.setState(copy);
+        this.setState({display : true});
     }
 
     closeDropDown(e){
@@ -63,11 +60,8 @@ class Register extends React.Component {
     }
 
     updateInputFilled(e){
-        let copy = Object.assign({},this.state);
         let attr = e.target.id + 'Value';
-        copy[attr] = e.target.value;
-
-        this.setState(copy);
+        this.setState({[attr]:e.target.value});
     }
 
     updateUsernameValidity(e){

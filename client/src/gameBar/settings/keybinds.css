@@ -1,0 +1,35 @@
+.keybinds_overlay{
+    position:fixed;
+
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+
+    background:#000A;
+
+    z-index:10;
+}
+
+.keybinds_list{
+    padding:0;
+    margin:0;
+    list-style: none;
+}
+
+.keybinds_list li{
+    padding:0.25em 0;
+}
+
+.keybinds_list li button{
+    width:100px;
+    padding:0;
+
+    box-shadow:inset 0 0 0 1px white;
+
+    border:none;
+    background:transparent;
+    color:inherit;
+    float:right;
+    box-sizing: border-box;
+}

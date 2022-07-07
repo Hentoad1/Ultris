@@ -17,10 +17,7 @@ class User extends React.Component {
     }
 
     displayDropDown(e){
-        let copy = Object.assign({},this.state);
-        copy.display = true;
-
-        this.setState(copy);
+        this.setState({display:true});
     }
 
     closeDropDown(e){

@@ -7,6 +7,7 @@ import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 
 
 import Handling from './handling.js'
+import Keybinds from './keybinds.js'
 
 import './settings.css';
 
@@ -18,7 +19,7 @@ const defaultState = {
 class Settings extends React.Component {
     constructor(props){
         super(props);
-        this.state = Object.assign({},defaultState);
+        this.state = defaultState;
 
 
         this.displayDropDown = this.displayDropDown.bind(this);
@@ -26,22 +27,11 @@ class Settings extends React.Component {
     }
 
     displayDropDown(){
-        let copy = Object.assign({},this.state);
-        copy.display = true;
-
-        this.setState(copy);
+        this.setState({display : true});
     }
 
-    closeDropDown(e){
-        let defaultCopy = Object.assign({},defaultState);
-
-        this.setState(defaultCopy);
-    }
-
-    renderForm(){
-        return(
-            <Handling />
-        )
+    closeDropDown(){
+        this.setState(defaultState);
     }
 
     render() {
@@ -63,19 +53,13 @@ class Settings extends React.Component {
                             <Accordion.Item eventKey="0">
                                 <Accordion.Header>Keybinds</Accordion.Header>
                                 <Accordion.Body className = 'settings_accordion_body'>
-                                <Handling />
+                                <Keybinds loggedIn = {this.props.loggedIn}/>
                                 </Accordion.Body>
                             </Accordion.Item>
                             <Accordion.Item eventKey="1">
                                 <Accordion.Header>Handling</Accordion.Header>
                                 <Accordion.Body className = 'settings_accordion_body'>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                                veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                                est laborum.
+                                <Handling loggedIn = {this.props.loggedIn}/>
                                 </Accordion.Body>
                             </Accordion.Item>
                         </Accordion>

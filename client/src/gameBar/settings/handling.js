@@ -1,8 +1,5 @@
 import React from 'react';
 
-import { FormGroup } from 'react-bootstrap';
-import CloseButton from 'react-bootstrap/CloseButton';
-
 import './handling.css';
 import '../../global.css';
 
@@ -60,14 +57,17 @@ class Handling extends React.Component {
         let percentScrolled = (target.value - target.min) / (target.max - target.min);
         let value = percentScrolled * target.max;  
 
-        
-        let copy = Object.assign({},this.state);
-        let factor = target.id === 'SDF' ? 1 : copy.unitFactor;
+        let factor = target.id === 'SDF' ? 1 : this.state.unitFactor;
 
-        copy[target.id].value = value;
-        copy[target.id].formattedValue = this.formatValue(value, factor);
-        copy[target.id].barFilled = this.calculateBarFilled(target.min,target.max,target.value);
-        this.setState(copy);
+        console.log(this.state);
+
+        let data = {
+            value:value,
+            formattedValue:this.formatValue(value, factor),
+            barFilled:this.calculateBarFilled(target.min,target.max,target.value)
+        };
+
+        this.setState({[target.id]:data});
     }
 
     onTextUpdate(e){
@@ -83,27 +83,26 @@ class Handling extends React.Component {
     onPossbileSubmit(e){
         if (e.key === 'Enter' && e.target.value !== ''){
             let target = e.target;
-            let copy = Object.assign({},this.state);
-            let stats = copy[target.id];
+            let stats = this.state[target.id];
             
-            let factor = target.id === 'SDF' ? 1 : copy.unitFactor;
+            let factor = target.id === 'SDF' ? 1 : this.state.unitFactor;
             let input = target.value / factor;
 
             let value = Math.max(stats.min,Math.min(stats.max,input));
 
-
-            copy[target.id].value = value;
-            copy[target.id].formattedValue = this.formatValue(value, factor);
-            copy[target.id].barFilled = this.calculateBarFilled(stats.min,stats.max,value);
+            let data = {
+                value:value,
+                formattedValue:this.formatValue(value, factor),
+                barFilled:this.calculateBarFilled(target.min,target.max,target.value)
+            };
 
             target.value = '';
 
-            this.setState(copy);
+            this.setState({[target.id]:data});
         }
     }
 
     recalculateSliders(copy = Object.assign({},this.state)){
-        console.log(copy);
         const sections = ['ARR','DAS','DCD'];
         let factor = copy.unitFactor;
 
@@ -111,8 +110,6 @@ class Handling extends React.Component {
             let stats = copy[sections[i]];
             stats.formattedValue = this.formatValue(stats.value,factor);
         }
-
-        console.log(copy);
 
         this.setState(copy);
     }
@@ -130,9 +127,7 @@ class Handling extends React.Component {
     }
 
     updateSoftDrop(e){
-        let copy = Object.assign({},this.state);
-        copy.SDF.instant = e.target.checked;
-        this.setState(copy);
+        this.setState({SDF:{instant:e.target.checked}});
     }
 
     formatValue(value, factor = this.state.unitFactor){
@@ -203,6 +198,7 @@ class Handling extends React.Component {
                     <div className = 'grow'></div>
                     <input className = 'handling_checkbox' type = 'checkbox' onInput = {this.updateSoftDrop}/>
                 </div>
+                <span className = 'handling_logged_warning' style = {{display : this.props.loggedIn ? 'none' : null}}>Because you are not logged in, your settings will not be saved.</span>
             </React.Fragment>
         );
     }
