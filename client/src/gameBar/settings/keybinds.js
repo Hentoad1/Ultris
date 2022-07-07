@@ -6,9 +6,12 @@ import '../../global.css';
 
 const initalState = {
     rebindOverlay:false,
-    keyBeingSet:null,
+    controlBeingSet:null,
     controls:{
         exit:'Escape'
+    },
+    formattedControls:{
+        exit:'ESCAPE'
     }
 };
 
@@ -23,17 +26,37 @@ class Keybinds extends React.Component {
     }
 
     rebind(e){
-        this.setState({rebindOverlay:true,keyBeingSet:e.target.key});
+        e.target.blur();
+        let cntl = e.target.getAttribute('controlbutton');
+        this.setState({rebindOverlay:true,keyBeingSet:cntl});
     }
     
     overlayKeyPressed(e){
         if (this.state.rebindOverlay){
+            let data = {
+                rebindOverlay:false,
+                controls:{[this.state.keyBeingSet]:e.key},
+                formattedControls:{[this.state.keyBeingSet]:this.formatKey(e.key)}
+            };
+
+            this.setState(data);
+
             console.log(e);
         }
     }
 
     overlayClicked(e){
+        if (this.state.rebindOverlay){
+            let data = {
+                rebindOverlay:false,
+                controls:{[this.state.keyBeingSet]:null},
+                formattedControls:{[this.state.keyBeingSet]:this.formatKey(null)}
+            };
 
+            this.setState(data);
+
+            console.log(e);
+        }
     }
 
     componentDidMount(){
@@ -42,6 +65,16 @@ class Keybinds extends React.Component {
 
     componentWillUnmount(){
         document.removeEventListener("keyup", this.overlayKeyPressed, false);
+    }
+
+    formatKey(key){
+        if (key === null){
+            return '<UNBOUND>';
+        }else if (key === ' '){
+            return 'SPACE'; 
+        }else{
+            return key.toUpperCase();
+        }
     }
 
     render() {
@@ -53,7 +86,7 @@ class Keybinds extends React.Component {
             <React.Fragment>
                 {overlay}
                 <ul className = 'keybinds_list'>
-                    <li>EXIT <button key = 'exit' onClick = {this.rebind}>{this.state.controls.exit}</button></li>
+                    <li>EXIT <button controlbutton = 'exit' onClick = {this.rebind}>{this.state.formattedControls.exit}</button></li>
                     <li>RESET</li>
                     <li>LEFT</li>
                     <li>RIGHT</li>
