@@ -124,9 +124,12 @@
     padding:1em;
 }
 
-.handling_logged_warning{
-    word-wrap: break-word;
-    text-align: center;
+.handling_default_button{
+    border:1px solid white;;
+    background:transparent;
+    color:inherit;
+    margin:1em auto;
+    padding:0 1em;
 }
 
 .handling_submit:disabled{

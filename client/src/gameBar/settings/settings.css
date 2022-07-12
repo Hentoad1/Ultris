@@ -126,6 +126,12 @@
     opacity:0.5;
 }
 
+.settings_logged_warning{
+    padding:1em;
+    word-wrap: break-word;
+    text-align: center;
+}
+
 a{
     color:white;
     text-decoration:none;

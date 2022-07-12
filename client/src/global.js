@@ -1,14 +1,17 @@
+import React from 'react';
 import { Outlet } from "react-router-dom";
-import './App.css';
+
 import GameBar from './gameBar/gameBar.js';
 
-function App() {
+import './global.css';
+
+function Globals() {
   return (
-    <div className="App">
+    <React.Fragment>
       <GameBar />
       <Outlet />
-    </div>
+    </React.Fragment>
   );
 }
 
-export default App;
+export default Globals;

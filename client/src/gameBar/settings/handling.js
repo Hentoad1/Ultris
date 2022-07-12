@@ -1,8 +1,16 @@
 import React from 'react';
+import Cookies from 'universal-cookie';
 
 import './handling.css';
 import '../../global.css';
 
+const defaultHandling = {
+    ARR:33,
+    DAS:167,
+    DCD:0,
+    SDF:6,
+    ISDF:false
+}
 
 const initalState = {
     unit:'MS',
@@ -10,29 +18,29 @@ const initalState = {
     ARR:{
         min:0,
         max:167,
-        value:50,
-        formattedValue:50,
+        value:0,
+        formattedValue:0,
         barFilled:0, //should be initalized when loaded
     },
     DAS:{
         min:0,
         max:334,
-        value:50,
-        formattedValue:50,
+        value:0,
+        formattedValue:0,
         barFilled:0, //should be initalized when loaded
     },
     DCD:{
         min:0,
         max:167,
-        value:50,
-        formattedValue:50,
+        value:0,
+        formattedValue:0,
         barFilled:0, //should be initalized when loaded
     },
     SDF:{
         min:0,
         max:20,
-        value:5,
-        formattedValue:5,
+        value:0,
+        formattedValue:0,
         barFilled:0, //should be initalized when loaded
         instant:false
     },
@@ -41,8 +49,25 @@ const initalState = {
 
 class Handling extends React.Component {
     constructor(props){
-        super(props);
-        this.state = Object.assign({},initalState);
+        super(props); 
+        const cookies = new Cookies();
+
+        let state = Object.assign({},initalState);
+
+        let handlingStats = cookies.get('handling') || defaultHandling;
+
+        state.SDF.instant = handlingStats.ISDF;
+        delete handlingStats.ISDF;
+
+        for (let property in handlingStats){
+            let value = handlingStats[property];
+            state[property].value = value;
+            state[property].formattedValue = this.formatValue(value, 1);
+        }
+
+
+
+        this.state = state;
         
         this.onSliderUpdate = this.onSliderUpdate.bind(this);
         this.onTextUpdate = this.onTextUpdate.bind(this);
@@ -50,6 +75,7 @@ class Handling extends React.Component {
         this.recalculateSliders = this.recalculateSliders.bind(this);
         this.changeUnit = this.changeUnit.bind(this);
         this.updateSoftDrop = this.updateSoftDrop.bind(this);
+        this.reset = this.reset.bind(this);
     }
 
     onSliderUpdate(e){
@@ -109,7 +135,10 @@ class Handling extends React.Component {
         for (let i = 0; i < sections.length; i++){
             let stats = copy[sections[i]];
             stats.formattedValue = this.formatValue(stats.value,factor);
+            stats.barFilled = this.calculateBarFilled(stats.min,stats.max,stats.value)
         }
+
+        copy.SDF.barFilled = this.calculateBarFilled(copy.SDF.min,copy.SDF.max,copy.SDF.value)
 
         this.setState(copy);
     }
@@ -127,7 +156,10 @@ class Handling extends React.Component {
     }
 
     updateSoftDrop(e){
-        this.setState({SDF:{instant:e.target.checked}});
+        let sdf = Object.assign({},this.state.SDF);
+        sdf.instant = e.target.checked;
+
+        this.setState({SDF:sdf});
     }
 
     formatValue(value, factor = this.state.unitFactor){
@@ -145,6 +177,36 @@ class Handling extends React.Component {
         return barFilled;
     }
 
+    saveToCookie(){
+        let data = {
+            ARR:this.state.ARR.value,
+            DAS:this.state.DAS.value,
+            DCD:this.state.DCD.value,
+            SDF:this.state.SDF.value,
+            ISDF:this.state.SDF.instant
+        };
+        const cookies = new Cookies();
+        cookies.set('handling', data, { path: '/' });
+        return 'value';
+    }
+
+    reset(){
+        let state = Object.assign({},this.state);
+
+        let handlingStats = defaultHandling;
+
+        state.SDF.instant = handlingStats.ISDF;
+        delete handlingStats.ISDF;
+
+        for (let property in handlingStats){
+            let value = handlingStats[property];
+            state[property].value = value;
+            state[property].formattedValue = this.formatValue(value, 1);
+        }
+
+        this.recalculateSliders(state);
+    }
+
     componentDidMount(){
         const sections = ['ARR','DAS','DCD','SDF'];
         let copy = Object.assign({},this.state);
@@ -157,6 +219,7 @@ class Handling extends React.Component {
         this.setState(copy);
     }
 
+    
     render() {
         return (
             <React.Fragment>
@@ -196,9 +259,9 @@ class Handling extends React.Component {
                 <div className = 'handling_section'>
                     INSTANT SOFTDROP
                     <div className = 'grow'></div>
-                    <input className = 'handling_checkbox' type = 'checkbox' onInput = {this.updateSoftDrop}/>
+                    <input className = 'handling_checkbox' type = 'checkbox' onInput = {this.updateSoftDrop} defaultChecked = {this.state.SDF.instant}/>
                 </div>
-                <span className = 'handling_logged_warning' style = {{display : this.props.loggedIn ? 'none' : null}}>Because you are not logged in, your settings will not be saved.</span>
+                <button className = 'handling_default_button' onClick = {this.reset}>Reset to Default</button>
             </React.Fragment>
         );
     }

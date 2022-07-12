@@ -1,0 +1,17 @@
+.main_wrapper{
+    flex-grow:1;
+
+    display:flex;
+    align-items:center;
+    justify-content: center;
+    flex-direction:row;
+
+    background:var(--background-color);
+    color:var(--color);
+
+    user-select:none;
+}
+
+.main_wrapper *{
+    outline:0px solid white;
+}
