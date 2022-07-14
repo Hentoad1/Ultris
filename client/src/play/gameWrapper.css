@@ -1,6 +1,8 @@
 .main_wrapper{
     flex-grow:1;
 
+    position:relative;
+
     display:flex;
     align-items:center;
     justify-content: center;
@@ -10,6 +12,7 @@
     color:var(--color);
 
     user-select:none;
+    overflow:hidden;
 }
 
 .main_wrapper *{

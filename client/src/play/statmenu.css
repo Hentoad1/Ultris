@@ -1,0 +1,19 @@
+.statMenu{
+    position:absolute;
+
+    left:0;
+    right:0;
+
+    height:100%;
+
+    background:black;
+}
+
+.visible{
+    top:0%;
+}
+
+.hidden{
+    top:100%;
+}
+

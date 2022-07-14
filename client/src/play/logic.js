@@ -38,6 +38,13 @@ var combo = -1;
 var justHeld = false;
 var lastMovement;
 
+//STATS
+var normalClears = new Array(4).fill(0);
+var fullSpins = new Array(3).fill(0);
+var miniSpins = new Array(2).fill(0);
+var pcCount = 0;
+var b2bMax = 0;
+
 //HANDLING
 const fallSpeed = 1000;
 var handling = {DAS:133, ARR:10, DCD:0, SDF:1, ISDF:true};
@@ -65,7 +72,10 @@ var previousFrame =  Date.now();
 var gameRunning = false;
 var gameMode = false;
 
+//IMPORTS
 var DOM;
+var callbacks;
+
 
 var resetCount = 0;
 
@@ -374,7 +384,6 @@ async function countdown(resets){
 
     elem.style.animation = "";
     let bypass = elem.offsetHeight; //refresh;
-    elem.className = "centerOutput countdownStyle";
     elem.style.fontSize = "60px";
     elem.style.opacity = 1;
     for(let i = 3; i > 0; i--){
@@ -402,7 +411,7 @@ function display(){
 	ctx.clearRect(0,0,canvas.width,canvas.height);//clears all
 	
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#FFFFFF';
+    ctx.strokeStyle = '#AAAAAA';
 	for (let i = 0; i < 10; i++){
 		for (let j = 0; j < 20; j++){
 			ctx.strokeRect(i * cellSize + 0.5,(19 - j) * cellSize + 0.5,cellSize,cellSize);
@@ -560,7 +569,7 @@ function createTimer(){
 			
 			if (gameMode == "blitz" && time > "2:00"){
 				DOM.time.innerHTML = "2:00";
-				//end(true);
+				end(true);
 			}else{
 				DOM.time.innerHTML = time;
 			}
@@ -685,7 +694,7 @@ function place(){
 	/*This is genius, this calls a non test of a shift of 0,0 returning a boolean value of if the peice spawns inside another peice already but also because it is not doing a test it will update the falling varabile causing peices spawning on top of blocks to still place properly.*/
 	if (!current.shift(0,0)){
 		if (gameMode !== 'online'){
-			//end(false);
+			end(false);
 		}else{
 			/*socket.emit('defeat', function(place,total){
 				end(false,place,total);
@@ -752,7 +761,7 @@ function lineCleared(justCleared){
 	x = DOM.combo.offsetHeight; // updates the css with the javascript
 	DOM.combo.style.transition = "opacity 1s linear 2s";
 	DOM.combo.style.opacity = "0";
-	/*
+	
 	var pc = true;
 	board.every(a => a.forEach(b => {
 		if (b != 0){
@@ -761,17 +770,20 @@ function lineCleared(justCleared){
 		}
 	}));
 	if (pc){
-		perfectClear();
+		DOM.title.innerHTML = "ALL<br>CLEAR";
+		DOM.title.style.animation = "";
+		let react_bypass = DOM.title.offsetHeight;
+		DOM.title.style.animation = "allClear 5s 1 linear";
 		pcCount++;
 	}
 	if (current.tSpin){
-		broadcast.innerHTML = "T-SPIN " + linesToText[Math.min(justCleared,11) - 1];
+		DOM.broadcast.innerHTML = "T-SPIN " + linesToText[Math.min(justCleared,11) - 1];
 		fullSpins[justCleared - 1]++;
 	}else if (current.miniSpin){
-		broadcast.innerHTML = "T-SPIN MINI " + linesToText[Math.min(justCleared,11) - 1];
+		DOM.broadcast.innerHTML = "T-SPIN MINI " + linesToText[Math.min(justCleared,11) - 1];
 		miniSpins[justCleared - 1]++;
 	}else{
-		broadcast.innerHTML = linesToText[Math.min(justCleared,11) - 1];
+		DOM.broadcast.innerHTML = linesToText[Math.min(justCleared,11) - 1];
 		normalClears[justCleared - 1]++;
 	}
 	
@@ -793,21 +805,61 @@ function lineCleared(justCleared){
 	}
 	DOM.b2b.innerHTML = "B2B x" + b2bCounter;
 	if (combo > 0){
-		comboOutput.innerHTML = "Combo x" + combo;
+		DOM.combo.innerHTML = "Combo x" + combo;
 	}else{
-		comboOutput.innerHTML = "";
+		DOM.combo.innerHTML = "";
 	}
-		DOM.score.innerHTML = parseInt(DOM.score.innerHTML) + ((Math.floor(points * spinMultiplier * b2bMultiplier / 100)*100) + pcBonus + combo * 50) * DOM.leves.innerHTML;
+		DOM.score.innerHTML = parseInt(DOM.score.innerHTML) + ((Math.floor(points * spinMultiplier * b2bMultiplier / 100)*100) + pcBonus + combo * 50) * DOM.level.innerHTML;
 	
 	b2bMax = Math.max(b2bMax,b2bCounter);
 	
 	if (gameMode == "sprint" && DOM.lines.innerHTML >= 40){
 		end(true);
-	}*/
+	}
 	
 	//t-spin is 4 times
 	//mini tspin is 4/3 times
 	//b2b is 1.5 times*/
+}
+
+function end(victory){
+	gameRunning = false;
+	let stats = {
+		display:true,
+		displayMinors:true,
+		victory:victory,
+		normalClears:normalClears,
+		fullSpins:fullSpins,
+		miniSpins:miniSpins,
+		primaryStat:'',
+		primaryStatValue:'',
+		secondaryStats:null
+	}
+
+	if (gameMode == 'sprint'){
+		if (true){
+			stats.primaryStat = 'TIME';
+			stats.primaryStatValue = DOM.time.innerHTML;
+		}else{
+			stats.primaryStat = 'LINES';
+			stats.primaryStatValue = DOM.lines.innerHTML + '/40';
+			stats.displayMinors = false;
+		}
+	}else if (gameMode == 'blitz'){
+		stats.primaryStat = 'SCORE';
+		stats.primaryStatValue = DOM.score.innerHTML;
+	}else if (gameMode == 'endless' || true){
+		stats.primaryStat = 'SCORE';
+		stats.primaryStatValue = DOM.score.innerHTML;
+		secondaryStats = [
+			{
+				
+			}
+		]
+	}
+
+
+	callbacks.updateStats(stats);
 }
 
 //GENERATORS
@@ -823,8 +875,9 @@ function genBlankBoard(){
 }
 
 //EXPORTS
-function initalize(elems){
-    DOM = elems;
+function initalize(a,b){ // im using bad variable names but otherwise they would be litearlly identical.
+    DOM = a;
+	callbacks = b; 
     reset();
 
     window.requestAnimationFrame(fullLoop);

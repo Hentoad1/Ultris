@@ -48,7 +48,11 @@ class Game extends React.Component {
             title: this.titleRef.current
         }
 
-        initalize(DOM);
+        let callbacks = {
+            updateStats:this.props.updateStatMenu
+        }
+
+        initalize(DOM,callbacks);
 
         document.addEventListener('keydown', keyDownHandler, false);
         document.addEventListener('keyup', keyUpHandler, false);
@@ -65,10 +69,10 @@ class Game extends React.Component {
             <div className = 'clientWrapper'>
                 <div className = "inner_left_wrapper">
                     <canvas width = '100' height = '100' ref={this.holdRef} className = "box"></canvas>
-                    <div id = "broadcastWrapper" > {/*this is for lines being cleared, the css is not yet implemented / transfered; should be re-named to minor broadcast wrapper */}
-                        <span ref={this.b2bref}/>
-                        <span ref={this.broadcastRef}/>
-                        <span ref={this.comboRef}/>
+                    <div className = "broadcast_wrapper" > {/*this is for lines being cleared, the css is not yet implemented / transfered; should be re-named to minor broadcast wrapper */}
+                        <span className = "minor_broadcast" ref={this.b2bref}/>
+                        <span className = "broadcast" ref={this.broadcastRef}/>
+                        <span className = "minor_broadcast" ref={this.comboRef}/>
                     </div>
                     <div className = "statBox">
                         Score
@@ -91,7 +95,7 @@ class Game extends React.Component {
                     <canvas height = '400' width = '20' ref={this.meterRef} className = 'meter'></canvas>
                 </div>
                 <div className = 'inner_center_wrapper'>
-                    <span className = "centerOutput countdownStyle" ref={this.titleRef}></span> {/*this is for center broadcasts, css hasent been transfered. Plan on renaming to major broadcast [wrapper/box/output]*/}
+                    <span className = "center_output" ref={this.titleRef}></span>
                     <canvas height = '400' width = '200' ref={this.mainRef} className = "box"></canvas>
                     <span className = 'inner_username_wrapper'>PLAYER</span>
                 </div>
