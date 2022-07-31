@@ -5,7 +5,7 @@ import GameBar from './gameBar/gameBar.js';
 
 import './global.css';
 
-function Globals() {
+function Globals(props) {
   return (
     <React.Fragment>
       <GameBar />

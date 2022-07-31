@@ -6,7 +6,25 @@
 
     height:100%;
 
-    background:black;
+	background:#19191966;
+
+    transition-property:top,opacity;
+	transition-timing-function:ease-in;
+    transition-duration: 1s,0.5s;
+
+    display:flex;
+    align-items: center;
+
+    justify-content: center;
+    
+	flex-flow:column;
+	color:white;
+	font-size:20px;
+	text-align:center;
+	z-index:200;
+
+    backface-visibility: hidden;
+    transform: translateZ(0) scale(1, 1);
 }
 
 .visible{
@@ -15,5 +33,33 @@
 
 .hidden{
     top:100%;
+	opacity:0;
 }
 
+.primaryStatValue{
+	font-size:3em;
+	user-select:text;
+}
+
+.primaryStatValue::selection{
+    background-color:white;
+    color:#191919;
+}
+
+.minorStats{
+	list-style:none;
+	padding:0;
+	max-height:200px;
+	min-width:400px;
+	overflow-y:scroll;
+	text-align:left;
+}
+
+.minorStats *{
+	user-select:text;
+}
+
+.minorStats *::selection{
+    background-color:white;
+	color:#191919;
+}

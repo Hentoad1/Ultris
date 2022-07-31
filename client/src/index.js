@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Globals from './global.js';
+import PlayMenu from './play/playMenu.js';
 import GameWrapper from './play/gameWrapper.js';
 
 
@@ -10,7 +11,7 @@ import GameWrapper from './play/gameWrapper.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  <React.Fragment>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
@@ -19,14 +20,17 @@ root.render(
     />
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Globals />}>
-          <Route index element={<h1>default</h1>} />
-          <Route path='play' element={<GameWrapper />} />
-          <Route path='*' element={<h1>404 Error</h1>} />
+        <Route path='/' element = {<Globals />}>
+          <Route index element = {<h1>default</h1>} />
+          <Route path='play'>
+            <Route index element = {<PlayMenu />} />
+            <Route path='*' element = {<GameWrapper />} />
+          </Route>
+          <Route path='*' element = {<h1>404 Error</h1>} />
         </Route>
       </Routes>
     </BrowserRouter>
-  </React.StrictMode>
+  </React.Fragment>
 );
 
 // If you want to start measuring performance in your app, pass a function

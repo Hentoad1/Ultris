@@ -72,14 +72,25 @@ var previousFrame =  Date.now();
 var gameRunning = false;
 var gameMode = false;
 
+//ONLINE
+var socket = null;
+var garbageQueue = [];
+var garbageMeter = [];
+var online = {
+	cellSize:20,
+	margins:5,
+	change:5,
+	displayLines:true,
+	onEndScreen:false,
+	midGame:false,
+	spectating:true,
+	inActive:false,
+	fallMultiplier:1
+};
+
 //IMPORTS
 var DOM;
 var callbacks;
-
-
-var resetCount = 0;
-
-var exitPercent = 0;
 
 
 //CONTROLS
@@ -178,7 +189,7 @@ export default class Tetrimino{
 		this.pType = pTypes[p];
 		this.color = colors[p + 1];
 		this.colorIndex = p + 1;
-		this.iKicks = (p == 2);
+		this.iKicks = (p===2);
 		this.x = 5 - this.pType.length % 2;
 		this.y = 18;
 		this.state = 0;
@@ -228,19 +239,19 @@ export default class Tetrimino{
 		this.pType.forEach((e,i) => temp[i] = e.slice());
 		
 		temp.forEach((a,i) => a.forEach((e,j) => {
-			if (deg == 90){
+			if (deg === 90){
 				this.iKicks ? kicks = cWiseIKicks : kicks = cWiseElseKicks;
 				tempY = j;
 				tempX = (temp.length - 1 - i);
 				temp[tempY][tempX] = this.pType[i][j];
 				newState = (this.state + 5) % 4;
-			}else if (deg == 270){
+			}else if (deg === 270){
 				this.iKicks ? kicks = ccWiseIKicks : kicks = ccWiseElseKicks;
     		tempY = (temp.length - 1 - j);
         tempX = i;
 				temp[tempY][tempX] = this.pType[i][j];
 				newState = (this.state + 3) % 4;
-			}else if (deg == 180){	
+			}else if (deg === 180){	
 				kicks = aKicks;
 				tempX = temp.length - 1 - i;
 				tempY = temp.length - 1 - j;
@@ -267,7 +278,7 @@ export default class Tetrimino{
 			if (this.shift(kicks[this.state][i][0],kicks[this.state][i][1],tempOffsets)){
 				this.pType = temp;
 				this.state = newState;
-				this.kick3 = (i == 3);
+				this.kick3 = (i === 3);
 				this.genShadowY();
 				lastMovement = "rotate";
 				DAS = Math.max(DAS,handling.DCD);
@@ -293,20 +304,20 @@ export default class Tetrimino{
 		var testX = 0;
 		var testY = 0;
 		
-		if (offsets == null){
+		if (offsets === null || offsets === undefined){
 			offsets = pOffsets(this.pType);
 		}
 		
 		offsets.forEach(e => {
 			testX = this.x + x + e[0];
 			testY = this.y + y + e[1];
-			legal = testX >= 0 && testX < 10 && testY >= 0 && board[testY][testX] == 0 && legal;
+			legal = testX >= 0 && testX < 10 && testY >= 0 && board[testY][testX] === 0 && legal;
 		});
 		
 		if (legal && !test){
 			this.x += x;
 			this.y += y;
-			if (x != 0){
+			if (x !==  0){
 				this.genShadowY();
 			}
 			lastMovement = "shift";
@@ -324,14 +335,14 @@ export default class Tetrimino{
 	place(){
 		pOffsets(this.pType).forEach(e => board[this.y + e[1]][this.x + e[0]] = this.colorIndex);
 		
-		if (this.colorIndex == 1 && (lastMovement.valueOf() == "rotate" || false)){
+		if (this.colorIndex === 1 && (lastMovement.valueOf() === "rotate" || false)){
 			const tipCords = [[-1,1],[1,1],[1,-1],[-1,-1]];
 			var cors = [];
 			for (let i = 0; i < 4; i++){
 				let x = this.x + tipCords[(this.state + i) % 4][0];
 				let y = this.y + tipCords[(this.state + i) % 4][1];
 				if (x >= 0 && x < 10 && y >= 0){
-					cors[i] = board[y][x] != 0;
+					cors[i] = board[y][x] !==  0;
 				}else{
 					cors[i] = true;
 				}
@@ -341,7 +352,7 @@ export default class Tetrimino{
 			
 			this.tSpin = this.kick3 || (col && cors[0] && cors[1] && (cors[2] || cors[3]));
 			
-			this.miniSpin = col && cors[2] && cors[3] && (cors[0] != cors[1]);
+			this.miniSpin = col && cors[2] && cors[3] && (cors[0] !==  cors[1]);
 		}
 	}
 }
@@ -371,7 +382,7 @@ async function reset(salt = Math.random()){
 	DOM.lines.innerHTML = 0;
 	gameRunning = false;
 
-    if (await countdown(resetCount)){
+    if (await countdown()){
 		gameRunning = true;
 		currentFrame = Date.now();
 		clearInterval(timer);
@@ -379,16 +390,16 @@ async function reset(salt = Math.random()){
 	}
 }
 
-async function countdown(resets){
+async function countdown(){
     let elem = DOM.title;
 
     elem.style.animation = "";
-    let bypass = elem.offsetHeight; //refresh;
+    refreshDOM(elem); //refresh;
     elem.style.fontSize = "60px";
     elem.style.opacity = 1;
     for(let i = 3; i > 0; i--){
         elem.innerHTML = i;
-        let bypass = elem.offsetHeight; //refresh;
+        refreshDOM(elem); //refresh;
         var killed = await new Promise(resolve => {
             setTimeout(() => resolve(false),1000);
             window.addEventListener("killCountdown",() => resolve(true))
@@ -420,16 +431,16 @@ function display(){
 	
     for (let i = 0; i < board.length; i++){
         for (let j = 0; j < board[i].length; j++){
-            if (board[i][j] != 0){
+            if (board[i][j] !==  0){
 			    pasteOnGrid(j,i,board[i][j]);
             }
         }
     }
-	if (current != null){
+	if (current !==  null){
 		current.display();
-		/*if (gameMode == 'online' && onlineConstants.displayLines){
+		if (gameMode === 'online' && online.displayLines){
 			socket.emit('send peice',current.export(), current.exportShadow(),current.colorIndex);
-		}*/
+		}
 	}
 }
 
@@ -438,7 +449,7 @@ function displayHold(){
     let ctx = canvas.getContext('2d');
 
 	ctx.clearRect(0,0,canvas.width,canvas.height);
-	if (hold != null){
+	if (hold !==  null){
 		pasteIcon(0,0,hold.pType,hold.colorIndex,pOffsets(hold.pType),canvas);
 	}
 }
@@ -450,6 +461,35 @@ function displayQueue(){
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 	for (let i = 0; i < 5; i++){
 		pasteIcon(0,i * 75,pTypes[queue[i]],queue[i] + 1,pOffsets(pTypes[queue[i]]),canvas);
+	}
+}
+
+function displayGarbage(){
+	const tierColors = ['#BF1E1E','#BF601E','#1EBFBF','#1E1EBF','#1EBF1E','#D4D421'];
+	const offset = 0;
+	const totalGarbage = garbageMeter.reduce((a,b) => a + b,0);
+	const tier = Math.floor(totalGarbage / 20) + offset;
+	const hiddenGarbage = (tier - offset) * 20;
+	let displayMeter = garbageMeter.slice();
+
+	let ctx = DOM.meter.getContext('2d');
+	
+	for (var count = 0; count + displayMeter[0] < hiddenGarbage; count += displayMeter.shift()){}
+	displayMeter[0] -= hiddenGarbage - count;
+	
+	ctx.fillStyle = tier === 0 ? '#191919' : tierColors[(tier - 1) % tierColors.length];
+	ctx.fillRect(0,0,DOM.meter.width,DOM.meter.height);
+	
+	let y = 0;
+	for (let i = 0; i < displayMeter.length; i++){
+		const height  = 20 * displayMeter[i];
+		ctx.fillStyle = tierColors[tier % (tierColors.length)];
+		ctx.fillRect(0,400 - y,DOM.meter.width,-1 * height + (tier === 0 ? 1 : 0));
+		if (i < displayMeter.length - 1){
+			ctx.fillStyle = 'black';
+			ctx.fillRect(0,400 - y - height,DOM.meter.width,-1);
+		}
+		y += height;
 	}
 }
 
@@ -495,7 +535,7 @@ function newBag(){
 	let salt = bagSalt * (bags + bagSalt) / (bags - bagSalt) - (bags % bagSalt) % 1;
 	
 	salt *= 10;
-	let round = Math.floor(salt) % 2 == 0;
+	let round = Math.floor(salt) % 2 === 0;
 	salt %= 1;
 	
 	
@@ -511,7 +551,7 @@ function newBag(){
 	
 	for (let i = 0; i < 7; i++){	
 		let weighted = Math.floor(randomInts[i] * 12 / 9) / 2;
-		if (weighted % 1 == 0.5){
+		if (weighted % 1 === 0.5){
 			weighted += round ? 0.5 : -0.5;
 		}
 		while(!remaining.has(weighted)){
@@ -526,7 +566,7 @@ function newBag(){
 
 function holdCurrent(){
 	if (!justHeld){
-		if (hold == null){
+		if (hold === null){
 			hold = current;
 			current.reset();
 			current = new Tetrimino(queue[0]);
@@ -567,7 +607,7 @@ function createTimer(){
 			
 			var time = minutes + ":" + formattedSeconds + "." + ms;
 			
-			if (gameMode == "blitz" && time > "2:00"){
+			if (gameMode === "blitz" && time > "2:00"){
 				DOM.time.innerHTML = "2:00";
 				end(true);
 			}else{
@@ -581,11 +621,11 @@ function physics(){
 	var leftDown = controls.left.held;
 	var rightDown = controls.right.held;
 	var downDown = controls.soft.held;
-	let fallMultiplier = (gameMode == 'online') ? /*onlineConstants.fallMultiplier*/1 : Math.pow(0.8,DOM.level.innerHTML);
+	let fallMultiplier = (gameMode === 'online') ? online.fallMultiplier : Math.pow(0.8,DOM.level.innerHTML);
 	
 	if (gameRunning){
 		if (leftDown || rightDown){
-			if (DAS == handling.DAS || DAS <= 0){
+			if (DAS === handling.DAS || DAS <= 0){
 				if (leftDown){
 					while (current.shift(-1,0) && DAS <= -handling.ARR){ //it will guarentee one move
 						DAS += handling.ARR;
@@ -642,21 +682,6 @@ function fullLoop(){
 		physics();
 	}
 	
-	/*if (controls.exit.held || exitPercent > 0){
-		if (controls[0][3]){
-				exitPercent += (currentFrame - previousFrame) / 10;
-				exitPercent = Math.min(exitPercent,100);
-				if (exitPercent == 100){
-					exitPercent = 0;
-					escape();
-				}
-			}else{
-				exitPercent -= (currentFrame - previousFrame) / 10;
-				exitPercent = Math.max(exitPercent,0);
-		}
-		DOM.exit.style.setProperty("--barFilled",exitPercent + "%");
-	}*/
-	
 	window.requestAnimationFrame(fullLoop);
 }
 
@@ -668,15 +693,15 @@ function place(){
 	
 	var linesCleared = updateBoard();
 	
-	/*if (gameMode == 'online'){
-		if (linesCleared == 0){
+	if (gameMode === 'online'){
+		if (linesCleared === 0){
 			if (garbageQueue.length > 0){
 				for (let i = Math.min(garbageQueue.length,8); i > 0; i--){
 					board.unshift(garbageQueue.pop());
 					board.pop();
-					if (garbageMeter.length != 0 && garbageMeter[0] <= 1){
+					if (garbageMeter.length !==  0 && garbageMeter[0] <= 1){
 						garbageMeter.shift();
-					}else if (garbageMeter.length != 0){
+					}else if (garbageMeter.length !==  0){
 						garbageMeter[0] -= 1;
 					}
 				}
@@ -686,7 +711,7 @@ function place(){
 		}else{
 			socket.emit('cleared line',board,pOffsets(current.pType),current.x,current.y,current.colorIndex,current.kick3,lastMovement);
 		}
-	}*/
+	}
 	
 	current = new Tetrimino(queue[0]);
 	
@@ -696,13 +721,11 @@ function place(){
 		if (gameMode !== 'online'){
 			end(false);
 		}else{
-			/*socket.emit('defeat', function(place,total){
+			socket.emit('defeat', function(place,total){
 				end(false,place,total);
 			});
-			
-			gameOver = true;*/
+			gameRunning = false; // freezes game until the params can be given back and end can properly go through
 			current = null;
-			gameRunning = false;
 			clearInterval(timer);
 		}
 	}
@@ -724,7 +747,7 @@ function updateBoard(){
 	for (let i = 0; i < board.length; i++){
 		var flag = true;
 		for (let j = 0; j < 10; j++){
-			flag = board[i][j] != 0 && flag;
+			flag = board[i][j] !==  0 && flag;
 		}
 		if (flag){
 			for (let a = i;a < board.length - 1;a++){
@@ -735,7 +758,7 @@ function updateBoard(){
 		}
 		
 	}
-	if (count != 0){
+	if (count !==  0){
 		combo++;
 		lineCleared(count);
 	}else{
@@ -752,19 +775,19 @@ function lineCleared(justCleared){
 	
 	DOM.broadcast.style.transition = "opacity 0s linear";
 	DOM.broadcast.style.opacity = "1";
-	let x = DOM.broadcast.offsetHeight; // updates the css with the javascript
+	refreshDOM(DOM.broadcast);
 	DOM.broadcast.style.transition = "opacity 1s linear 2s";
 	DOM.broadcast.style.opacity = "0";
 	
 	DOM.combo.style.transition = "opacity 0s linear";
 	DOM.combo.style.opacity = "1";
-	x = DOM.combo.offsetHeight; // updates the css with the javascript
+	refreshDOM(DOM.combo);
 	DOM.combo.style.transition = "opacity 1s linear 2s";
 	DOM.combo.style.opacity = "0";
 	
 	var pc = true;
 	board.every(a => a.forEach(b => {
-		if (b != 0){
+		if (b !==  0){
 			pc = false;
 			return false;
 		}
@@ -772,7 +795,7 @@ function lineCleared(justCleared){
 	if (pc){
 		DOM.title.innerHTML = "ALL<br>CLEAR";
 		DOM.title.style.animation = "";
-		let react_bypass = DOM.title.offsetHeight;
+		refreshDOM(DOM.title);
 		DOM.title.style.animation = "allClear 5s 1 linear";
 		pcCount++;
 	}
@@ -793,7 +816,7 @@ function lineCleared(justCleared){
 	var b2bMultiplier = 1;
 	var pcBonus = pc ? 3500 : 0;
 	
-	if (spinMultiplier != 1 || justCleared >= 4){
+	if (spinMultiplier !==  1 || justCleared >= 4){
 		b2bCounter++;
 		b2bMultiplier = 1.5;
 		if (b2bCounter > 0){
@@ -813,7 +836,7 @@ function lineCleared(justCleared){
 	
 	b2bMax = Math.max(b2bMax,b2bCounter);
 	
-	if (gameMode == "sprint" && DOM.lines.innerHTML >= 40){
+	if (gameMode === "sprint" && DOM.lines.innerHTML >= 40){
 		end(true);
 	}
 	
@@ -824,42 +847,56 @@ function lineCleared(justCleared){
 
 function end(victory){
 	gameRunning = false;
+	current = null;
+	clearInterval(timer);
+
 	let stats = {
 		display:true,
 		displayMinors:true,
-		victory:victory,
-		normalClears:normalClears,
-		fullSpins:fullSpins,
-		miniSpins:miniSpins,
+		victory,
+		minorStats:[...normalClears,...fullSpins,...miniSpins, pcCount, b2bMax],
 		primaryStat:'',
 		primaryStatValue:'',
 		secondaryStats:null
 	}
 
-	if (gameMode == 'sprint'){
-		if (true){
+
+	DOM.full.style.animation = "none";
+	refreshDOM(DOM.full);
+	DOM.full.style.animation = "gameEnd 5s linear";
+	DOM.full.style.opacity = "0";
+
+	if (gameMode === 'sprint'){
+		if (victory){
 			stats.primaryStat = 'TIME';
 			stats.primaryStatValue = DOM.time.innerHTML;
+			stats.secondaryStats = [
+				{title:'SCORE',value:DOM.score.innerHTML}
+			]
 		}else{
 			stats.primaryStat = 'LINES';
 			stats.primaryStatValue = DOM.lines.innerHTML + '/40';
 			stats.displayMinors = false;
+			//secondary stats dont need to be defined because display minors are false.
 		}
-	}else if (gameMode == 'blitz'){
+	}else if (gameMode === 'blitz'){
 		stats.primaryStat = 'SCORE';
 		stats.primaryStatValue = DOM.score.innerHTML;
-	}else if (gameMode == 'endless' || true){
+		stats.secondaryStats = [
+			{title:'LINES',value:DOM.lines.innerHTML},
+			{title:'LEVEL',value:DOM.level.innerHTML}
+		]
+	}else if (gameMode === 'endless'){
 		stats.primaryStat = 'SCORE';
 		stats.primaryStatValue = DOM.score.innerHTML;
-		secondaryStats = [
-			{
-				
-			}
+		stats.secondaryStats = [
+			{title:'TIME',value:DOM.time.innerHTML},
+			{title:'LINES',value:DOM.lines.innerHTML},
+			{title:'LEVEL',value:DOM.level.innerHTML}
 		]
 	}
 
-
-	callbacks.updateStats(stats);
+	callbacks.end(stats);
 }
 
 //GENERATORS
@@ -874,11 +911,58 @@ function genBlankBoard(){
     return arr;
 }
 
+//HELPER FUNCTIONS
+
+function refreshDOM(elem = DOM.full){
+	if (elem !== undefined && elem !== null){
+		return elem.offsetHeight;
+	}
+}
+
 //EXPORTS
-function initalize(a,b){ // im using bad variable names but otherwise they would be litearlly identical.
-    DOM = a;
-	callbacks = b; 
+function initalize(...args){ // im using bad variable names but otherwise they would be litearlly identical.
+    DOM = DOM ?? args[0];
+	callbacks = callbacks ?? args[1];
+	gameMode = args[2];
+	socket = socket ?? args[3];
+	console.log(socket);
     reset();
+
+	DOM.full.style = null;
+	refreshDOM(DOM.full);
+	DOM.full.style = null;
+
+	socket.on('recieve garbage', function(lines,x){
+		let fullGarbage = new Array(10).fill(9);
+		fullGarbage[x] = 0;
+						
+						
+		for (let i = 0; i < lines; i++){
+			garbageQueue.unshift(fullGarbage.slice());
+		}
+		
+		garbageMeter.push(lines);
+		
+		
+		displayGarbage();
+	});
+	
+	socket.on('cancel garbage', function(lines){
+		for (let i = 0; i < lines; i++){
+			garbageQueue.pop();
+			if (garbageMeter.length !== 0 && garbageMeter[0] <= 1){
+				garbageMeter.shift();
+			}else if (garbageMeter.length !== 0){
+				garbageMeter[0] -= 1;
+			}
+		}
+		
+		displayGarbage();
+	});
+
+	socket.on('request garbage',function(){
+		socket.emit('sync garbage',garbageMeter.reduce((a,b) => a + b, 0));
+	});
 
     window.requestAnimationFrame(fullLoop);
 }
@@ -905,5 +989,7 @@ function keyUpHandler(event){
         }
     }
 }
+
+
 
 export {initalize, keyDownHandler, keyUpHandler};

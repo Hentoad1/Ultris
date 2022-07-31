@@ -1,7 +1,7 @@
 import React from 'react';
 
-import {initalize, keyDownHandler, keyUpHandler} from './logic.js'
 
+import {initalize, keyDownHandler, keyUpHandler} from './logic.js'
 import './game.css';
 
 const defaultState = {
@@ -30,9 +30,20 @@ class Game extends React.Component {
         this.comboRef = React.createRef();
 
         this.titleRef = React.createRef();
+        
+        //WRAPPER
+        this.wrapperRef = React.createRef();
+
+        this.initialize = this.initialize.bind(this);
     }
 
-    componentDidMount() {
+    reset(){
+        document.addEventListener('keydown', keyDownHandler, false);
+        document.addEventListener('keyup', keyUpHandler, false);
+        initalize();
+    }
+
+    initialize(gameMode,socket){
         let DOM = {
             hold: this.holdRef.current,
             meter: this.meterRef.current,
@@ -45,14 +56,21 @@ class Game extends React.Component {
             b2b: this.b2bref.current,
             broadcast: this.broadcastRef.current,
             combo: this.comboRef.current,
-            title: this.titleRef.current
+            title: this.titleRef.current,
+            full: this.wrapperRef.current
         }
 
+        let endFunc = this.props.gameEnd;
         let callbacks = {
-            updateStats:this.props.updateStatMenu
+            end:function(...data){
+                document.removeEventListener('keydown', keyDownHandler, false);
+                document.removeEventListener('keyup', keyUpHandler, false);
+                endFunc(...data);
+            }
         }
 
-        initalize(DOM,callbacks);
+        initalize(DOM,callbacks,gameMode,socket);
+
 
         document.addEventListener('keydown', keyDownHandler, false);
         document.addEventListener('keyup', keyUpHandler, false);
@@ -65,8 +83,7 @@ class Game extends React.Component {
 
     render() {
         return (
-            <React.Fragment>
-            <div className = 'clientWrapper'>
+            <div className = 'clientWrapper' ref = {this.wrapperRef}>
                 <div className = "inner_left_wrapper">
                     <canvas width = '100' height = '100' ref={this.holdRef} className = "box"></canvas>
                     <div className = "broadcast_wrapper" > {/*this is for lines being cleared, the css is not yet implemented / transfered; should be re-named to minor broadcast wrapper */}
@@ -103,7 +120,6 @@ class Game extends React.Component {
                     <canvas id = "queueDisp" height = '400' width = '100' ref={this.queueRef} className = "box"></canvas>
                 </div>
             </div>
-            </React.Fragment>
         )
     }
 }

@@ -4,7 +4,7 @@ var path = require('path');
 
 
 let dir = path.resolve(__dirname + '/../../client/build');
-router.get('/', function(req, res, next) {
+router.get('*', function(req, res, next) {
   res.sendFile(dir + "/index.html");
 });
 

@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var sessions = require('express-session');
 var logger = require('morgan');
 var cors = require("cors");
-
 var app = express();
 
 require('dotenv').config();
@@ -43,6 +42,8 @@ var sessionMiddleware = sessions({
     sameSite:false
   }
 });
+
+
 
 //socket io.use call goes here
 
@@ -82,4 +83,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+module.exports = {app, sessionMiddleware};
