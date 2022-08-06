@@ -1,7 +1,7 @@
 import React from 'react';
 import './statmenu.css';
 
-const offlineStatTitles = [
+const minorStatTitles = [
     'SINGLES',
     'DOUBLES',
     'TRIPLES',
@@ -14,15 +14,13 @@ const offlineStatTitles = [
     'ALL CLEARS',
     'LARGEST B2B STREAK'
 ];
-const onlineStatTitles = ['TOTAL PLAYERS', ...offlineStatTitles];
 const defaultState = {
     display:false,
     displayMinors:true,
     primaryStat:'',
     primaryStatValue:'',
     secondaryStats:[],
-    minorStats:[],
-    online:false
+    minorStats:[]
 };
 
 class StatMenu extends React.Component {
@@ -32,44 +30,9 @@ class StatMenu extends React.Component {
 
         this.KeyHandler = this.KeyHandler.bind(this);
         this.gameEnd = this.gameEnd.bind(this);
-        this.initialize = this.initialize.bind(this);
-    }
-
-    initialize(gameMode,socket){
-        /*
-        ending scenarios:
-
-        offline {
-            press r to restart
-        }
-
-        online {
-            - lose mid game
-                press r to sprint
-                to c to go to menu
-            - lose end of the game
-                press and key to continue to menu
-        }
-
-        */
     }
 
     gameEnd(stats){
-        console.log(stats);
-        if (stats.needsFormatting){
-            let place = stats.primaryStatValue;
-            if (place === 1){
-                place += 'ST';
-            }else if (place === 2){
-                place += 'ND';
-            }else if (place === 3){
-                place += 'RD';
-            }else{
-                place += 'TH';
-            }
-            stats.primaryStatValue = place;
-            delete stats.needsFormatting;
-        }
         document.addEventListener('keyup', this.KeyHandler, false);
         new Promise(function(resolve){
             setTimeout(resolve,2000,stats.display);
@@ -108,11 +71,7 @@ class StatMenu extends React.Component {
     render() {
         let minors = '';
         if (this.state.displayMinors){
-            if (this.state.online){
-                minors = this.state.minorStats.map((e,i) => <li key = {i + this.state.secondaryStats.length}>{onlineStatTitles[i]}: {e}</li>);
-            }else{
-                minors = this.state.minorStats.map((e,i) => <li key = {i + this.state.secondaryStats.length}>{offlineStatTitles[i]}: {e}</li>);
-            }
+            minors = this.state.minorStats.map((e,i) => <li key = {i + this.state.secondaryStats.length}>{minorStatTitles[i]}: {e}</li>);
         }
 
         return (
@@ -124,8 +83,7 @@ class StatMenu extends React.Component {
                     {minors}
                 </ul>
                 <span>
-                PRESS R TO RESTART<br/>
-                PRESS ESC TO EXIT TO MENU
+                PRESS R TO RESTART
                 </span>
             </div>
         )

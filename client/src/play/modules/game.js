@@ -61,6 +61,7 @@ class Game extends React.Component {
         }
 
         let props = this.props; //this must be defined here because it changes in the object
+        let setState = this.setState.bind(this);
         let callbacks = {
             end:function(...data){
                 document.removeEventListener('keydown', keyDownHandler, false);

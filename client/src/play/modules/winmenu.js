@@ -3,12 +3,7 @@ import './winmenu.css';
 
 const defaultState = {
     display:false,
-    displayMinors:true,
-    primaryStat:'',
-    primaryStatValue:'',
-    secondaryStats:[],
-    minorStats:[],
-    online:false
+    playerName:''
 };
 
 class WinMenu extends React.Component {
@@ -17,9 +12,15 @@ class WinMenu extends React.Component {
         this.state = defaultState;
 
         this.initialize = this.initialize.bind(this);
+        this.KeyHandler = this.KeyHandler.bind(this);
     }
 
     initialize(gameMode,socket){
+        let setState = this.setState.bind(this); 
+        socket.on('end',function(username){
+            setState({display:true,playerName:username});
+            document.addEventListener('keyup', this.KeyHandler, false);
+        }.bind(this));
         /*
         ending scenarios:
 
@@ -31,25 +32,24 @@ class WinMenu extends React.Component {
             - lose mid game
                 press r to sprint
                 to c to go to menu
-            - lose end of the game
-                press and key to continue to menu
         }
 
         */
-       socket.on('end',function(...args){
-        console.log('fired',args);
-       });
+       
+    }
+
+    KeyHandler(e){
+        console.log('fired');
+        this.setState({display:false});
+        document.removeEventListener('keyup', this.KeyHandler, false);
     }
 
     render() {
         return (
             <div className = {'winMenu ' + (this.state.display ? 'visible' : 'hidden')}>
-                <span className = 'title'>{this.state.primaryStat}</span>
-                <span className = 'playerName'>{this.state.primaryStatValue}</span>
-                <span>
-                PRESS R TO RESTART<br/>
-                PRESS ESC TO EXIT TO MENU
-                </span>
+                <span className = 'title'>WINNER</span>
+                <span className = 'playerName'>{this.state.playerName}</span>
+                <span>PRESS ANY KEY TO RETURN TO THE MENU</span>
             </div>
         )
     }

@@ -35,7 +35,9 @@ class Wrapper extends React.Component {
     }
 
     passFunction(ref,func,...args){
-        this[ref].current[func](...args);
+        if (this[ref].current !== null){
+            this[ref].current[func](...args);
+        }
     }
 
     componentDidMount(){
@@ -56,7 +58,6 @@ class Wrapper extends React.Component {
 
         //add a verification check on the initial connection or something like that.
         this.gameRef.current.initialize(gameMode,socket);
-        this.statRef.current.initialize(gameMode,socket);
         if (this.state.online){ 
             this.chatRef.current.initialize(gameMode,socket);
             this.oppoRef.current.initialize(gameMode,socket);

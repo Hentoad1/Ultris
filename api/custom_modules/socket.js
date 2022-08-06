@@ -225,9 +225,7 @@ function bind(input){
 		
 		socket.emit('sendPID', socket.publicID);
 		
-		socket.on('defeat',function(callback){
-			callback(currentRoom.aliveUsers.size,currentRoom.startingPlayers);
-			
+		socket.on('defeat',function(){
 			currentRoom.killUser(roomObject);
 		});
 		

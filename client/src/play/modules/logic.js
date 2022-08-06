@@ -842,12 +842,6 @@ function end(victory){
 		needsFormatting:false
 	}
 
-
-	DOM.full.style = null;
-	refreshDOM(DOM.full);
-	DOM.full.style.animation = "gameEnd 5s linear";
-	DOM.full.style.opacity = "0";
-
 	if (gameMode === 'sprint'){
 		if (victory){
 			stats.primaryStat = 'TIME';
@@ -879,17 +873,19 @@ function end(victory){
 	}
 	
 	if (gameMode === 'online'){
-		socket.emit('defeat',function(alive,total){
-			stats.primaryStat = 'PLACE';
-			stats.primaryStatValue = alive;
-			stats.online = true;
-			stats.needsFormatting = true;
-			stats.minorStats.unshift(total);
-			console.log(stats);
-			callbacks.end(stats);
-		});
+		socket.emit('defeat');
+
+		DOM.full.style = null;
+		refreshDOM(DOM.full);
+		DOM.full.style.animation = "gameEnd 5s linear";
+		DOM.full.style.opacity = "0";
 	}else{
 		callbacks.end(stats);
+
+		DOM.full.style = null;
+		refreshDOM(DOM.full);
+		DOM.full.style.animation = "gameEnd 5s linear";
+		DOM.full.style.opacity = "0";
 	}
 
 }

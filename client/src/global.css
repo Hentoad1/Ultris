@@ -44,20 +44,3 @@ li{
 ::-webkit-scrollbar-thumb{
 	background:#FFFFFF88;
 }
-
-@keyframes gameEnd{
-	0%{
-		transform: scale(1);
-		opacity:1;
-	}
-	
-	60%{
-		transform: scale(1.2);
-		opacity:0.7;
-	}
-	
-	100%{
-		transform: scale(1.5);
-		opacity:0;
-	}
-}
