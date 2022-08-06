@@ -43,8 +43,6 @@ var sessionMiddleware = sessions({
   }
 });
 
-
-
 //socket io.use call goes here
 
 

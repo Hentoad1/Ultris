@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Globals from './global.js';
 import PlayMenu from './play/playMenu.js';
-import GameWrapper from './play/gameWrapper.js';
+import Wrapper from './play/wrapper.js';
 
 
 //import reportWebVitals from './reportWebVitals';
@@ -24,7 +24,7 @@ root.render(
           <Route index element = {<h1>default</h1>} />
           <Route path='play'>
             <Route index element = {<PlayMenu />} />
-            <Route path='*' element = {<GameWrapper />} />
+            <Route path='*' element = {<Wrapper />} />
           </Route>
           <Route path='*' element = {<h1>404 Error</h1>} />
         </Route>

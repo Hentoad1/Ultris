@@ -98,7 +98,6 @@ class Handling extends React.Component {
 
     onTextUpdate(e){
         const validChars = '0123456789.';
-        let target = e.target;
         let arr = e.target.value.split('');
 
         let result = arr.filter((e,i) => validChars.includes(e) && i < 4);

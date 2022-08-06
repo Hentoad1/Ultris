@@ -1,0 +1,46 @@
+.lobbymenu{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #191919;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	z-index: 50;
+}
+
+.lobbymenu .userlist{
+	background:#29292930;
+	position:absolute;
+	overflow-y:scroll;
+	list-style-type: inside;
+
+	display:flex;
+	flex-flow:column;
+	justify-content: flex-start;
+
+
+	top:50px;
+	bottom:50px;
+	left:50px;
+	right:auto;
+	width:20%;
+	
+	padding:0;
+	margin:0;
+}
+
+.lobbymenu .userlist li{
+	font-size:1.25rem;
+	padding:0.5em;
+	margin:0.25em;
+	border-radius: 0.5em;
+	background:#29292930;
+
+	text-align: center;
+	color:white;
+}

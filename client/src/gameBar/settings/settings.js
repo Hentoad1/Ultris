@@ -1,17 +1,14 @@
 import React from 'react';
-import {forwardRef, useImperativeHandle, useRef} from 'react';
 
 
 import CloseButton from 'react-bootstrap/CloseButton';
 import { IoSettingsSharp } from 'react-icons/io5';
 import Accordion from 'react-bootstrap/Accordion'
-import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 
 import Handling from './handling.js'
 import Keybinds from './keybinds.js'
 
 import './settings.css';
-import { toHaveDisplayValue } from '@testing-library/jest-dom/dist/matchers.js';
 
 
 const defaultState = {

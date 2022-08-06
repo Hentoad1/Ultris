@@ -60,13 +60,15 @@ class Game extends React.Component {
             full: this.wrapperRef.current
         }
 
-        let endFunc = this.props.gameEnd;
+        let props = this.props; //this must be defined here because it changes in the object
         let callbacks = {
             end:function(...data){
                 document.removeEventListener('keydown', keyDownHandler, false);
                 document.removeEventListener('keyup', keyUpHandler, false);
-                endFunc(...data);
-            }
+                props.gameEnd(...data);
+                props.clearOpponents(...data);
+            },
+            lobbyDisp:props.setLobbyDisplay
         }
 
         initalize(DOM,callbacks,gameMode,socket);

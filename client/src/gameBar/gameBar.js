@@ -8,21 +8,6 @@ import Settings from './settings/settings.js';
 
 import './gameBar.css';
 import '../global.css';
-import { toHaveDisplayValue } from '@testing-library/jest-dom/dist/matchers.js';
-
-
-function RenderUsername(props){
-  if (props.loggedIn){
-    return <User className = 'right gamebar_child gamebar_clickable' username = {props.username} updateLoggedIn = {props.fetchAPI}/>
-  }else{
-    return (
-      <React.Fragment>
-        <Login className = 'right gamebar_child gamebar_clickable' updateLoggedIn = {props.fetchAPI}/>
-        <Register className = 'right gamebar_child gamebar_clickable' updateLoggedIn = {props.fetchAPI}/>
-      </React.Fragment>
-    );
-  }
-}
 
 class GameBar extends React.Component {
   constructor(props) {
@@ -42,20 +27,32 @@ class GameBar extends React.Component {
   }
 
   fetchAPI(){
-    fetch('http://localhost:9000/users')
+    fetch('http://localhost:9000/users',{method:'POST'})
     .then(res => res.json())
     .then(this.processAPIResponse)
     .catch(err => err);
   }
 
   render() {
+    var userInfo;
+    if (this.state.loggedIn){
+      userInfo = <User className = 'right gamebar_child gamebar_clickable' username = {this.state.username} updateLoggedIn = {this.fetchAPI}/>
+    }else{
+      userInfo = (
+        <React.Fragment>
+          <Login className = 'right gamebar_child gamebar_clickable' updateLoggedIn = {this.fetchAPI}/>
+          <Register className = 'right gamebar_child gamebar_clickable' updateLoggedIn = {this.fetchAPI}/>
+        </React.Fragment>
+      );
+    }
+
     return (
         <nav className = 'gamebar_primary'>
           <NavLink to="/play" className = 'right gamebar_child gamebar_clickable'>Play</NavLink>
           <NavLink to="/leaderboard" className = 'right gamebar_child gamebar_clickable'>Leaderboard</NavLink>
           <header className = 'grow gamebar_child'>Ultris</header>
           <Settings className = 'right gamebar_child gamebar_clickable' loggedIn = {this.state.loggedIn}/>
-          <RenderUsername loggedIn = {this.state.loggedIn} username = {this.state.username} fetchAPI = {this.fetchAPI}/>
+          {userInfo}
         </nav>
     );
   }

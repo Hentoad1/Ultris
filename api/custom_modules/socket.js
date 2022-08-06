@@ -20,6 +20,10 @@ class Room{
 	async updateGameState(){
 		console.log('----------');
 		
+		console.log('totalUsers ' + this.totalUsers.size);
+		console.log('spectatingUsers ' + this.spectatingUsers.size);
+		console.log('deadUsers ' + this.deadUsers.size);
+		console.log('aliveUsers ' + this.aliveUsers.size);
 		
 		let totalAlive = this.aliveUsers.size;
 		let totalDead = this.deadUsers.size;
@@ -30,7 +34,7 @@ class Room{
 			let finalPlayer = Array.from(this.aliveUsers)[0];
 			let username = finalPlayer.username;
 			
-			io.in(this.name).emit('end',username,this.startingPlayers,true);
+			io.in(this.name).emit('end',username);
 			this.deadUsers.add(finalPlayer);
 			this.aliveUsers.clear();
 		}
@@ -42,31 +46,39 @@ class Room{
 			
 			io.in(this.name).emit('server message','Restarting...');
 			
-			for (let i = 5; i--; ){
-				io.in(this.name).emit('server message','Match Begins in ' + (i + 1));
+			for (let i = 10; i > 0; i--){
+				io.in(this.name).emit('countdown',i);
 				await new Promise(r => setTimeout(r,1000));
 				if (this.breakCountdown){
-					this.countingDown = false;
-					io.in(this.name).emit('server message','There are no longer enough players left to start the game. The countdown has been canceled.');
+					io.in(this.name).emit('message','server','[SERVER]','There are no longer enough players left to start the game. The countdown has been canceled.');
+					io.in(this.name).emit('countdown','');
+					this.breakCountdown = false;
 					return;
 				}
 			}
 			
 			this.aliveUsers =  new Set([...this.aliveUsers, ...this.deadUsers]);
-			this.startingPlayers = this.aliveUsers.size;
-			this.deadUsers.clear();
-			
-			const userData = [];
-			this.aliveUsers.forEach(e => userData.push({pid:e.pid, username:e.username}));
-			
-			
-			io.in(this.name).emit('updateUsers',userData);
-			let bagSalt = Math.random();
-			io.in(this.name).emit('start',bagSalt);
-			this.countingDown = false;
-			
 			this.aliveUsers.forEach(this.resetUser);
+			this.deadUsers.clear();
+
+
+			this.startingPlayers = this.aliveUsers.size;
 			
+			const userData = [...this.aliveUsers].map(e => ({pid:e.pid, username:e.username}));
+			io.in(this.name).emit('updateUsers',userData);
+
+			let bagSalt = Math.random();
+			let currentDate = Date.now();
+			let gameStartDate = currentDate + 1000 * 15;
+			io.in(this.name).emit('start',gameStartDate,bagSalt);
+			
+			this.countingDown = false;
+
+			console.log('totalUsers ' + this.totalUsers.size);
+			console.log('spectatingUsers ' + this.spectatingUsers.size);
+			console.log('deadUsers ' + this.deadUsers.size);
+			console.log('aliveUsers ' + this.aliveUsers.size);
+
 		}else if (this.countingDown && totalPlayers < 2){ //this should cancel the countdown in the event that a player leaves while the match is starting.
 			this.breakCountdown = true;
 		}else if (totalPlayers > 1){
@@ -87,7 +99,13 @@ class Room{
 		this.resetUser(obj);
 		
 		io.in(this.name).emit('server message', 'Welcome ' + socket.username + ' to the room!');
-		
+		console.log('totalUsers ' + this.totalUsers.size);
+		console.log('spectatingUsers ' + this.spectatingUsers.size);
+		console.log('deadUsers ' + this.deadUsers.size);
+		console.log('aliveUsers ' + this.aliveUsers.size);
+		let usernames = [...this.totalUsers].map(e => e.username);
+		io.in(this.name).emit('update lobby', usernames);
+
 		this.updateGameState();
 		
 		if (this.countingDown){
@@ -123,7 +141,8 @@ class Room{
 		this.deadUsers.delete(obj);
 		this.aliveUsers.delete(obj);
 		
-		io.in(this.name).emit('remove board', obj.pid);
+		let usernames = [...this.totalUsers].map(e => e.username);
+		io.in(this.name).emit('update lobby', usernames);
 		
 		
 		io.in(this.name).emit('server message', obj.username + ' has left the room.');
@@ -134,7 +153,6 @@ class Room{
 	killUser(obj){
 		if (this.aliveUsers.delete(obj)){
 			this.deadUsers.add(obj);
-			io.in(this.name).emit('remove board',obj.pid);
 			this.updateGameState();
 		}
 	}
@@ -186,7 +204,8 @@ rooms.set('quickplay', new Room('quickplay'));
 
 function bind(input){
 	io = input;
-	io.on('connection', (socket) => {
+	io.on('connection',function(socket){
+		console.log('connection');
 		socket.room = 'quickplay';
 		socket.username = 'GUEST';
 		if (socket.request.session.userid !== undefined){
@@ -221,10 +240,12 @@ function bind(input){
 		});
 		
 		socket.on('disconnect', function(){
+			console.log('disconnect');
 			currentRoom.removeUser(roomObject);
 		});
 		
 		socket.on('send message', function(message){ // MESSAGES
+			console.log('emitting');
 			io.in(socket.room).emit('message','userMessage',socket.username,message);
 		});
 		
@@ -277,7 +298,8 @@ function bind(input){
 			socket.boardData.combo = 0;
 		});
 		
-		socket.on('cleared line', (board,cords,x,y,color,testKick3,lastMove) => {
+		socket.on('cleared line', function(board,cords,x,y,color,testKick3,lastMove){
+			console.log('cleared line');
 			if (socket.boardData.board !== undefined){
 				const isT = Math.abs(getSum(cords)) == 1;
 				const pc = getSum(board) == 0;
@@ -437,28 +459,24 @@ function bind(input){
 					socket.emit('cancel garbage', canceled);
 				}
 				
-				
 				//SEND LINES
 				if (outgoingLines > 0){
-					if (currentRoom.totalPlayers > 1){
-						const randomID = getRandomUser();
-						const user = io.sockets.sockets.get(randomID);
+					if (currentRoom.aliveUsers.size > 1){
+						const user = getRandomUser();
 						const garbageHole = Math.floor(Math.random() * 10);
 						user.garbageQueue += outgoingLines;
-						
-						io.to(randomID).emit('recieve garbage',outgoingLines,garbageHole);
-						
-						
-						
+						user.socket.emit('recieve garbage',outgoingLines,garbageHole);
 					}
 					
 					function getRandomUser(){
 						const users = [...currentRoom.aliveUsers];
 						const len = users.length;
 						do{
-							var id = users[Math.floor(Math.random() * len)].id;
+							var obj = users[Math.floor(Math.random() * len)]
+							var id = obj.id;
+							
 						}while(id == socket.id);
-						return id;
+						return obj;
 					}
 				}
 			}else if (socket.boardData.board === undefined){

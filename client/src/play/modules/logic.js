@@ -19,8 +19,8 @@
     //SCORING
     const linesToText = ["SINGLE","DOUBLE","TRIPLE","QUAD","PENTA","SEXTA","HEPTA","OCTA","NONA","DECA","MEGA"];
     const linesToPoints = [100,300,500,800];
-    const colors = ["#0000","#D91ED9", "#1E1EBF", "#1EBFBF", "#BF1E1E", "#BF601E", "#1EBF1E", "#D4D421","#6A6A6A","#1A1A1A"];
-    const colors2 = ["#FFFFFF","#BF1BBF", "#1B1BA6", "#1BA6A6", "#A61B1B", "#A6551B", "#1BA61B", "#A6A61B","#5C5C5C","#090909"];
+    const innerColors = ["#0000","#D91ED9", "#1E1EBF", "#1EBFBF", "#BF1E1E", "#BF601E", "#1EBF1E", "#D4D421","#6A6A6A","#1A1A1A"];
+    const outerColors = ["#FFFFFF","#BF1BBF", "#1B1BA6", "#1BA6A6", "#A61B1B", "#A6551B", "#1BA61B", "#A6A61B","#5C5C5C","#090909"];
 
     //INSTANCES
     const killCountdown = new Event("killCountdown");
@@ -76,17 +76,6 @@ var gameMode = false;
 var socket = null;
 var garbageQueue = [];
 var garbageMeter = [];
-var online = {
-	cellSize:20,
-	margins:5,
-	change:5,
-	displayLines:true,
-	onEndScreen:false,
-	midGame:false,
-	spectating:true,
-	inActive:false,
-	fallMultiplier:1
-};
 
 //IMPORTS
 var DOM;
@@ -187,7 +176,7 @@ const controls = {
 export default class Tetrimino{
 	constructor(p){
 		this.pType = pTypes[p];
-		this.color = colors[p + 1];
+		this.color = innerColors[p + 1];
 		this.colorIndex = p + 1;
 		this.iKicks = (p===2);
 		this.x = 5 - this.pType.length % 2;
@@ -438,7 +427,7 @@ function display(){
     }
 	if (current !==  null){
 		current.display();
-		if (gameMode === 'online' && online.displayLines){
+		if (gameMode === 'online' && socket.constants.displayLines){
 			socket.emit('send peice',current.export(), current.exportShadow(),current.colorIndex);
 		}
 	}
@@ -497,11 +486,11 @@ function displayGarbage(){
 function pasteIcon(x,y,pType,colorIndex,offsets,canvas){
     let ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = colors2[colorIndex];
+    ctx.fillStyle = outerColors[colorIndex];
     offsets.forEach(e => {
             ctx.fillRect((2.5 - (pType.length % 2) / 2 + e[0]) * cellSize + 0.5,(2.5-e[1] + (pType.length % 3 % 2) / 2) * cellSize + 0.5 + y,cellSize,cellSize);
     });
-    ctx.fillStyle = colors[colorIndex];
+    ctx.fillStyle = innerColors[colorIndex];
     offsets.forEach(e => {
             ctx.fillRect((2.5 - (pType.length % 2) / 2 + e[0]) * cellSize + 5.5,(2.5-e[1] + (pType.length % 3 % 2) / 2) * cellSize + 5.5 + y,cellSize - 10,cellSize - 10);
     });
@@ -511,9 +500,9 @@ function pasteOnGrid(x,y,colorIndex){
     let canvas = DOM.main;
     let ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = colors2[colorIndex];
+    ctx.fillStyle = outerColors[colorIndex];
     ctx.fillRect(x * cellSize + 0.5,(19 - y) * cellSize + 0.5,cellSize - 0,cellSize - 0);
-    ctx.fillStyle = colors[colorIndex];
+    ctx.fillStyle = innerColors[colorIndex];
     ctx.fillRect(x * cellSize + 5.5,(19 - y) * cellSize + 5.5,cellSize - 10,cellSize - 10);
 }
 
@@ -621,7 +610,7 @@ function physics(){
 	var leftDown = controls.left.held;
 	var rightDown = controls.right.held;
 	var downDown = controls.soft.held;
-	let fallMultiplier = (gameMode === 'online') ? online.fallMultiplier : Math.pow(0.8,DOM.level.innerHTML);
+	let fallMultiplier = (gameMode === 'online') ? socket.constants.fallMultiplier : Math.pow(0.8,DOM.level.innerHTML);
 	
 	if (gameRunning){
 		if (leftDown || rightDown){
@@ -718,16 +707,7 @@ function place(){
 	
 	/*This is genius, this calls a non test of a shift of 0,0 returning a boolean value of if the peice spawns inside another peice already but also because it is not doing a test it will update the falling varabile causing peices spawning on top of blocks to still place properly.*/
 	if (!current.shift(0,0)){
-		if (gameMode !== 'online'){
-			end(false);
-		}else{
-			socket.emit('defeat', function(place,total){
-				end(false,place,total);
-			});
-			gameRunning = false; // freezes game until the params can be given back and end can properly go through
-			current = null;
-			clearInterval(timer);
-		}
+		end(false);
 	}
 	
 	queue.shift();
@@ -857,11 +837,13 @@ function end(victory){
 		minorStats:[...normalClears,...fullSpins,...miniSpins, pcCount, b2bMax],
 		primaryStat:'',
 		primaryStatValue:'',
-		secondaryStats:null
+		secondaryStats:[],
+		online:false,
+		needsFormatting:false
 	}
 
 
-	DOM.full.style.animation = "none";
+	DOM.full.style = null;
 	refreshDOM(DOM.full);
 	DOM.full.style.animation = "gameEnd 5s linear";
 	DOM.full.style.opacity = "0";
@@ -895,8 +877,21 @@ function end(victory){
 			{title:'LEVEL',value:DOM.level.innerHTML}
 		]
 	}
+	
+	if (gameMode === 'online'){
+		socket.emit('defeat',function(alive,total){
+			stats.primaryStat = 'PLACE';
+			stats.primaryStatValue = alive;
+			stats.online = true;
+			stats.needsFormatting = true;
+			stats.minorStats.unshift(total);
+			console.log(stats);
+			callbacks.end(stats);
+		});
+	}else{
+		callbacks.end(stats);
+	}
 
-	callbacks.end(stats);
 }
 
 //GENERATORS
@@ -904,7 +899,7 @@ function genBlankBoard(){
     let arr = [];
     for (let i = 0; i < 40; i++){
         arr[i] = [];
-		for (let j = 0; j < 20; j++){
+		for (let j = 0; j < 10; j++){
 			arr[i][j] = 0;
 		}
 	}
@@ -912,7 +907,6 @@ function genBlankBoard(){
 }
 
 //HELPER FUNCTIONS
-
 function refreshDOM(elem = DOM.full){
 	if (elem !== undefined && elem !== null){
 		return elem.offsetHeight;
@@ -924,47 +918,58 @@ function initalize(...args){ // im using bad variable names but otherwise they w
     DOM = DOM ?? args[0];
 	callbacks = callbacks ?? args[1];
 	gameMode = args[2];
-	socket = socket ?? args[3];
-	console.log(socket);
-    reset();
 
-	DOM.full.style = null;
+
+	DOM.full.style = null; // makes it so it will cancel the animation if it is still running.
 	refreshDOM(DOM.full);
 	DOM.full.style = null;
 
-	socket.on('recieve garbage', function(lines,x){
-		let fullGarbage = new Array(10).fill(9);
-		fullGarbage[x] = 0;
-						
-						
-		for (let i = 0; i < lines; i++){
-			garbageQueue.unshift(fullGarbage.slice());
-		}
+	if (gameMode === 'online'){
+		socket = socket ?? args[3];
 		
-		garbageMeter.push(lines);
-		
-		
-		displayGarbage();
-	});
-	
-	socket.on('cancel garbage', function(lines){
-		for (let i = 0; i < lines; i++){
-			garbageQueue.pop();
-			if (garbageMeter.length !== 0 && garbageMeter[0] <= 1){
-				garbageMeter.shift();
-			}else if (garbageMeter.length !== 0){
-				garbageMeter[0] -= 1;
+		socket.on('start',function(startDate,salt){
+			garbageQueue = [];
+			garbageMeter = [];
+			
+			callbacks.lobbyDisp(false);
+			reset(salt);
+		});
+
+		socket.on('recieve garbage', function(lines,x){
+			let fullGarbage = new Array(10).fill(9);
+			fullGarbage[x] = 0;
+
+			for (let i = 0; i < lines; i++){
+				garbageQueue.unshift(fullGarbage.slice());
 			}
-		}
+			
+			garbageMeter.push(lines);
+			
+			
+			displayGarbage();
+		});
 		
-		displayGarbage();
-	});
+		socket.on('cancel garbage', function(lines){
+			for (let i = 0; i < lines; i++){
+				garbageQueue.pop();
+				if (garbageMeter.length !== 0 && garbageMeter[0] <= 1){
+					garbageMeter.shift();
+				}else if (garbageMeter.length !== 0){
+					garbageMeter[0] -= 1;
+				}
+			}
+			
+			displayGarbage();
+		});
+	
+		socket.on('request garbage',function(){
+			socket.emit('sync garbage',garbageMeter.reduce((a,b) => a + b, 0));
+		});
+	}else{ // if not online then juts initialize the game immidiately.
+		reset();
+	}
 
-	socket.on('request garbage',function(){
-		socket.emit('sync garbage',garbageMeter.reduce((a,b) => a + b, 0));
-	});
-
-    window.requestAnimationFrame(fullLoop);
+	window.requestAnimationFrame(fullLoop);
 }
 
 function keyDownHandler(event){

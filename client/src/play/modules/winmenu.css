@@ -1,4 +1,4 @@
-.statMenu{
+.winMenu{
     position:absolute;
 
     left:0;
@@ -6,7 +6,7 @@
 
     height:100%;
 
-	background:#19191966;
+	background:#19191955;
 
     transition-property:top,opacity;
 	transition-timing-function:ease-in;
@@ -21,45 +21,27 @@
 	color:white;
 	font-size:20px;
 	text-align:center;
-	z-index:200;
+	z-index:100;
 
     backface-visibility: hidden;
     transform: translateZ(0) scale(1, 1);
 }
 
-.visible{
+.winMenu.visible{
     top:0%;
 }
 
-.hidden{
+.winMenu.hidden{
     top:100%;
 	opacity:0;
 }
 
-.primaryStatValue{
+.winMenu .playerName{
 	font-size:3em;
 	user-select:text;
 }
 
-.primaryStatValue::selection{
+.winMenu .primaryStatValue::selection{
     background-color:white;
     color:#191919;
-}
-
-.minorStats{
-	list-style:none;
-	padding:0;
-	max-height:200px;
-	min-width:400px;
-	overflow-y:scroll;
-	text-align:left;
-}
-
-.minorStats *{
-	user-select:text;
-}
-
-.minorStats *::selection{
-    background-color:white;
-	color:#191919;
 }
