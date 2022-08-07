@@ -1,5 +1,7 @@
 //CONSTANTS 
 
+import DropdownItem from "react-bootstrap/esm/DropdownItem";
+
     //ROTATION SYSTEM
     const T = [[0,1,0],[1,1,1],[0,0,0]];
     const J = [[1,0,0],[1,1,1],[0,0,0]];
@@ -371,6 +373,12 @@ async function reset(salt = Math.random()){
 	DOM.lines.innerHTML = 0;
 	gameRunning = false;
 
+	garbageQueue = [];
+	garbageMeter = [];
+	
+	DOM.full.style = null;
+	DOM.full.onanimationend = null;
+
     if (await countdown()){
 		gameRunning = true;
 		currentFrame = Date.now();
@@ -606,6 +614,7 @@ function createTimer(){
 		}, 10);
 }
 
+
 function physics(){
 	var leftDown = controls.left.held;
 	var rightDown = controls.right.held;
@@ -638,16 +647,15 @@ function physics(){
 			}
 			display();
 		}else{
-			if (fallTimer <= 0){
+			const SDFmultiplier = downDown ? handling.SDF : 1;
+			fallTimer -= (currentFrame - previousFrame) * SDFmultiplier;
+			while (fallTimer <= 0){
 				let fallTotal = fallSpeed * fallMultiplier;
 				if (current.shift(0,-1) && downDown){
 					DOM.score.innerHTML = parseInt(DOM.score.innerHTML) + 1;
 				}
 				display();
-				fallTimer = fallTotal;
-			}else{
-				const SDFmultiplier = downDown ? handling.SDF : 1;
-				fallTimer -= (currentFrame - previousFrame) * SDFmultiplier;
+				fallTimer += fallTotal;
 			}
 		}
 		
@@ -672,6 +680,18 @@ function fullLoop(){
 	}
 	
 	window.requestAnimationFrame(fullLoop);
+}
+
+function backupLoop(){ //this shit needs to run on setInterval because animation frames are not called when a user is alt tabbed because no repaints occur, just stops player from donowalling gravity by alt tabbing
+	previousFrame = currentFrame;
+	currentFrame = Date.now();
+	/*let fallMultiplier = (gameMode == 'online') ? onlineConstants.fallMultiplier : Math.pow(0.8,Level.textContent);
+	let trueFallSpeed = fallSpeed * fallMultiplier;*/
+	
+	if (gameRunning){
+		console.log('called');
+		physics(true);
+	}
 }
 
 //BOARD
@@ -877,8 +897,11 @@ function end(victory){
 
 		DOM.full.style = null;
 		refreshDOM(DOM.full);
-		DOM.full.style.animation = "gameEnd 5s linear";
-		DOM.full.style.opacity = "0";
+		DOM.full.style.animation = "spectateAnimation 1s cubic-bezier(0.0, 0.0, 1.0, 1.0)";
+
+		DOM.full.onanimationend = function(){
+			DOM.full.style.display = 'none';
+		}
 	}else{
 		callbacks.end(stats);
 
@@ -924,11 +947,14 @@ function initalize(...args){ // im using bad variable names but otherwise they w
 		socket = socket ?? args[3];
 		
 		socket.on('start',function(startDate,salt){
-			garbageQueue = [];
-			garbageMeter = [];
-			
-			callbacks.lobbyDisp(false);
+			/*callbacks.lobbyDisp(false);*/
 			reset(salt);
+		});
+
+		socket.on('end',function(){
+			gameRunning = false;
+			current = null;
+			clearInterval(timer);
 		});
 
 		socket.on('recieve garbage', function(lines,x){
@@ -966,6 +992,7 @@ function initalize(...args){ // im using bad variable names but otherwise they w
 	}
 
 	window.requestAnimationFrame(fullLoop);
+	setInterval(backupLoop,100);
 }
 
 function keyDownHandler(event){

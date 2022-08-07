@@ -73,7 +73,7 @@ class Wrapper extends React.Component {
 
         this.setState({online:gameMode === 'online'});
     }
-
+    
     render() {
         let onlineContent = '';
         if (this.state.online){
@@ -81,11 +81,12 @@ class Wrapper extends React.Component {
                 <React.Fragment>
                     <Chat ref={this.chatRef} />
                     <Opponents ref = {this.oppoRef}/>
-                    <LobbyMenu ref = {this.lobbyRef} setLobbyState = {(...args) => this.passFunction('chatRef','setLobbyState',...args)}/>
-                    <WinMenu ref = {this.winRef}/>
+                    <LobbyMenu ref = {this.lobbyRef} setWinState = {(...args) => this.passFunction('winRef','setVisibility',...args)} setLobbyState = {(...args) => this.passFunction('chatRef','setLobbyState',...args)}/>
+                    <WinMenu ref = {this.winRef} forceDisplayState = {(...args) => this.passFunction('lobbyRef','forceDisplayState',...args)}/>
                 </React.Fragment>
             );
         }
+        
         return (
             <div className = 'main_wrapper'>
                 <Game ref = {this.gameRef} clearOpponents = {(...args) => this.passFunction('oppoRef','clearOpponents',...args)} setLobbyDisplay = {(...args) => this.passFunction('lobbyRef','forceDisplayState',...args)} gameEnd = {(...args) => this.passFunction('statRef','gameEnd',...args)}/>

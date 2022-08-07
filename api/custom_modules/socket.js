@@ -15,6 +15,7 @@ class Room{
 		this.spectatingUsers = new Set(); // these are users who are choosing to sit out every round.
 		this.deadUsers = new Set();
 		this.aliveUsers = new Set();
+		this.playerDeathList = [];
 	}
 	
 	async updateGameState(){
@@ -32,9 +33,16 @@ class Room{
 		
 		if (totalAlive == 1){
 			let finalPlayer = Array.from(this.aliveUsers)[0];
-			let username = finalPlayer.username;
+			this.playerDeathList.unshift(finalPlayer);
+			let playerData = this.playerDeathList.map(user =>
+				({
+					username:user.username,
+					linesSent:user.socket.boardData.linesSent,
+					linesReceived:user.socket.boardData.linesReceived
+				})
+			);
 			
-			io.in(this.name).emit('end',username);
+			io.in(this.name).emit('end',playerData);
 			this.deadUsers.add(finalPlayer);
 			this.aliveUsers.clear();
 		}
@@ -57,28 +65,22 @@ class Room{
 				}
 			}
 			
-			this.aliveUsers =  new Set([...this.aliveUsers, ...this.deadUsers]);
-			this.aliveUsers.forEach(this.resetUser);
-			this.deadUsers.clear();
+			this.aliveUsers =  new Set([...this.aliveUsers, ...this.deadUsers]); //reset the alive users to include the dead users.
+			this.aliveUsers.forEach(this.resetUser); //resets the user data.
+			this.deadUsers.clear(); //clear the dead users.
+			this.playerDeathList = []; //reset the player death list.
 
-
-			this.startingPlayers = this.aliveUsers.size;
+			this.startingPlayers = this.aliveUsers.size; //save the number of players at the start of the game.
 			
-			const userData = [...this.aliveUsers].map(e => ({pid:e.pid, username:e.username}));
+			const userData = [...this.aliveUsers].map(e => ({pid:e.pid, username:e.username})); //send the user data to the clients.
 			io.in(this.name).emit('updateUsers',userData);
 
 			let bagSalt = Math.random();
 			let currentDate = Date.now();
 			let gameStartDate = currentDate + 1000 * 15;
-			io.in(this.name).emit('start',gameStartDate,bagSalt);
+			io.in(this.name).emit('start',gameStartDate,bagSalt); //starts the game
 			
-			this.countingDown = false;
-
-			console.log('totalUsers ' + this.totalUsers.size);
-			console.log('spectatingUsers ' + this.spectatingUsers.size);
-			console.log('deadUsers ' + this.deadUsers.size);
-			console.log('aliveUsers ' + this.aliveUsers.size);
-
+			this.countingDown = false; //reset the counting down flag.
 		}else if (this.countingDown && totalPlayers < 2){ //this should cancel the countdown in the event that a player leaves while the match is starting.
 			this.breakCountdown = true;
 		}else if (totalPlayers > 1){
@@ -153,6 +155,7 @@ class Room{
 	killUser(obj){
 		if (this.aliveUsers.delete(obj)){
 			this.deadUsers.add(obj);
+			this.playerDeathList.unshift(obj);
 			this.updateGameState();
 		}
 	}
@@ -164,6 +167,8 @@ class Room{
 			combo:0,
 			garbage:0,
 			garbageQueue:0,
+			linesSent:0,
+			linesReceived:0,
 			desyncs:0
 		};
 	}
@@ -464,6 +469,9 @@ function bind(input){
 						const garbageHole = Math.floor(Math.random() * 10);
 						user.garbageQueue += outgoingLines;
 						user.socket.emit('recieve garbage',outgoingLines,garbageHole);
+
+						socket.boardData.linesSent += outgoingLines;
+						user.socket.boardData.linesReceived += outgoingLines;
 					}
 					
 					function getRandomUser(){

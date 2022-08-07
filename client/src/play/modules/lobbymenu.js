@@ -21,17 +21,20 @@ class StatMenu extends React.Component {
 
     initialize(gameMode,socket){
         let setState = this.setState.bind(this);
+        let props = this.props;
+        console.log(props);
 
         socket.on('update lobby',function(users){
             setState({players:users});
         });
 
         socket.on('countdown',function(secondsLeft){
-            if (secondsLeft === 0){
-                setState({countDownValue:secondsLeft,display:false});
-            }else{
-                setState({countDownValue:secondsLeft});
-            }
+            setState({countDownValue:secondsLeft});
+        });
+
+        socket.on('start',function(){
+            setState({countDownValue:'',display:false});
+            props.setWinState(false);
         });
     }
 

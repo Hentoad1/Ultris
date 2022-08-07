@@ -87,7 +87,6 @@ function bind(socket,getRef,setState){
 	}
 
 	function display(user,callback = function(){}){
-		console.log('display called');
 		if (user.ref.current === null){
 			console.log('no canvas');
 			return;
