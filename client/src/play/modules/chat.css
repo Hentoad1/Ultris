@@ -32,7 +32,6 @@
 	--messageHeight:100%;
 }
 
-
 .chatMessages{
 	height:var(--messageHeight);
 

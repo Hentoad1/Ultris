@@ -1,6 +1,4 @@
-//CONSTANTS 
-
-import DropdownItem from "react-bootstrap/esm/DropdownItem";
+//CONSTANTS
 
     //ROTATION SYSTEM
     const T = [[0,1,0],[1,1,1],[0,0,0]];
@@ -365,6 +363,7 @@ async function reset(salt = Math.random()){
 	display();
 	displayQueue();
 	displayHold();
+	displayGarbage();
 
 	clearInterval(timer);
 	DOM.time.innerHTML = "0:00.000";
@@ -462,6 +461,9 @@ function displayQueue(){
 }
 
 function displayGarbage(){
+	if (DOM.meter === null){
+		return;
+	}
 	const tierColors = ['#BF1E1E','#BF601E','#1EBFBF','#1E1EBF','#1EBF1E','#D4D421'];
 	const offset = 0;
 	const totalGarbage = garbageMeter.reduce((a,b) => a + b,0);
@@ -689,7 +691,6 @@ function backupLoop(){ //this shit needs to run on setInterval because animation
 	let trueFallSpeed = fallSpeed * fallMultiplier;*/
 	
 	if (gameRunning){
-		console.log('called');
 		physics(true);
 	}
 }
@@ -947,7 +948,6 @@ function initalize(...args){ // im using bad variable names but otherwise they w
 		socket = socket ?? args[3];
 		
 		socket.on('start',function(startDate,salt){
-			/*callbacks.lobbyDisp(false);*/
 			reset(salt);
 		});
 

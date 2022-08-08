@@ -13,32 +13,61 @@ class Chat extends React.Component {
     constructor(props){
         super(props);
         this.state = defaultState;
-        
-        this.initialize = this.initialize.bind(this);
+
         this.KeyHandler = this.KeyHandler.bind(this);
+
+        this.msgRef = React.createRef();
+
+        props.globals.chat = {
+            setState:this.setState.bind(this),
+            state:this.state
+        }
     }
 
-    setLobbyState(arg){
-        console.log(arg);
-        this.setState({inLobby:arg});
-    }
-
-    initialize(gameMode,socket){
-        console.log(socket);
-        this.setState({socket})
+    componentDidMount(){
+        let socket = this.props.globals.socket;
+        
         socket.on('message', function(type, name, msg){
-            console.log('fired');
             let messages = this.state.messages;
             messages.push({type,name,msg});
             this.setState({messages});
         }.bind(this));
+
+        socket.on('start', function(){
+            let elem = this.msgRef.current;
+            if (elem !== null){
+                elem.style.transition = 'none';
+                this.setState({inLobby:false},function(){
+                    reflow(elem);
+                    elem.style = null;
+                });
+            }
+        }.bind(this));
+
+        socket.on('end', function(){
+            let elem = this.msgRef.current;
+            new Promise(resolve => setTimeout(resolve,1000))
+            .then(function(){
+                if (elem !== null){
+                    elem.style.transition = 'none';
+                    this.setState({inLobby:true},function(){
+                        reflow(elem);
+                        elem.style = null;
+                    });
+                }
+            }.bind(this));
+        }.bind(this));
+
+        function reflow(elem){
+            return elem.offsetWidth;
+        }
     }
 
     KeyHandler(e){
         if (e.key === 'Enter'){
 			if (!/^\s*$/.test(e.target.value)){ //makes sure its not blank
-				if (this.state.socket !== undefined){
-                    this.state.socket.emit('send message',e.target.value);
+				if (this.props.globals.socket !== undefined){
+                    this.props.globals.socket.emit('send message',e.target.value);
                 }
 				
                 
@@ -50,7 +79,7 @@ class Chat extends React.Component {
     render() {
         return (
             <div className = {'chat' + (this.state.inLobby ? ' inLobby' : '')}>
-                <ul className = 'chatMessages'>
+                <ul className = 'chatMessages' ref = {this.msgRef}>
                     {this.state.messages.map((e,i) => <li className = {e.type} key = {i}>{e.name}: {e.msg}</li>)}
                 </ul>
                 <input className = 'chatInput' onKeyUp = {this.KeyHandler} placeholder = 'Type here to send a message...'/>

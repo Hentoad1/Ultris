@@ -85,8 +85,6 @@ class Handling extends React.Component {
 
         let factor = target.id === 'SDF' ? 1 : this.state.unitFactor;
 
-        console.log(this.state);
-
         let data = {
             value:value,
             formattedValue:this.formatValue(value, factor),
@@ -162,7 +160,6 @@ class Handling extends React.Component {
     }
 
     formatValue(value, factor = this.state.unitFactor){
-        console.log(factor);
         if (factor === 1){
             return Math.floor(value);
         }else{

@@ -30,6 +30,11 @@ class StatMenu extends React.Component {
 
         this.KeyHandler = this.KeyHandler.bind(this);
         this.gameEnd = this.gameEnd.bind(this);
+
+        props.globals.statmenu = {
+            setState:this.setState.bind(this),
+            gameEnd:this.gameEnd
+        }
     }
 
     gameEnd(stats){
@@ -60,7 +65,7 @@ class StatMenu extends React.Component {
         }
         if (e.key === 'r'){
             dropMenu();
-            this.props.reset();
+            this.props.globals.game.reset();
         }
         if (e.key === 'c'){
             dropMenu();

@@ -7,22 +7,20 @@ const defaultState = {
     display:true
 };
 
-class StatMenu extends React.Component {
+class LobbyMenu extends React.Component {
     constructor(props){
         super(props);
         this.state = defaultState;
 
-        this.forceDisplayState = this.forceDisplayState.bind(this);
+        props.globals.lobbymenu = {
+            setState:this.setState.bind(this)
+        }
     }
 
-    forceDisplayState(state){
-        this.setState({display:state});
-    }
-
-    initialize(gameMode,socket){
+    componentDidMount(){
+        let globals = this.props.globals;
+        let socket = globals.socket;
         let setState = this.setState.bind(this);
-        let props = this.props;
-        console.log(props);
 
         socket.on('update lobby',function(users){
             setState({players:users});
@@ -34,7 +32,7 @@ class StatMenu extends React.Component {
 
         socket.on('start',function(){
             setState({countDownValue:'',display:false});
-            props.setWinState(false);
+            globals.winmenu.setState({display:false});
         });
     }
 
@@ -54,4 +52,4 @@ class StatMenu extends React.Component {
     }
 }
   
-export default StatMenu;
+export default LobbyMenu;

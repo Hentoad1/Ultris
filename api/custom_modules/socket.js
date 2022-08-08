@@ -61,6 +61,7 @@ class Room{
 					io.in(this.name).emit('message','server','[SERVER]','There are no longer enough players left to start the game. The countdown has been canceled.');
 					io.in(this.name).emit('countdown','');
 					this.breakCountdown = false;
+					this.countingDown = false;
 					return;
 				}
 			}
@@ -142,6 +143,8 @@ class Room{
 		this.spectatingUsers.delete(obj);
 		this.deadUsers.delete(obj);
 		this.aliveUsers.delete(obj);
+
+		io.in(this.name).emit('remove user', obj.pid);
 		
 		let usernames = [...this.totalUsers].map(e => e.username);
 		io.in(this.name).emit('update lobby', usernames);
@@ -154,6 +157,7 @@ class Room{
 	
 	killUser(obj){
 		if (this.aliveUsers.delete(obj)){
+			io.in(this.name).emit('remove user', obj.pid);
 			this.deadUsers.add(obj);
 			this.playerDeathList.unshift(obj);
 			this.updateGameState();
@@ -424,7 +428,7 @@ function bind(input){
 				outgoingLines += Math.floor(Math.cbrt(socket.boardData.b2b));
 				outgoingLines += Math.floor(Math.sqrt(socket.boardData.combo));
 				outgoingLines += pc ? 10 : 0;
-				
+				outgoingLines = Math.floor(outgoingLines);
 				
 				
 				if (b2bmove){

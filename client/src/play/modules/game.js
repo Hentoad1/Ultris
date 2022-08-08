@@ -12,7 +12,7 @@ class Game extends React.Component {
     constructor(props){
         super(props);
         this.state = defaultState;
-
+        
         //CANVASES
         this.holdRef = React.createRef();
         this.meterRef = React.createRef();
@@ -34,7 +34,10 @@ class Game extends React.Component {
         //WRAPPER
         this.wrapperRef = React.createRef();
 
-        this.initialize = this.initialize.bind(this);
+        props.globals.game = {
+            setState:this.setState.bind(this),
+            reset:this.reset
+        }
     }
 
     reset(){
@@ -43,7 +46,8 @@ class Game extends React.Component {
         initalize();
     }
 
-    initialize(gameMode,socket){
+    componentDidMount(){
+        let globals = this.props.globals;
         let DOM = {
             hold: this.holdRef.current,
             meter: this.meterRef.current,
@@ -59,20 +63,17 @@ class Game extends React.Component {
             title: this.titleRef.current,
             full: this.wrapperRef.current
         }
+        globals.game.clientRef = this.wrapperRef;
 
-        let props = this.props; //this must be defined here because it changes in the object
-        let setState = this.setState.bind(this);
         let callbacks = {
-            end:function(...data){
+            end:function(...args){
                 document.removeEventListener('keydown', keyDownHandler, false);
                 document.removeEventListener('keyup', keyUpHandler, false);
-                props.gameEnd(...data);
-                props.clearOpponents(...data);
-            },
-            lobbyDisp:props.setLobbyDisplay
+                globals.statmenu.gameEnd(...args);
+            }
         }
 
-        initalize(DOM,callbacks,gameMode,socket);
+        initalize(DOM,callbacks,globals.gameMode,globals.socket);
 
 
         document.addEventListener('keydown', keyDownHandler, false);

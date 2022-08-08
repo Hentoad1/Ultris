@@ -1,5 +1,7 @@
 .clientWrapper{
+    float:center;
     display:flex;
+	justify-self:center;
 }
 
 .inner_left_wrapper{

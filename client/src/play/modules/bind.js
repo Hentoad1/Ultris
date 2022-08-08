@@ -4,15 +4,19 @@ const outerColors = ["#FFFFFF","#BF1BBF", "#1B1BA6", "#1BA6A6", "#A61B1B", "#A65
 var currentPid = undefined;
 var userData = [];
 
-function bind(socket,getRef,setState){
+function bind(globals,getRef,setState){
+	let socket = globals.socket;
+
+	socket.on('end',function(){
+		userData = [];
+		setState({userData});
+	});
 
 	socket.on('sendPID', function(id){
 		currentPid = id;
 	});
 
-    socket.on('updateUsers', function(users, spectate = false){
-		console.log('currentPid', currentPid);
-		console.log('users', users);
+    socket.on('updateUsers', function(users){
 		const size = socket.constants.cellSize;
 		userData = [];
 		for (let i = 0, index = 0; i < users.length; i++){
@@ -33,14 +37,12 @@ function bind(socket,getRef,setState){
 			index++;
 		}
 
-		console.log('userData', userData);
 		
 		setState({userData},() => resize(true));
-		console.log('mounted');	
 	});
 
 	socket.on('remove user', function(id){
-		let [userIndex, user] = getUser(id);
+		let [userIndex] = getUser(id);
 		if (userIndex !== -1){
 			userData.splice(userIndex,1);
 			setState({userData},() => resize());
@@ -82,13 +84,41 @@ function bind(socket,getRef,setState){
 	});
 
 	function resize(forceRedraw = false){
-		userData.forEach(display);
-		return false;
+		const margin = 10;
+		const textHeight = 30;
+
+		let clientWidth = 0;
+		if (globals.game.clientRef.current !== null){
+			clientWidth = globals.game.clientRef.current.offsetWidth;
+		}
+
+		let availibleWidth = (window.innerWidth - clientWidth - 200) / 2; // divied by 2 for 2 halves
+		let availibleHeight = window.innerHeight - 100;
+
+
+		let acceptableSizes = [5,10,15,20];
+		let cellSize = 5;
+		for (let i = acceptableSizes.length - 1; i >= 0; i--){
+			let rows = Math.floor(availibleHeight / (acceptableSizes[i] * 20 + margin  + textHeight)) * 2; // multiply by 2 for 2 halves
+			let columns = Math.floor(availibleWidth / (acceptableSizes[i] * 10 + margin));
+
+			if (rows * columns >= userData.length){
+				cellSize = acceptableSizes[i];
+				break;
+			}
+		}
+
+		let changedSize = cellSize !== socket.constants.cellSize;
+		socket.constants.cellSize = cellSize;
+		if (changedSize || forceRedraw){
+			userData.forEach(display);
+		}
+
+		return changedSize;
 	}
 
 	function display(user,callback = function(){}){
 		if (user.ref.current === null){
-			console.log('no canvas');
 			return;
 		}
 
@@ -96,6 +126,8 @@ function bind(socket,getRef,setState){
 		let ctx = elem.getContext('2d');
 		let board = user.board;
 		let size = socket.constants.cellSize;
+		elem.width = size * 10;
+		elem.height = size * 20;
 
 		ctx.clearRect(0,0,elem.width,elem.height);//clears all
 		
@@ -111,7 +143,7 @@ function bind(socket,getRef,setState){
 		
 		for (let i = 0; i < board.length; i++){
 			for (let j = 0; j < board[i].length; j++){
-				if (board[i][j] != 0){
+				if (board[i][j] !== 0){
 					pasteOnGrid(j,i,board[i][j],ctx);
 				}
 			}
@@ -156,8 +188,4 @@ function bind(socket,getRef,setState){
 	}
 }
 
-function reset(){
-	userData = [];
-}
-
-export { bind,reset };
+export { bind };

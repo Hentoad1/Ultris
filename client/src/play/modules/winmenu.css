@@ -108,19 +108,22 @@
 }
 
 .userStat:nth-child(1){
-    --height:6rem;
+    --height:3rem;
     --accentColor:#C9B037;
     --smallLineSize:0.75em;
+    --smallLineSize:0.5em;
 }
 
 .userStat:nth-child(2){
-    --height:4.5rem;
+    --height:3rem;
     --accentColor:#C6C6C6;
     --smallLineSize:0.6em;
+    --smallLineSize:0.5em;
 }
 
 .userStat:nth-child(3){
-    --height:4.5rem;
+    --height:3rem;
     --accentColor:#6A3805;
     --smallLineSize:0.6em;
+    --smallLineSize:0.5em;
 }
