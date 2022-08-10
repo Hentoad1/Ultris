@@ -25,21 +25,21 @@ class Wrapper extends React.Component {
             opponents:[]
         };
         
-        let gameMode = 'sprint';
+        let gameMode = 'sprint'; //gets game mode from url
         let path = window.location.pathname;
         let parsed = path.slice(path.lastIndexOf('/') + 1);
         if (['sprint','blitz','endless'].includes(parsed)){
-            gameMode = parsed;
+            globals.gameMode = parsed;
+            console.log(globals.gameMode);
         }else{
-            let code = parsed;
-            if (code === 'online'){ // temporary
-                gameMode = 'online';
-            }
-        }
-
-        globals.gameMode = gameMode;
-
-        
+            console.log(parsed);
+            globals.gameMode = 'online';
+            socket.emit('join room',parsed,function(err){
+                if (err){
+                    alert('room does not exist');
+                }
+            });
+        }        
     }
 
     componentDidMount(){

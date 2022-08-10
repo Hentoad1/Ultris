@@ -30,7 +30,7 @@ router.post('/register', function(req, res, next) {
     database.register(input, function(success, result){
       if (success){
         req.session.uuid = result.uuid;
-        req.session.userid = result.username;
+        req.session.username = result.username;
         req.session.save();
       }else{
         output.success = false;
@@ -77,7 +77,7 @@ router.post('/login', function(req, res, next) {
     output.success = valid;
     if (valid){
       req.session.uuid = result.uuid;
-      req.session.userid = result.username;
+      req.session.username = result.username;
       req.session.save();
     }else{
       output.serverError = 'Incorrect Login Information.';

@@ -82,7 +82,7 @@ class Chat extends React.Component {
                 <ul className = 'chatMessages' ref = {this.msgRef}>
                     {this.state.messages.map((e,i) => <li className = {e.type} key = {i}>{e.name}: {e.msg}</li>)}
                 </ul>
-                <input className = 'chatInput' onKeyUp = {this.KeyHandler} placeholder = 'Type here to send a message...'/>
+                <input className = 'chatInput' onKeyUp = {this.KeyHandler} onFocus = {this.props.globals.game.removeListeners} onBlur = {this.props.globals.game.addListeners} placeholder = 'Type here to send a message...'/>
             </div>
         )
     }

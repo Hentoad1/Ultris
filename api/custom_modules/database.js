@@ -2,15 +2,17 @@ var mysql = require('mysql2');
 var uuid = require("uuid");
 var bcrypt = require("bcrypt");
 
-const con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: process.env.DATABASE_PASSWORD,
-    database:'main',
-    port:'3306'
-});
-  
+const options = {
+	host: "localhost",
+	user: "root",
+	password: process.env.DATABASE_PASSWORD,
+	database:'main',
+	port:'3306'
+}
+
 function testUsername(input, callback){
+	const con = mysql.createConnection(options);
+
     con.query("SELECT EXISTS(SELECT * FROM account WHERE username = ?)", input, function (err, results) {
 		if (err) throw err;
 
@@ -22,6 +24,7 @@ function testUsername(input, callback){
 }
 
 function register(input, callback){
+	const con = mysql.createConnection(options);
 	var preHash = input.password;
 	
 	bcrypt.genSalt(10, function(err, salt) {
@@ -36,22 +39,6 @@ function register(input, callback){
 					callback(err === null,input);
 				});
 			});
-			
-			
-			/*var defaults = {
-				uuid: data.uuid,
-				DAS:133,
-				ARR:10,
-				DCD:0,
-				SDF:1,
-				ISDF:true,
-				keybinds:'Escape,r,ArrowLeft,ArrowRight,ArrowDown,ArrowUp,a,z,c, '
-			};
-			
-			
-			con.query("INSERT INTO controls SET ?", defaults, function(err, result){	
-				if (err) throw err;
-			});*/
 		});
 	});
 	
@@ -59,6 +46,7 @@ function register(input, callback){
 }
 
 function login(input, callback){
+	const con = mysql.createConnection(options);
 	con.query("SELECT * FROM account WHERE username = ?", input.username, function(err, result){
 		if (err) throw err;
 		
@@ -81,6 +69,7 @@ function login(input, callback){
 
 
 function genUniqueUUID(callback){
+	const con = mysql.createConnection(options);
 	let id = uuid.v4();
 
 	con.query("SELECT EXISTS(SELECT * FROM account WHERE uuid = ?)", id, function (err, results) {
@@ -95,7 +84,6 @@ function genUniqueUUID(callback){
 			callback(id);
 		}
 	});
-
 }
 
 module.exports = {testUsername, register, login};

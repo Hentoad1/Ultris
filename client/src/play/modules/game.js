@@ -36,13 +36,14 @@ class Game extends React.Component {
 
         props.globals.game = {
             setState:this.setState.bind(this),
-            reset:this.reset
+            reset:this.reset,
+            addListeners:this.addListeners,
+            removeListeners:this.removeListeners,
         }
     }
 
     reset(){
-        document.addEventListener('keydown', keyDownHandler, false);
-        document.addEventListener('keyup', keyUpHandler, false);
+        this.addListeners();
         initalize();
     }
 
@@ -65,24 +66,28 @@ class Game extends React.Component {
         }
         globals.game.clientRef = this.wrapperRef;
 
+
         let callbacks = {
-            end:function(...args){
-                document.removeEventListener('keydown', keyDownHandler, false);
-                document.removeEventListener('keyup', keyUpHandler, false);
-                globals.statmenu.gameEnd(...args);
-            }
+            end:globals.statmenu.gameEnd
         }
 
         initalize(DOM,callbacks,globals.gameMode,globals.socket);
 
-
-        document.addEventListener('keydown', keyDownHandler, false);
-        document.addEventListener('keyup', keyUpHandler, false);
+        this.addListeners();
     }
 
     componentWillUnmount(){
+        this.addListeners();
+    }
+
+    removeListeners(){
         document.removeEventListener('keydown', keyDownHandler, false);
         document.removeEventListener('keyup', keyUpHandler, false);
+    }
+
+    addListeners(){
+        document.addEventListener('keydown', keyDownHandler, false);
+        document.addEventListener('keyup', keyUpHandler, false);
     }
 
     render() {
