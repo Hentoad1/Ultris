@@ -16,7 +16,7 @@
 	left:50px;
 	right:auto;
 	font-size:1rem;
-	width:20%;
+	width:calc((100% - 100px) * 0.2);
 
 	z-index:75;
 }

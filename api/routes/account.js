@@ -42,7 +42,36 @@ router.post('/register', function(req, res, next) {
   });
 });
 
-router.post('/testUsername', function(req, res, next) {
+router.post('/login', function(req, res, next) {
+  let input = req.body;
+  let output = {};
+
+  input.username = input.username.toUpperCase();
+
+
+
+  database.login(input, function(valid, result){
+    output.success = valid;
+    if (valid){
+      req.session.uuid = result.uuid;
+      req.session.username = result.username;
+      req.session.save();
+    }else{
+      output.serverError = 'Incorrect Login Information.';
+    }
+    res.send(output);
+  });
+});
+
+router.post('/logout', function(req, res, next) {
+  req.session.destroy(function(err){
+    if (err) throw err;
+
+    res.end();
+  });
+});
+
+router.post('/username', function(req, res, next) {
   let input = req.body;
   let output = {};
   
@@ -64,35 +93,16 @@ router.post('/testUsername', function(req, res, next) {
   });
 });
 
-router.post('/login', function(req, res, next) {
-  let input = req.body;
-  let output = {};
-  console.log(req.body.username);
+router.post('/', function(req, res, next) {
+  let loggedIn = req.session.username !== undefined;
+  let username = loggedIn ? req.session.username : 'GUEST';
 
-  input.username = input.username.toUpperCase();
+  let output = {
+    loggedIn,
+    username
+  };
 
-
-
-  database.login(input, function(valid, result){
-    output.success = valid;
-    if (valid){
-      req.session.uuid = result.uuid;
-      req.session.username = result.username;
-      req.session.save();
-    }else{
-      output.serverError = 'Incorrect Login Information.';
-    }
-    console.log(output);
-    res.send(output);
-  });
-});
-
-router.post('/logout', function(req, res, next) {
-  req.session.destroy(function(err){
-    if (err) throw err;
-
-    res.end();
-  });
+  res.send(output);
 });
 
 function verifyUsername(username, output){

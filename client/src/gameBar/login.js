@@ -51,7 +51,7 @@ class Login extends React.Component {
             password:this.state.passwordValue
         };
 
-        fetch('http://localhost:9000/account/login', {
+        fetch('%PUBLIC_URL%/account/login', {
             credentials: 'same-origin',
             method: 'POST',
             body: JSON.stringify(data),

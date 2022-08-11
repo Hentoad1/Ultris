@@ -116,6 +116,8 @@ function bind(globals,getRef,setState){
 
 		return changedSize;
 	}
+	
+	window.addEventListener('resize', () => resize());
 
 	function display(user,callback = function(){}){
 		if (user.ref.current === null){

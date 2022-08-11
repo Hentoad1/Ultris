@@ -7,8 +7,14 @@ class Room{
 	constructor(name,owner,automated){
 		//room information
 		this.name = name;
-		this.owner = owner;
+		this.owner = owner; //owner should be an object with uuid and username.
 		this.automated = automated;
+		//customizable settings
+		this.settings = {
+			private:true,
+			name:this.automated ? this.name : owner.username + "'s Room",
+			custom:!this.automated
+		}
 		//lobby states
 		this.countingDown = false;
 		this.breakCountdown = false;
@@ -19,7 +25,6 @@ class Room{
 		this.aliveUsers = new Set();
 		this.startingPlayers = 0;
 		this.playerDeathList = [];
-
 		//set the room object in the rooms map.
 		rooms.set(this.name,this);
 	}
@@ -229,7 +234,7 @@ class Room{
 	}
 }
 
-new Room('quickplay',null,true);
+new Room('quickplay',{},true);
 
 function bind(input){
 	io = input;
@@ -240,16 +245,22 @@ function bind(input){
 		socket.boardData = {};
 
 		socket.on('join room',function(code,callback){
-			console.log(rooms);
 			if (!rooms.has(code)){
-				callback(true);
+				callback(null,'Room does not exist.');
 				return;
 			}
-			callback(false);
+			let room = rooms.get(code);
+			let outgoingData = Object.assign({},room.settings);
+			outgoingData.admin = (room.owner.uuid === socket.uuid && socket.uuid !== null);//need fix
+			console.log(socket.uuid);
+			callback(outgoingData,false);
+
+
+			//add rest of the listeners for procesing the game
 			socket.join(code);
 			socket.room = code;
 			
-			var currentRoom = rooms.get(socket.room);
+			var currentRoom = room;
 			var roomObject = currentRoom.addUser(socket);
 
 			socket.publicID = roomObject.pid;
@@ -535,7 +546,7 @@ function bind(input){
 
 		socket.on('create room',function(callback){
 			let roomcode = generateRoomCode();
-			new Room(roomcode,socket.uuid,false);
+			new Room(roomcode,{uuid:socket.uuid,username:socket.username},false);
 			callback(roomcode);
 		});
 	});

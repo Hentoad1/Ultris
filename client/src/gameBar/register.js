@@ -80,7 +80,7 @@ class Register extends React.Component {
 			message = ("Please Enter a Username.");
 		}else{
             valid = true;
-            fetch('http://localhost:9000/account/testUsername', {
+            fetch('%PUBLIC_URL%/account/username', {
                 method: 'POST',
                 body: JSON.stringify({username:e.target.value}),
                 headers: {
@@ -152,7 +152,7 @@ class Register extends React.Component {
             email:this.state.emailValue
         };
 
-        fetch('http://localhost:9000/account/register', {
+        fetch('%PUBLIC_URL%/account/register', {
             credentials: 'same-origin',
             method: 'POST',
             body: JSON.stringify(data),

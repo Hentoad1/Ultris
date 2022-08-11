@@ -27,7 +27,7 @@ class User extends React.Component {
     }
 
     logout(){
-        fetch('http://localhost:9000/account/logout',{method:'POST'})
+        fetch('%PUBLIC_URL%/account/logout',{method:'POST'})
         .then()
         .then(this.props.updateLoggedIn)
         .catch(err => err);

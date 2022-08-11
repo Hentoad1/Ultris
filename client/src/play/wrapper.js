@@ -9,7 +9,7 @@ import WinMenu from './modules/winmenu.js';
 import LobbyMenu from './modules/lobbymenu.js';
 import './wrapper.css';
 
-const socket = io('localhost:9000');
+const socket = io('%PUBLIC_URL%');
 socket.constants = {
     cellSize:20,
 	displayLines:true,
@@ -25,18 +25,17 @@ class Wrapper extends React.Component {
             opponents:[]
         };
         
-        let gameMode = 'sprint'; //gets game mode from url
         let path = window.location.pathname;
         let parsed = path.slice(path.lastIndexOf('/') + 1);
         if (['sprint','blitz','endless'].includes(parsed)){
             globals.gameMode = parsed;
-            console.log(globals.gameMode);
         }else{
-            console.log(parsed);
             globals.gameMode = 'online';
-            socket.emit('join room',parsed,function(err){
+            socket.emit('join room',parsed,function(data,err){
                 if (err){
-                    alert('room does not exist');
+                    alert(err);
+                }else{
+                    globals.lobbymenu.setState({lobbyinfo:data});
                 }
             });
         }        

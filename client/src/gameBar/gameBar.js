@@ -27,7 +27,7 @@ class GameBar extends React.Component {
   }
 
   fetchAPI(){
-    fetch('http://localhost:9000/users',{method:'POST'})
+    fetch('%PUBLIC_URL%/account',{method:'POST'})
     .then(res => res.json())
     .then(this.processAPIResponse)
     .catch(err => err);

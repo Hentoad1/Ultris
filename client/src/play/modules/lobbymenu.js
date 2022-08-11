@@ -4,7 +4,8 @@ import './lobbymenu.css';
 const defaultState = {
     players:[],
     countDownValue:'',
-    display:true
+    display:true,
+    lobbyinfo:{}
 };
 
 class LobbyMenu extends React.Component {
@@ -27,7 +28,7 @@ class LobbyMenu extends React.Component {
         });
 
         socket.on('countdown',function(secondsLeft){
-            setState({countDownValue:secondsLeft});
+            setState({countDownValue:`Game Begins in ${secondsLeft} seconds.`});
         });
 
         socket.on('start',function(){
@@ -37,10 +38,12 @@ class LobbyMenu extends React.Component {
     }
 
     render() {
+        let title = <h1 className = 'title'>{this.state.lobbyinfo.name}</h1>
         if (this.state.display){
             return (
                 <div className = 'lobbymenu'>
-                    <h1>{this.state.countDownValue}</h1>
+                    {title}
+                    <h1 className = 'countdown'>{this.state.countDownValue}</h1>
                     <ul className = 'userlist'>
                         {this.state.players.map((username,i) => <li key = {i}>{username}</li>)}
                     </ul>

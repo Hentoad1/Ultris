@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 
 import './playMenu.css';
 
-const socket = io('localhost:9000');
+const socket = io('%PUBLIC_URL%');
 
 const defaultState = {
     redirect:null,
