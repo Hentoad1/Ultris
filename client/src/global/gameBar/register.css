@@ -1,0 +1,80 @@
+.register_outer{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0;
+
+    z-index:1000;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;    
+
+    background:rgba(0, 0, 0, 0.4);
+}
+
+.register_inner{
+    background:#191919;
+    color:white;
+    
+    display:flex;
+    flex-flow:column;
+
+    border-radius:50px;
+    padding:2em;
+
+    user-select: none;
+}
+
+.register_head{
+    font-size:2em;
+    padding:1.5em 3em;
+}
+
+.register_label{
+    padding:1em;
+    text-align:left;
+}
+
+.register_input{
+    text-align:left;
+    appearance:none;
+    border:none;
+
+    margin:0 0.5em 1em 0.5em;
+    padding:0.5em;
+
+}
+
+.register_submit{
+    appearance: none;
+    border:none;
+
+    background:white;
+    color:#191919;
+
+    border-radius: 50px;
+    margin-top:2em;
+    padding:1em;
+}
+
+.register_error{
+    font-size:0.9rem;
+}
+
+.register_submit:hover{
+    opacity:0.9;
+}
+
+.register_submit:active{
+    opacity:0.8;
+}
+
+.register_submit:disabled{
+    opacity:0.5;
+}
+
+a{
+    color:white;
+    text-decoration:none;
+}

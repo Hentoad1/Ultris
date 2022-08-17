@@ -1,0 +1,13 @@
+.account_inner{
+    background:#00000044;
+    background:white;
+    color:black;
+
+    padding:2em;
+    border-radius:5px;
+}
+
+.account_inner h1{
+    font-size:1.5rem;
+    margin-bottom:1em;
+}

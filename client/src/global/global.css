@@ -1,0 +1,59 @@
+html, body, #root{
+  --background-color:#191919;
+  --color:white;
+  height:100%;
+  width:100%;
+}
+
+#root{
+  display:flex;
+  flex-flow:column;
+}
+
+li{
+  list-style-type: none;
+}
+
+.App {
+  display:flex;
+  flex-flow:column;
+  
+  background:var(--background-color);
+
+  height:100%;
+  width:100%;
+}
+
+.page_content{
+  flex-grow:1;
+
+  background:var(--background-color);
+  color:var(--color);
+}
+
+.page_content.centered{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.left{
+  float:left;
+}
+
+.right{
+  float:right;
+}
+
+.grow{
+  flex-grow:1;
+}
+
+::-webkit-scrollbar{
+  width:5px;
+	background-color:transparent;
+}
+
+::-webkit-scrollbar-thumb{
+	background:#FFFFFF88;
+}

@@ -1,0 +1,15 @@
+.main_wrapper{
+    position:relative;
+
+    display:flex;
+    align-items:center;
+    justify-content: center;
+    flex-direction:row;
+
+    user-select:none;
+    overflow:hidden;
+}
+
+.main_wrapper *{
+    outline:0px solid white;
+}

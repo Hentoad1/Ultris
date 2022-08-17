@@ -2,38 +2,37 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Globals from './global.js';
-import PlayMenu from './play/playMenu.js';
-import Wrapper from './play/wrapper.js';
-
-
-//import reportWebVitals from './reportWebVitals';
+import Globals from './global/global.js';
+import {Notifcations} from './global/notifications.js';
+import PlayMenu from './routes/play/playMenu.js';
+import {Wrapper as Game} from './routes/play/wrapper.js';
+import Register from './routes/register/register.js';
+import Account from './routes/account/account.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.Fragment>
     <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-      crossOrigin="anonymous"
-    />
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element = {<Globals />}>
-          <Route index element = {<h1>default</h1>} />
-          <Route path='play'>
-            <Route index element = {<PlayMenu />} />
-            <Route path='*' element = {<Wrapper />} />
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+        crossOrigin="anonymous"
+      />
+    <Notifcations>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element = {<Globals />}>
+            <Route index element = {<h1>default</h1>} />
+            <Route path='register' element = {<Register />} />
+            <Route path='account' element = {<Account />} />
+            <Route path='play'>
+              <Route index element = {<PlayMenu />} />
+              <Route path='*' element = {<Game />} />
+            </Route>
+            <Route path='*' element = {<h1>404 Error</h1>} />
           </Route>
-          <Route path='*' element = {<h1>404 Error</h1>} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </Notifcations>
   </React.Fragment>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-//reportWebVitals();

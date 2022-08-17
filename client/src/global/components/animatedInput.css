@@ -1,0 +1,95 @@
+.AnimatedInput{
+    position:relative;
+    padding-left:1em;
+    padding-right:0;
+    padding-top:1em;
+    padding-bottom:0.5em;
+    background:transparent;
+
+    border:1px solid #aaa;
+    outline:none;
+
+    border-radius:3px;
+
+    text-align: left;
+}
+
+.AnimatedInput:focus-within{
+    border:1px solid white;
+    outline:1px solid white;
+}
+
+.AnimatedInput input{
+    border:none;
+    outline:none;
+    color:inherit;
+    width:100%;
+    height:100%;
+
+    background:transparent;
+}
+
+.AnimatedInput span{
+    padding-left: inherit;
+    padding-top: inherit;
+    font-size:1rem;
+
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+
+    pointer-events: none;
+    user-select: none;
+
+    opacity:0.5;
+
+    line-height:100%;
+
+    transition:all 0.2s ease-in-out;
+}
+
+.AnimatedInput .iconWrapper{
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+
+    display:flex;
+    flex-flow:row;
+    justify-content:end;
+
+    pointer-events: none;
+}
+
+.AnimatedInput .iconWrapper .icon{
+    pointer-events: auto;
+    cursor:pointer;
+    margin:0.5em;
+    padding:0.2em;
+    border-radius:5px;
+
+    background:transparent;
+
+    transition: background 0.3s ease-in-out;
+
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.AnimatedInput .iconWrapper .icon:hover{
+    background:#FFFFFF44;
+}
+
+.AnimatedInput .iconWrapper .icon *{
+    width: 24px;
+    height: 24px;
+}
+
+.AnimatedInput span.minimized{
+    padding-top:0.25rem;
+    font-size:0.7em;
+}

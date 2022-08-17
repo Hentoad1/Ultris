@@ -1,47 +1,68 @@
 var express = require('express');
 var router = express.Router();
 
-var database = require('../custom_modules/database.js');
+var database = require('../modules/database.js');
 
+
+//LOGOUT BUTTON
+router.post('/logout', function(req, res, next) {
+  database.getUUID(function(err, uuid){
+    if (err) return next (err);
+
+    req.session.username = 'GUEST';
+    req.session.uuid = uuid;
+    req.session.save();
+
+    res.end();
+  });
+});
+
+//REGISTER ROUTE FROM CLIENT
 router.post('/register', function(req, res, next) {
   let input = req.body;
-  let output = {success:true};
 
-  input.username = input.username.toUpperCase();
+  let [usernameInvalid, username] = verifyUsername(input.username);
+  let passwordInvalid = verifyPassword(input.password);
 
-  output.success = verifyUsername(input.username, output) &&
-  verifyPassword(input.password, output) &&
-  verifyEmail(input.email, output);
+  let errorMessage = usernameInvalid || passwordInvalid;
+  if (errorMessage){
+    res.send({
+      err: errorMessage
+    });
+  }
 
-  if (!output.success){
+  /*if (!output.success){
     res.send(output);
     return; //end here because an error has occured.
   }
 
-  database.testUsername(input.username, function(taken){
-    if (taken){
-      output.usernameError = 'This Username has already been taken.';
-      output.usernameValid = false;
+  
 
+  database.register(input, function(err, result){
+    if (err){
+      output.success = false;
+      output.serverError = 'Account failed to be created.';
       res.send(output);
-      return; //end here because an error has occured.
+      res.end();
+    }else{
+      req.session.uuid = result.uuid;
+      req.session.username = result.username;
+      req.session.save();
     }
+  });*/
+});
 
-    database.register(input, function(success, result){
-      if (success){
-        req.session.uuid = result.uuid;
-        req.session.username = result.username;
-        req.session.save();
-      }else{
-        output.success = false;
-        output.serverError = 'Account failed to be created.';
-        res.send(output);
-        res.end();
-      }
-    });
+router.post('/email', function(req, res, next) {
+  let email = req.body.email.toUpperCase();
+
+  verifyEmail(email,function callback(err, response){
+    if (err) return next (err)
+
+    res.send({err:response,email})
   });
 });
 
+//LOGIN ROUTE FROM CLIENT
 router.post('/login', function(req, res, next) {
   let input = req.body;
   let output = {};
@@ -50,120 +71,100 @@ router.post('/login', function(req, res, next) {
 
 
 
-  database.login(input, function(valid, result){
-    output.success = valid;
-    if (valid){
-      req.session.uuid = result.uuid;
-      req.session.username = result.username;
-      req.session.save();
-    }else{
+  database.login(input, function(err, result){
+    output.success = !err;
+    if (err){
       output.serverError = 'Incorrect Login Information.';
+    }else{
+      req.session.username = result.username;
+      req.session.uuid = result.uuid;
+      req.session.lastLogged = Date.now();
+      req.session.save();
     }
     res.send(output);
   });
 });
 
-router.post('/logout', function(req, res, next) {
-  req.session.destroy(function(err){
-    if (err) throw err;
-
-    res.end();
-  });
-});
-
-router.post('/username', function(req, res, next) {
-  let input = req.body;
-  let output = {};
-  
-  input.username = input.username.toUpperCase();
-
-  let validFormatting = verifyUsername(input.username, output);
-  if (!validFormatting){
-    res.send(output);
-    return; //end here because an error has occured.
+//ACCOUNT ROUTE FROM CLIENT
+router.post('/secure', function(req, res, next) {
+  if (req.session.username ?? 'GUEST' === 'GUEST'){
+    res.send({err:'You must be logged in to access this page.'});
+    return;
   }
 
-  database.testUsername(input.username, function(taken){
-    if (taken){
-      output.usernameError = 'This Username has already been taken.';
-      output.usernameValid = false; 
-    }
+  let loggedInRecently = req.session.lastLogged > Date.now() - (1000 * 60 * 60 * 24);
 
-    res.send(output);
-  });
-});
-
-router.post('/', function(req, res, next) {
-  let loggedIn = req.session.username !== undefined;
-  let username = loggedIn ? req.session.username : 'GUEST';
 
   let output = {
-    loggedIn,
-    username
+    secure: loggedInRecently
   };
 
   res.send(output);
 });
 
-function verifyUsername(username, output){
-  let regex = /[^a-zA-Z0-9]/g;
-  let result = username.match(regex);
-  let valid = false;
-  let message = '';
+//MAIN API
+router.post('/', function(req, res, next) {
+  let username = req.session.username ?? 'GUEST';
+  let loggedIn = username !== 'GUEST';
 
-  if (result != null && result.length > 0){
-    let charSet = new Set(result); // make it into a set to avoid repeats
-    let chars = Array.from(charSet).join('');
-    let text = chars.length == 1 ? 'Invalid Character:' : 'Invalid Characters:';
-    message = (text + " '" + chars + "'");
-  }else if (username.length > 15){
-    message = ("Username Must be 15 Characters or less.");
-  }else if (username == ''){
-    message = ("Please Enter a Username.");
-  }else {
-    valid = true; //async database call here
-    output.usernameError = message;
-    output.usernameValid = valid;
-    return valid;
+  let output = {
+    username,
+    loggedIn
+  };
+
+  res.send(output);
+});
+
+function verifyUsername(input){
+  let regex = /^[a-zA-Z0-9]+$/g;
+  let username = input.toUpperCase();
+  let result = regex.test(username);
+  let response = null;
+
+  if (!result){
+    response = 'Username must contain only letters and numbers.';
+  }else if (username.length > 15 || username.length < 3){
+    response = "Username must be 3 to 15 characters long.";
+  }else{
+    const InnapropriatePhrases = ['FUCK']; //temporary
+    const ReplacementPhrases = ['','#','##','###','####']; //temporary
+    InnapropriatePhrases.forEach(function(word){
+      let index = username.indexOf(word);
+      if (index !== -1){
+        username = username.replace(word, ReplacementPhrases[InnapropriatePhrases.length]);
+      }
+    });
   }
 
-  output.usernameError = message;
-  output.usernameValid = valid;
-  return valid;
+  return [response, username];
 }
 
-function verifyPassword(password, output){
-  let error = '';
-  let valid = false;
+function verifyEmail(email, callback){
+  let regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  let valid = regex.test(email);
+  
+  let response = valid ? null : 'Please Enter a Valid Email.';
+
+  database.uniqueEmail(email, function(err, result){
+    if (err) return callback(err);
+
+    if (result){
+      response = 'Email is already in use.';
+    }
+    callback(err, response);
+  });
+}
+
+function verifyPassword(password){
+  let response = '';
 
   if (password.length < 8){
-      error = 'Your password must have 8 or more characters.';
+      response = 'Your password must have 8 or more characters.';
   }else if (password.length >= 128){
-      error = 'Your password must be less than 128 characters.';
-  }else{
-      valid = true;
+      response = 'Your password must be less than 128 characters.';
   }
-  output.passwordValid = valid;
-  output.passwordError = error;
 
-  return valid;
-}
-
-function verifyEmail(email, output){
-  let atIndex = email.indexOf('@');
-  let singleAtSign = atIndex === email.lastIndexOf('@');
-
-  let dotIndex = email.lastIndexOf('.');
-
-  let correctPosition = dotIndex - atIndex > 1;
-
-  let valid = email === '' || (singleAtSign && correctPosition);
-  
-
-  output.emailValid = valid;
-  output.emailError = valid ? '' : 'Please Enter a Valid Email.';
-
-  return valid;
+  return response;
 }
 
 module.exports = router;

@@ -1,0 +1,97 @@
+.asd{
+    background:#202020;
+    color:white;
+
+    min-width:25em;
+
+    display:grid;
+    grid-template-rows:1fr;
+
+    grid-gap:2em;
+
+    border-radius:3px;
+
+    padding:4em;
+
+    text-align: center;
+    position:relative;
+}
+
+.asd header{
+    font-size:0.8em;
+    margin-bottom:2em;
+}
+
+.asd header h1{
+    font-weight:bold;
+    font-size:1.25rem;
+}
+
+.asd button{
+    border:none;
+    background:#4444FF;
+
+    color:inherit;
+
+    padding:1em;
+    border-radius:3px;
+
+    user-select: none;
+
+    position:relative;
+}
+
+.asd button:disabled::after{
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    pointer-events: none;
+    background:#00000099;
+}
+
+.asd .passwordError{
+    color:red;
+
+}
+
+.asd a{
+    color:inherit;
+
+}
+
+.asd .checkboxRow{
+    background:inherit;
+
+    display:flex;
+    flex-direction:row;
+}
+
+.asd .checkboxRow .checkboxStyles{
+    background:inherit;
+    margin-left:1em;
+    margin-right:0.5em;
+    margin-top:auto;
+    margin-bottom:auto;
+}
+
+
+.loading{
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+
+    display:flex;
+    align-items: center;
+    justify-content: center;
+
+    background:#00000099;
+}
+
+.loading svg{
+    width:100px;
+}

@@ -1,0 +1,74 @@
+.notificationWrapper{
+  position:fixed;
+  right:0;
+  top:0;
+  bottom:0;
+
+  width:20em; /* ???? */
+  pointer-events:none;
+
+  display:flex;
+  flex-flow:column;
+  justify-content: flex-end;
+
+  z-index: 1000;
+}
+
+.notification{
+  pointer-events:auto;
+
+  outline:2px solid var(--PrimaryColor);
+
+  color:white;
+
+  padding:1em;
+  margin:1em;
+  border-radius:1em;
+
+  background:var(--background-color);
+
+  opacity:0; /* only applies when out of transition */
+
+  animation-name:notification;
+  animation-duration:var(--AnimationTime,5s);
+  animation-iteration-count:1;
+
+  display:flex;
+  flex-flow:row;
+  justify-content:flex-start;
+}
+
+.notification svg{
+  flex-grow:0;
+  flex-shrink:0;
+
+  width:50px;
+  height:50px;
+  
+  margin-right:1em;
+
+  color:var(--PrimaryColor);
+}
+
+@keyframes notification{
+  0%{
+    transform:translateX(100%);
+    opacity:1;
+  }
+  10%{
+    transform:translateX(-15%);
+    opacity:1;
+  }
+  15%{
+    transform:translateX(0);
+    opacity:1;
+  }
+  80%{
+    transform:translateX(0);
+    opacity:1;
+  }
+  100%{
+    transform:translateX(100%);
+    opacity:0;
+  }
+}
