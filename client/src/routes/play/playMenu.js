@@ -15,8 +15,6 @@ class PlayMenu extends React.Component {
         super(props);
         this.state = defaultState;
 
-        console.log(this.props);
-
         this.createRoom = this.createRoom.bind(this);
     }
 

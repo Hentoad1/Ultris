@@ -1,10 +1,9 @@
 import React from 'react';
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import Login from './login.js';
-import Register from './register.js';
-import User from './user.js';
 import Settings from './settings/settings.js';
+
+import Context from '../context.js';
 
 import './gameBar.css';
 import '../global.css';
@@ -12,12 +11,15 @@ import '../global.css';
 class GameBar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { username: "", loggedIn: false};
+    this.state = { username: "", guest: true};
 
     this.fetchAPI = this.fetchAPI.bind(this);
   }
 
+  static contextType = Context;
+
   componentDidMount(){
+    this.context.refreshSession = this.fetchAPI;
     this.fetchAPI();
   }
 
@@ -31,26 +33,23 @@ class GameBar extends React.Component {
   }
 
   render() {
-    var userInfo;
-    if (this.state.loggedIn){
-      userInfo = <User className = 'right gamebar_child gamebar_clickable' username = {this.state.username} updateLoggedIn = {this.fetchAPI}/>
-    }else{
-      userInfo = (
-        <React.Fragment>
-          <Login className = 'right gamebar_child gamebar_clickable' updateLoggedIn = {this.fetchAPI}/>
-          <Register className = 'right gamebar_child gamebar_clickable' updateLoggedIn = {this.fetchAPI}/>
-        </React.Fragment>
-      );
-    }
+    let userInfo = this.state.guest ? 
+    <React.Fragment>
+      <Link to="/login" className = 'right gamebar_child gamebar_clickable'>Login</Link>
+      <Link to="/register" className = 'right gamebar_child gamebar_clickable'>Register</Link>
+    </React.Fragment> :
+    <Link to="/account">{this.state.username}</Link>
 
     return (
+      <React.Fragment>
         <nav className = 'gamebar_primary'>
-          <NavLink to="/play" className = 'right gamebar_child gamebar_clickable'>Play</NavLink>
-          <NavLink to="/leaderboard" className = 'right gamebar_child gamebar_clickable'>Leaderboard</NavLink>
+          <Link to="/play" className = 'right gamebar_child gamebar_clickable'>Play</Link>
+          <Link to="/leaderboard" className = 'right gamebar_child gamebar_clickable'>Leaderboard</Link>
           <header className = 'grow gamebar_child'>Ultris</header>
           <Settings className = 'right gamebar_child gamebar_clickable' loggedIn = {this.state.loggedIn}/>
           {userInfo}
         </nav>
+      </React.Fragment>
     );
   }
 }

@@ -13,7 +13,6 @@ class CustomCheckbox extends React.Component {
     }
 
     render() {
-        console.log('props',this.props)
         return (
             <div className = {'CustomCheckbox ' + this.props.className ?? ''} >
                 <input type = 'checkbox' onInput = {this.props.onInput ?? null}/>

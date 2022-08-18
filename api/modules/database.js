@@ -33,6 +33,7 @@ function register(input, callback){
 			if (err) return callback(err);
 			input.password = hash;
 			getUUID(function(err, result){
+				if (err) return callback(err);
 				input.uuid = result;
 
 				con.query("INSERT INTO account SET ?", [input], function(err, result){	

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import {ReactComponent as Text_Hidden} from '../../assets/svgs/Text_Hidden.svg';
-import {ReactComponent as Text_Visible} from '../../assets/svgs/Text_Visible.svg';
+import {ReactComponent as TextHidden} from '../../assets/svgs/Text_Hidden.svg';
+import {ReactComponent as TextVisible} from '../../assets/svgs/Text_Visible.svg';
 
 import './animatedInput.css';
 
@@ -40,10 +40,9 @@ class AnimatedInput extends React.Component {
             color:this.props.color ?? null,
             '--iconColor':this.props.iconColor ?? null
         };
-        console.log(this.props.children);
         return (
             <div className = 'AnimatedInput' style = {parentStyle} onBlur = {this.updatePlaceholder} onFocus = {this.hidePlaceholder}>
-                <input ref = {this.ref} type = {this.props.type ?? 'text'}/>
+                <input ref = {this.ref} type = {this.props.type ?? 'text'} onKeyUp = {this.props.onKeyUp}/>
                 <span className = {this.state.minimized ? 'minimized' : ''}>{this.props.placeholder}</span>
                 <div className = 'iconWrapper'>
                     {(this.props.children ?? []).map((icon, key) => 
@@ -73,11 +72,11 @@ class AnimatedPasswordInput extends React.Component {
 
     render() {
         let svg = this.state.showingText ? 
-        <Text_Visible onClick = {this.updateIcon}/> : 
-        <Text_Hidden onClick = {this.updateIcon}/>;
+        <TextVisible onClick = {this.updateIcon}/> : 
+        <TextHidden onClick = {this.updateIcon}/>;
 
         return (
-            <AnimatedInput type = {this.state.showingText ? 'text' : 'password'} placeholder = {this.props.placeholder} onRef = {this.props.onRef} color = {this.props.style} background = {this.props.background} iconColor = {this.props.iconColor}>
+            <AnimatedInput type = {this.state.showingText ? 'text' : 'password'} onKeyUp = {this.props.onKeyUp} placeholder = {this.props.placeholder} onRef = {this.props.onRef} color = {this.props.style} background = {this.props.background} iconColor = {this.props.iconColor}>
                 {svg}
                 {this.props.children}
             </AnimatedInput>

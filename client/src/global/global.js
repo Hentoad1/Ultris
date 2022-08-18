@@ -1,19 +1,23 @@
 import React from 'react';
-import { Outlet } from "react-router-dom";
+import { Outlet } from 'react-router';
+
+import {ContextWrapper} from './context.js';
 
 import GameBar from './gameBar/gameBar.js';
-import Notifcations from './notifications.js';
+import {Notifcations} from './notifications.js';
 
 import './global.css';
 
-function Globals(props) {
-  console.log(props);
-  return (
-    <React.Fragment>
-      <GameBar />
-      <Outlet/>
-    </React.Fragment>
-  );
+class Globals extends React.Component{
+  render(){
+    return (
+      <ContextWrapper>
+        <GameBar/>
+        <Notifcations/>
+        <Outlet/>
+      </ContextWrapper>
+    );
+  }
 }
 
 export default Globals;

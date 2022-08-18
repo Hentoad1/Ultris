@@ -1,10 +1,10 @@
 import React from 'react';
 import './notifications.css';
 
+import Context from './context.js';
+
 import {ReactComponent as Checkmark} from '../assets/svgs/Checkmark.svg';
 import {ReactComponent as Warning} from '../assets/svgs/Warning.svg';
-
-const NotificationContext = React.createContext();
 
 class NotificationWrapper extends React.Component {
     constructor(props){
@@ -13,6 +13,12 @@ class NotificationWrapper extends React.Component {
 
         this.addNotification = this.addNotification.bind(this);
         this.removeNotification = this.removeNotification.bind(this);
+    }
+
+    static contextType = Context;
+
+    componentDidMount(){
+      this.context.createNotification = this.addNotification;
     }
 
     addNotification(content,type,time){
@@ -36,9 +42,6 @@ class NotificationWrapper extends React.Component {
           <div className = 'notificationWrapper'>
             {this.state.notifications}
           </div>
-          <NotificationContext.Provider value = {this.addNotification}>
-            {this.props.children}
-          </NotificationContext.Provider>
         </React.Fragment>
       )
     }
@@ -63,4 +66,4 @@ class Notification extends React.Component {
   }
 }
 
-export {NotificationWrapper as Notifcations, NotificationContext};
+export {NotificationWrapper as Notifcations};

@@ -26,30 +26,32 @@ router.post('/register', function(req, res, next) {
 
   let errorMessage = usernameInvalid || passwordInvalid;
   if (errorMessage){
-    res.send({
+    return res.send({
       err: errorMessage
     });
   }
 
-  /*if (!output.success){
-    res.send(output);
-    return; //end here because an error has occured.
-  }
+  input.username = username;
 
-  
-
-  database.register(input, function(err, result){
-    if (err){
-      output.success = false;
-      output.serverError = 'Account failed to be created.';
-      res.send(output);
-      res.end();
-    }else{
-      req.session.uuid = result.uuid;
-      req.session.username = result.username;
-      req.session.save();
+  verifyEmail(input.email, function(err, response){
+    if (err) return next (err);
+    if (response){
+      return res.send({
+        err: "An error has occurred.",
+        reset: true
+      });
     }
-  });*/
+    
+    database.register(input, function(err, result){
+      if (err) return next (err);
+      
+      req.session.username = result.username;
+      req.session.uuid = result.uuid;
+      req.session.save();
+
+      res.send(result);
+    });
+  });
 });
 
 router.post('/email', function(req, res, next) {
@@ -140,16 +142,21 @@ function verifyUsername(input){
 }
 
 function verifyEmail(email, callback){
-  let regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  let valid = regex.test(email);
+  let whitespaceRegex = /\s/g;
+  let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  let valid = emailRegex.test(email) && !whitespaceRegex.test(email);
   
-  let response = valid ? null : 'Please Enter a Valid Email.';
+  let response = null;
+
+  if (!valid){
+    return callback(null, 'Please Enter a Valid Email.');
+  }
 
   database.uniqueEmail(email, function(err, result){
     if (err) return callback(err);
 
     if (result){
-      response = 'Email is already in use.';
+      response = 'Email taken.';
     }
     callback(err, response);
   });
