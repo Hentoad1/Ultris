@@ -8,7 +8,6 @@ import CustomCheckbox from '../../global/components/customCheckbox.js';
 import {ReactComponent as Loading} from '../../assets/svgs/Loading.svg';
 
 import '../../global/styles/menu.css';
-//import './register.css';
 
 class Register extends React.Component {
     constructor(props){
@@ -95,7 +94,7 @@ class Register extends React.Component {
 
         return (
             <div className = "page_content centered">
-                <div className = "menu">
+                <div className = "menu" style = {{'--menu-width':'15em'}}>
                     {stageContent}
                     {loadingContent}
                 </div>
@@ -206,7 +205,7 @@ class AccountSection extends React.Component {
                 <AnimatedInput onKeyUp = {this.keyHandler} onRef = {ref => {this.usernameRef = ref; ref.current.focus()}} placeholder = 'USERNAME' background = '#0F0F0F11'/>
                 <AnimatedPasswordInput onKeyUp = {this.keyHandler} onRef = {ref => this.passwordRef = ref} placeholder = 'PASSWORD' background = '#0F0F0F11'/>
                 <div className = 'row'>
-                    <CustomCheckbox className = 'checkboxStyles' onInput = {function(e){this.setState({checked:e.target.checked})}.bind(this)}/>
+                    <CustomCheckbox onInput = {function(e){this.setState({checked:e.target.checked})}.bind(this)} style = {{marginRight:'0.5em'}}/>
                     <span>I agree to the <Link to = '/privacy' className = 'link'>Privacy Policy</Link></span>
                 </div>
                 <button onClick = {this.submit} disabled = {!this.state.checked}>CONTINUE</button>

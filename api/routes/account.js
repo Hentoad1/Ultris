@@ -67,23 +67,20 @@ router.post('/email', function(req, res, next) {
 //LOGIN ROUTE FROM CLIENT
 router.post('/login', function(req, res, next) {
   let input = req.body;
-  let output = {};
-
-  input.username = input.username.toUpperCase();
-
-
 
   database.login(input, function(err, result){
-    output.success = !err;
-    if (err){
-      output.serverError = 'Incorrect Login Information.';
-    }else{
+    if (err) return next (err);
+
+    if (result){
       req.session.username = result.username;
       req.session.uuid = result.uuid;
       req.session.lastLogged = Date.now();
       req.session.save();
+      
+      res.send({err:null});
+    }else{
+      res.send({err:'Incorrect Login Information.'});
     }
-    res.send(output);
   });
 });
 

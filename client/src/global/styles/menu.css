@@ -2,10 +2,11 @@
     background:#202020;
     color:white;
 
-    width:fit-content;
+    width:var(--menu-width,fit-content);
+    max-width:var(--menu-width, fit-content);
 
     display:grid;
-    grid-template-rows:1fr;
+    grid-template-rows:auto;
 
     grid-gap:2em;
 

@@ -14,7 +14,7 @@ class CustomCheckbox extends React.Component {
 
     render() {
         return (
-            <div className = {'CustomCheckbox ' + this.props.className ?? ''} >
+            <div className = {'CustomCheckbox ' + (this.props.className ?? '')} style = {this.props.style}>
                 <input type = 'checkbox' onInput = {this.props.onInput ?? null}/>
                 <span/>
                 <Checkmark/>

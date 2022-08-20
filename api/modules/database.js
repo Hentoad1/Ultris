@@ -48,20 +48,20 @@ function register(input, callback){
 
 function login(input, callback){
 	const con = mysql.createConnection(options);
-	con.query("SELECT * FROM account WHERE username = ?", input.username, function(err, result){
+	con.query("SELECT * FROM account WHERE email = ?", input.email, function(err, [user]){
 		if (err) return callback(err);
-		
-		let userData = result[0];
-		if (userData === undefined){
-			callback(new Error("User not found."));
-			return;
+
+		if (user){
+			bcrypt.compare(input.password, user.password, function(err,match){
+				if (err) return callback(err);
+				
+				callback(err, user);
+			});
+		}else{
+			return callback(err, user);
 		}
 		
-		bcrypt.compare(input.password, result[0].password, function(err,match){
-			if (err) return callback(err);
-			
-			callback(!match,userData);
-		});
+		
 	});
 }
 

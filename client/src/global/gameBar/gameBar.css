@@ -26,8 +26,6 @@
 }
 
 .gameBar > a{
-  min-width: 5em;
-
   padding: 1.5em;
 
   background:var(--background);
