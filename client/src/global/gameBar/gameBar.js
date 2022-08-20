@@ -35,18 +35,18 @@ class GameBar extends React.Component {
   render() {
     let userInfo = this.state.guest ? 
     <React.Fragment>
-      <Link to="/login" className = 'right gamebar_child gamebar_clickable'>Login</Link>
-      <Link to="/register" className = 'right gamebar_child gamebar_clickable'>Register</Link>
+      <Link to="/login">Login</Link>
+      <Link to="/register">Register</Link>
     </React.Fragment> :
     <Link to="/account">{this.state.username}</Link>
 
     return (
       <React.Fragment>
-        <nav className = 'gamebar_primary'>
-          <Link to="/play" className = 'right gamebar_child gamebar_clickable'>Play</Link>
-          <Link to="/leaderboard" className = 'right gamebar_child gamebar_clickable'>Leaderboard</Link>
-          <header className = 'grow gamebar_child'>Ultris</header>
-          <Settings className = 'right gamebar_child gamebar_clickable' loggedIn = {this.state.loggedIn}/>
+        <nav className = 'gameBar'>
+          <Link to="/play">Play</Link>
+          <Link to="/leaderboard">Leaderboard</Link>
+          <header>Ultris</header>
+          <Settings loggedIn = {this.state.loggedIn}/>
           {userInfo}
         </nav>
       </React.Fragment>

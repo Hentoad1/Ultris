@@ -7,7 +7,8 @@ import {AnimatedInput,AnimatedPasswordInput} from '../../global/components/anima
 import CustomCheckbox from '../../global/components/customCheckbox.js';
 import {ReactComponent as Loading} from '../../assets/svgs/Loading.svg';
 
-import './register.css';
+import '../../global/styles/menu.css';
+//import './register.css';
 
 class Register extends React.Component {
     constructor(props){
@@ -58,6 +59,7 @@ class Register extends React.Component {
                 if (res.err){
                     this.throwError(res.err);
                 }else{
+                    this.context.refreshSession();
                     this.setState({redirect:'/play'});
                 }
             }.bind(this))
@@ -93,7 +95,7 @@ class Register extends React.Component {
 
         return (
             <div className = "page_content centered">
-                <div className = "asd">
+                <div className = "menu">
                     {stageContent}
                     {loadingContent}
                 </div>
@@ -156,13 +158,13 @@ class EmailSection extends React.Component {
     render() {
         return (
             <React.Fragment>
-                <header>
+                <div className = 'header'>
                     <h1>Enter your Email Address.</h1>
                     <span>You will need to verify it later.</span>
-                </header>
+                </div>
                 <AnimatedInput onKeyUp = {this.keyHandler} onRef = {ref => {this.inputRef = ref; ref.current.focus()}} placeholder = 'EMAIL ADDRESS' background = '#0F0F0F11'/>
                 <button onClick = {this.submit}>CONTINUE</button>
-                <span>Already Have an account? <Link to = '/login'>Sign in</Link></span>
+                <span>Already have an account? <Link to = '/login' className = 'link'>Sign in</Link></span>
             </React.Fragment>
         )
     }
@@ -197,14 +199,15 @@ class AccountSection extends React.Component {
     render() {
         return (
             <React.Fragment>
-                <header>
+                <div className = 'header'>
                     <h1>Account Info</h1>
-                </header>
+                    <span>Enter a Username and Password.</span>
+                </div>
                 <AnimatedInput onKeyUp = {this.keyHandler} onRef = {ref => {this.usernameRef = ref; ref.current.focus()}} placeholder = 'USERNAME' background = '#0F0F0F11'/>
                 <AnimatedPasswordInput onKeyUp = {this.keyHandler} onRef = {ref => this.passwordRef = ref} placeholder = 'PASSWORD' background = '#0F0F0F11'/>
-                <div className = 'checkboxRow'>
+                <div className = 'row'>
                     <CustomCheckbox className = 'checkboxStyles' onInput = {function(e){this.setState({checked:e.target.checked})}.bind(this)}/>
-                    <span>I agree to the <Link to = '/privacy'>Privacy Policy</Link></span>
+                    <span>I agree to the <Link to = '/privacy' className = 'link'>Privacy Policy</Link></span>
                 </div>
                 <button onClick = {this.submit} disabled = {!this.state.checked}>CONTINUE</button>
             </React.Fragment>
@@ -216,10 +219,10 @@ class SigninSection extends React.Component {
     render() {
         return (
             <React.Fragment>
-                <header className = 'emailTaken'>
+                <div className = 'header'>
                     <h1>An account with this email already exists.</h1>
-                    Would you like to sign in instead?
-                </header>
+                    <span>Would you like to sign in instead?</span>
+                </div>
                 <Link to = '/login' style = {{width:'100%'}} tabIndex = '-1'><button>SIGN IN</button></Link>
                 <button style = {{background:'white',color:'black'}} onClick = {() => this.props.setStage({},0)}>NO THANKS</button>
             </React.Fragment>

@@ -1,8 +1,8 @@
-.register{
+.menu{
     background:#202020;
     color:white;
 
-    width:25em;
+    width:fit-content;
 
     display:grid;
     grid-template-rows:1fr;
@@ -17,35 +17,32 @@
     position:relative;
 }
 
-.register > header{
+.menu > .header > h2{
     font-size:0.8em;
     margin-bottom:2em;
 }
 
-.register > header > h1{
+.menu > .header > h1{
     font-weight:bold;
     font-size:1.25rem;
 }
 
-.register button{
+.menu button{
     border:none;
     background:#4444FF;
 
     color:var(--button-color,white);
 
-    text-decoration: none;
-
     width:100%;
-
-    padding:1em;
+    padding:1.25em;
     border-radius:3px;
 
-    user-select: none;
-
     position:relative;
+    user-select: none;
+    cursor:pointer;
 }
 
-.register button:disabled::after{
+.menu button:disabled::after{
     content:'';
     position:absolute;
     top:0;
@@ -57,30 +54,14 @@
     border-radius:inherit;
 }
 
-.register > .checkboxRow{
+.menu > .row{
     background:inherit;
 
     display:flex;
-    flex-direction:row;
+    flex-flow:row;
 }
 
-.register > .checkboxRow > .checkboxStyles{
-    background:inherit;
-    margin-left:1em;
-    margin-right:0.5em;
-    margin-top:auto;
-    margin-bottom:auto;
-}
-
-.register > .emailTaken{
-    font-size:1rem;
-}
-
-.register > .emailTaken > h1{
-    font-size:1.25rem;
-}
-
-.register > .loading{
+.menu > .loading{
     position:absolute;
     top:0;
     bottom:0;
@@ -94,6 +75,6 @@
     background:#00000099;
 }
 
-.register > .loading > svg{
+.menu > .loading > svg{
     width:100px;
 }

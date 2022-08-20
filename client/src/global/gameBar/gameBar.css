@@ -1,4 +1,4 @@
-.gamebar_primary{
+.gameBar{
   --background:#141414;
   --color:white;
 
@@ -21,7 +21,11 @@
   color:var(--color);
 }
 
-.gamebar_child{
+.gameBar > header{
+  flex-grow:1;
+}
+
+.gameBar > a{
   min-width: 5em;
 
   padding: 1.5em;
@@ -35,18 +39,16 @@
   border:none;
   text-decoration: none;
   user-select: none;
-}
 
-.gamebar_clickable{
   cursor:pointer;
 }
 
-.gamebar_clickable:hover{
+.gameBar > a:hover{
   background:var(--background_hover);
   color:var(--color_hover);
 }
 
-.gamebar_clickable:active{
+.gameBar > a:active{
   background:var(--background_click);
   color:var(--color_click);
 }

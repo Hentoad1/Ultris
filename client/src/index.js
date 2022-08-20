@@ -6,22 +6,18 @@ import Globals from './global/global.js';
 import PlayMenu from './routes/play/playMenu.js';
 import {Wrapper as Game} from './routes/play/wrapper.js';
 import Register from './routes/register/register.js';
+import Login from './routes/login/login.js';
 import Account from './routes/account/account.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.Fragment>
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-        crossOrigin="anonymous"
-      />
       <BrowserRouter>
         <Routes>
           <Route path='/' element = {<Globals />}>
             <Route index element = {<h1>default</h1>} />
             <Route path='register' element = {<Register />} />
+            <Route path='login' element = {<Login />} />
             <Route path='account' element = {<Account />} />
             <Route path='play'>
               <Route index element = {<PlayMenu />} />
