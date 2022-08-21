@@ -21,7 +21,7 @@ class Login extends React.Component {
     static contextType = Context;
 
     keyHandler(e){
-        if (e.keyCode === 'enter'){
+        if (e.key === 'Enter'){
             this.submit();
         }
     }
@@ -46,12 +46,11 @@ class Login extends React.Component {
             })
             .then(res => res.json())
             .then(function(res){
-                this.setState({loading:false});
                 if (res.err){
+                    this.setState({loading:false});
                     this.throwError(res.err);
                 }else{
-                    this.context.refreshSession();
-                    this.setState({redirect:'/play'});
+                    this.context.refreshSession(() => this.setState({redirect:'/play',loading:false}));
                 }
             }.bind(this))
             .catch(function(){

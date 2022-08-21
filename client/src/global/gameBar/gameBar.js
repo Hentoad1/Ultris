@@ -23,11 +23,14 @@ class GameBar extends React.Component {
     this.fetchAPI();
   }
 
-  fetchAPI(){
+  fetchAPI(callback){
     fetch('/account',{method:'POST'})
     .then(res => res.json())
     .then(function(res){
       this.setState(res);
+      if (callback){
+        callback();
+      }
     }.bind(this))
     .catch(err => err);
   }

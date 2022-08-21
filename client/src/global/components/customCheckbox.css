@@ -11,6 +11,11 @@
     display:inline-block;
 }
 
+.CustomCheckbox:focus-within{
+    border:1px solid #aaa;
+    outline:1px solid white;
+}
+
 .CustomCheckbox > *{
     outline:none;
     border:none;

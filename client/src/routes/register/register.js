@@ -51,15 +51,14 @@ class Register extends React.Component {
             })
             .then(res => res.json())
             .then(function(res){
-                this.setLoading(false);
                 if (res.reset){
                     this.setState({stage:0});
                 }
                 if (res.err){
+                    this.setLoading(false);
                     this.throwError(res.err);
                 }else{
-                    this.context.refreshSession();
-                    this.setState({redirect:'/play'});
+                    this.context.refreshSession(() => this.setState({redirect:'/play',loading:false}));
                 }
             }.bind(this))
             .catch(function(){
@@ -206,7 +205,7 @@ class AccountSection extends React.Component {
                 <AnimatedPasswordInput onKeyUp = {this.keyHandler} onRef = {ref => this.passwordRef = ref} placeholder = 'PASSWORD' background = '#0F0F0F11'/>
                 <div className = 'row'>
                     <CustomCheckbox onInput = {function(e){this.setState({checked:e.target.checked})}.bind(this)} style = {{marginRight:'0.5em'}}/>
-                    <span>I agree to the <Link to = '/privacy' className = 'link'>Privacy Policy</Link></span>
+                    <span>I agree to the <Link to = '/privacy' className = 'link' tabIndex = '-1'>Privacy Policy</Link></span>
                 </div>
                 <button onClick = {this.submit} disabled = {!this.state.checked}>CONTINUE</button>
             </React.Fragment>

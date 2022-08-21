@@ -19,7 +19,9 @@ class AnimatedInput extends React.Component {
     }
     
     componentDidMount(){
-        this.props.onRef(this.ref);
+        if (this.props.onRef){
+            this.props.onRef(this.ref);
+        }
     }
 
     updatePlaceholder(e){

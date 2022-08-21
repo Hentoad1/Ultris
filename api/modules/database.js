@@ -55,10 +55,14 @@ function login(input, callback){
 			bcrypt.compare(input.password, user.password, function(err,match){
 				if (err) return callback(err);
 				
-				callback(err, user);
+				if (match){
+					callback(err, user);
+				}else{
+					callback(err, null);
+				}
 			});
 		}else{
-			return callback(err, user);
+			return callback(err, null);
 		}
 		
 		

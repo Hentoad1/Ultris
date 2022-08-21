@@ -17,6 +17,7 @@ router.post('/logout', function(req, res, next) {
   });
 });
 
+
 //REGISTER ROUTE FROM CLIENT
 router.post('/register', function(req, res, next) {
   let input = req.body;
@@ -45,10 +46,12 @@ router.post('/register', function(req, res, next) {
     database.register(input, function(err, result){
       if (err) return next (err);
       
-      req.session.username = result.username;
-      req.session.uuid = result.uuid;
+      req.session.data = {
+        username: result.username,
+        uuid: result.uuid,
+        lastLogged: Date.now()
+      }
       req.session.save();
-
       res.send(result);
     });
   });
@@ -72,11 +75,14 @@ router.post('/login', function(req, res, next) {
     if (err) return next (err);
 
     if (result){
-      req.session.username = result.username;
-      req.session.uuid = result.uuid;
-      req.session.lastLogged = Date.now();
-      req.session.save();
       
+      req.session.data = {
+        username: result.username,
+        uuid: result.uuid,
+        lastLogged: Date.now()
+      }
+      req.session.save();
+
       res.send({err:null});
     }else{
       res.send({err:'Incorrect Login Information.'});
@@ -103,15 +109,12 @@ router.post('/secure', function(req, res, next) {
 
 //MAIN API
 router.post('/', function(req, res, next) {
-  let username = req.session.username ?? 'GUEST';
-  let loggedIn = username !== 'GUEST';
+  let session = req.session.data ?? {};
 
-  let output = {
-    username,
-    loggedIn
-  };
-
-  res.send(output);
+  res.send({
+    username: session.username,
+    guest: !(session.lastLogged ?? false)
+  });
 });
 
 function verifyUsername(input){
