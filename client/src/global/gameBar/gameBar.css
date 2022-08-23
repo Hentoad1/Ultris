@@ -19,6 +19,9 @@
 
   background:var(--background);
   color:var(--color);
+
+
+  user-select: none;
 }
 
 .gameBar > header{
@@ -36,7 +39,6 @@
 
   border:none;
   text-decoration: none;
-  user-select: none;
 
   cursor:pointer;
 }

@@ -28,33 +28,6 @@
     font-size:1.25rem;
 }
 
-.menu button{
-    border:none;
-    background:#4444FF;
-
-    color:var(--button-color,white);
-
-    width:100%;
-    padding:1.25em;
-    border-radius:3px;
-
-    position:relative;
-    user-select: none;
-    cursor:pointer;
-}
-
-.menu button:disabled::after{
-    content:'';
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    pointer-events: none;
-    background:#00000099;
-    border-radius:inherit;
-}
-
 .menu > .row{
     background:inherit;
 

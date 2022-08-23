@@ -1,13 +1,59 @@
-.account_inner{
-    background:#00000044;
-    background:white;
-    color:black;
-
-    padding:2em;
-    border-radius:5px;
+.account{
+    display:grid;
+    grid-template-columns:15% 1fr;
+    height:100%;
 }
 
-.account_inner h1{
-    font-size:1.5rem;
+.account-navbar{
+    display:flex;
+    flex-direction:column;
+
+    padding:1em;
+    margin:1em;
+}
+
+.account-navbar .section{
+    display:flex;
+    flex-direction: column;
+    gap:0.2rem;
+}
+
+.account-navbar .section:not(:last-child){
+    padding-bottom:1em;
     margin-bottom:1em;
+    border-bottom:1px solid #fff5;
+    font-size:0.9rem;
+}
+
+.account-navbar h1{
+    padding:0.5em;
+    user-select: none;
+    color:white;
+}
+
+.account-navbar a{
+    border-radius:5px;
+    padding:0.5em;
+    opacity:0.7;
+}
+
+.account-navbar a:hover{
+    background:#fff1;
+}
+
+.account-navbar a.active{
+    background:#fff1;
+    opacity:1;
+}
+
+.account-content{
+    background:#aaa1;
+
+    display:flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+
+    overflow:scroll;
+    max-height:100%;
 }

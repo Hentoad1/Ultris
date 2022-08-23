@@ -8,6 +8,8 @@ import {Wrapper as Game} from './routes/play/wrapper.js';
 import Register from './routes/register/register.js';
 import Login from './routes/login/login.js';
 import Account from './routes/account/account.js';
+import Controls from './routes/account/controls/controls.js';
+import Handling from './routes/account/handling/handling.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,7 +20,10 @@ root.render(
             <Route index element = {<h1>default</h1>} />
             <Route path='register' element = {<Register />} />
             <Route path='login' element = {<Login />} />
-            <Route path='account' element = {<Account />} />
+            <Route path='account' element = {<Account />}>
+              <Route path='controls' element = {<Controls />} />
+              <Route path='handling' element = {<Handling />} />
+            </Route>
             <Route path='play'>
               <Route index element = {<PlayMenu />} />
               <Route path='*' element = {<Game />} />

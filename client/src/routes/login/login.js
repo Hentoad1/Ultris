@@ -6,6 +6,8 @@ import Context from '../../global/context.js';
 import {AnimatedInput,AnimatedPasswordInput} from '../../global/components/animatedInput.js';
 import {ReactComponent as Loading} from '../../assets/svgs/Loading.svg';
 
+import '../../global/styles/menu.css';
+
 class Login extends React.Component {
     constructor(props){
         super(props);

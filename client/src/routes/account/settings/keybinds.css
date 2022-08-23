@@ -1,0 +1,60 @@
+.keybinds_overlay{
+    position:fixed;
+
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+
+    background:#000000BB;
+
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow:column;
+
+    z-index:10;
+}
+
+.keybinds_main_header{
+    font-size:3rem;
+}
+
+.keybinds_sub_header{
+    font-size:1.5rem;
+}
+
+.keybinds_list{
+    padding:0;
+    margin:0;
+    list-style: none;
+}
+
+.keybinds_list li{
+    padding:0.25em 0;
+}
+
+.keybinds_list li button{
+    width:125px;
+    height:100%;
+    padding:0;
+
+    border:1px solid white;
+
+    background:transparent;
+    color:inherit;
+    float:right;
+    box-sizing: border-box;
+    
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.keybinds_default_button{
+    border:1px solid white;;
+    background:transparent;
+    color:inherit;
+    margin:1em auto;
+    padding:0 1em;
+}

@@ -222,7 +222,7 @@ class SigninSection extends React.Component {
                     <span>Would you like to sign in instead?</span>
                 </div>
                 <Link to = '/login' style = {{width:'100%'}} tabIndex = '-1'><button>SIGN IN</button></Link>
-                <button style = {{background:'white',color:'black'}} onClick = {() => this.props.setStage({},0)}>NO THANKS</button>
+                <button className = 'AlternameColor' style = {{background:'white',color:'black'}} onClick = {() => this.props.setStage({},0)}>NO THANKS</button>
             </React.Fragment>
         )
     }

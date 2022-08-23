@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {AnimatedInput} from '../../global/components/animatedInput.js';
+import { NavLink, Outlet } from 'react-router-dom';
 
 import './account.css';
 
@@ -18,10 +18,24 @@ class Account extends React.Component {
     
     render() {
         return (
-            <div className = "page_content centered">
-                <div className = 'account_inner'>
-                    <h1>SETTINGS</h1>
-                    <AnimatedInput placeholder = 'USERNAME'/>
+            <div className = "page_content account">
+                <div className = 'account-navbar'>
+                    <div className = 'section'>
+                        <h1>Game Settings</h1>
+                        <NavLink to = '/account/controls'>Controls</NavLink>
+                        <NavLink to = '/account/handling'>Handling</NavLink>
+                        <NavLink to = '/account/skin'>Skin</NavLink>
+                    </div>
+                    <div className = 'section'>
+                        <h1>Account Settings</h1>
+                        <NavLink to = '/account/a'>Personal Infomation</NavLink>
+                        <NavLink to = '/account/b'>Privacy</NavLink>
+                        <NavLink to = '/account/c'>Security</NavLink>
+                        <NavLink to = '/account/d'>Security</NavLink>
+                    </div>
+                </div>
+                <div className = 'account-content'>
+                    <Outlet />
                 </div>
             </div>
         )
