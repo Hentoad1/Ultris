@@ -10,6 +10,7 @@ function useAlerts(){
 
   let add = (content) => {
     let remove = () => {
+      console.log('slicing alert here', alerts, 't');
       setAlerts(alerts => alerts.slice(1));
     };
 
