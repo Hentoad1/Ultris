@@ -46,7 +46,7 @@ li{
 
 ::-webkit-scrollbar{
   width:5px;
-	background-color:transparent;
+	background:transparent;
 }
 
 ::-webkit-scrollbar-thumb{

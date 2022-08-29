@@ -1,4 +1,4 @@
-.gameBar{
+.navbar{
   --background:#141414;
   --color:white;
 
@@ -24,11 +24,11 @@
   user-select: none;
 }
 
-.gameBar > header{
+.navbar > header{
   flex-grow:1;
 }
 
-.gameBar > a{
+.navbar > a{
   padding: 1.5em;
 
   background:var(--background);
@@ -43,12 +43,12 @@
   cursor:pointer;
 }
 
-.gameBar > a:hover{
+.navbar > a:hover{
   background:var(--background_hover);
   color:var(--color_hover);
 }
 
-.gameBar > a:active{
+.navbar > a:active{
   background:var(--background_click);
   color:var(--color_click);
 }

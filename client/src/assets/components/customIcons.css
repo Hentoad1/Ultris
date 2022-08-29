@@ -1,0 +1,20 @@
+.InfoBox{
+    position:relative;
+}
+
+.InfoBox > .dropdown{
+    position:absolute;
+    top:calc(100% + 0.75rem);
+    left:50%;
+    transform:translateX(-50%);
+    width:max-content;
+
+    padding:0.5em;
+    border:1px solid white;
+    border-radius:3px;
+
+    background:var(--background-color);
+    opacity: 1;
+
+    z-index:2;
+}
