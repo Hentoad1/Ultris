@@ -1,108 +1,104 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link , Navigate } from 'react-router-dom';
 
-import Context from '../../global/context.js';
+//import Context from '../../global/context.js';
 
-import {AnimatedInput,AnimatedPasswordInput} from '../../global/components/animatedInput.js';
-import CustomCheckbox from '../../global/components/customCheckbox.js';
+import {AnimatedInput,AnimatedPasswordInput} from '../../assets/components/animatedInput.js';
+import CustomCheckbox from '../../assets/components/customCheckbox.js';
+import useAPI from '../../assets/hooks/useAPI.js';
 import {ReactComponent as Loading} from '../../assets/svgs/Loading.svg';
 
-import '../../global/styles/menu.css';
+import '../../assets/styles/menu.css';
 
-class Register extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            loading:false,
-            stage:0,
-            userData:{},
-            redirect:null
+function Register(){
+  let [stage, setStage] = useState(0);
+  let [userData, setUserData] = useState({});
+  let [loading, setLoading] = useState(false);
+  let QueryAPI = useAPI();
+
+  let nextStage = (newData,stage) => {
+    let newUserData = Object.assign({...userData}, newData);
+    setUserData(newUserData);
+
+    if (stage === 2){
+      QueryAPI('/account/register', newUserData, (result) => {
+        setLoading(false);
+        if (result && result.reset){
+          setStage(0);
         }
-
-        this.setStage = this.setStage.bind(this);
-        this.setLoading = this.setLoading.bind(this);
+      });
     }
+  }
 
-    static contextType = Context;
 
-    throwError(err){
-        this.context.createNotification(err);
-    }
-    
-    setLoading(loading){
-        this.setState({loading});
-    }
 
-    setStage(newData,stage){
-        let userData = this.state.userData;
-        Object.assign(userData, newData);
+  let stageContent = null;
+  if (stage === 0){
+    stageContent = <EmailSection setStage = {nextStage} setLoading = {setLoading}/>
+  }else if (stage === 0.5){
+    stageContent = <SigninSection setStage = {nextStage} setLoading = {setLoading}/>
+  }else if (stage === 1){
+    stageContent = <AccountSection setStage = {nextStage} setLoading = {setLoading}/>
+  }
 
-        if (stage === 2){
-            if (this.state.loading){
-                return;
-            }
+  let loadingContent = loading ? 
+  <div className = 'loading'>
+    <Loading/>
+  </div>
+  : null;
 
-            fetch('http://localhost:9000/account/register', {
-                method: 'POST',
-                body: JSON.stringify(userData),
-                headers: {
-                    'Content-type':'application/json'
-                }
-            })
-            .then(res => res.json())
-            .then(function(res){
-                if (res.reset){
-                    this.setState({stage:0});
-                }
-                if (res.err){
-                    this.setLoading(false);
-                    this.throwError(res.err);
-                }else{
-                    this.context.refreshSession(() => this.setState({redirect:'/play',loading:false}));
-                }
-            }.bind(this))
-            .catch(function(){
-                this.setLoading(false);
-                this.throwError('An unexpected error has occured. Please try again later.')
-            }.bind(this))
-        }else{
-            this.setState({loading:false,stage,userData});
-        }
-        
-    }
-
-    render() {
-        if (this.state.redirect){
-            return <Navigate to={this.state.redirect}/>
-        }
-
-        let loadingContent = this.state.loading ? 
-        <div className = 'loading'>
-            <Loading/>
-        </div>
-        : null;
-        
-        let stageContent = null;
-        if (this.state.stage === 0){
-            stageContent = <EmailSection setStage = {this.setStage} setLoading = {this.setLoading}/>
-        }else if (this.state.stage === 0.5){
-            stageContent = <SigninSection setStage = {this.setStage} setLoading = {this.setLoading}/>
-        }else if (this.state.stage === 1){
-            stageContent = <AccountSection setStage = {this.setStage} setLoading = {this.setLoading}/>
-        }
-
-        return (
-            <div className = "page_content centered">
-                <div className = "menu" style = {{'--menu-width':'15em'}}>
-                    {stageContent}
-                    {loadingContent}
-                </div>
-            </div>
-        )
-    }
+  return (
+    <div className = "page_content centered">
+      <div className = "menu" /*style = {{'--menu-width':'15em'}}*/>
+        {stageContent}
+        {loadingContent}
+      </div>
+    </div>
+  )
 }
 
-class EmailSection extends React.Component {
+function EmailSection(props){
+  let [email, setEmail] = useState({current:{}});
+  let QueryAPI = useAPI();
+
+  let submit = () => {
+    props.setLoading(true);
+    let emailJSON = {email:email.current.value};
+
+
+    console.log('calling queryapi');
+    QueryAPI('/account/email/', emailJSON, (result) => {
+      props.setLoading(false);
+      if (result){
+        if (result.taken){
+          props.setStage({},0.5);
+        }else{
+          props.setStage(emailJSON,1);
+        }
+      }
+    });
+  }
+
+  let keyHandler = function(e){
+    if (e.key === 'Enter'){
+        submit();
+    }
+  }
+
+  return (
+    <React.Fragment>
+      <div className = 'header'>
+        <h1>Enter your Email Address.</h1>
+        <span>You will need to verify it later.</span>
+      </div>
+      <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setEmail(ref); ref.current.focus()}} placeholder = 'EMAIL ADDRESS' background = '#0F0F0F11'/>
+      <button onClick = {submit}>CONTINUE</button>
+      <span>Already have an account? <Link to = '/login' className = 'link'>Sign in</Link></span>
+    </React.Fragment>
+  )
+}
+
+/*class EmailSection extends React.Component {
     constructor(props){
         super(props);
 
@@ -110,7 +106,7 @@ class EmailSection extends React.Component {
         this.keyHandler = this.keyHandler.bind(this);
     }
 
-    static contextType = Context;
+    //static contextType = Context;
 
     throwError(err){
         this.context.createNotification(err);
@@ -166,7 +162,7 @@ class EmailSection extends React.Component {
             </React.Fragment>
         )
     }
-}
+}*/
 
 class AccountSection extends React.Component {
     constructor(props){
@@ -207,7 +203,7 @@ class AccountSection extends React.Component {
                     <CustomCheckbox onInput = {function(e){this.setState({checked:e.target.checked})}.bind(this)} style = {{marginRight:'0.5em'}}/>
                     <span>I agree to the <Link to = '/privacy' className = 'link' tabIndex = '-1'>Privacy Policy</Link></span>
                 </div>
-                <button onClick = {this.submit} disabled = {!this.state.checked}>CONTINUE</button>
+                <button onClick = {this.submit} disabled = {!this.state.checked}>REGISTER</button>
             </React.Fragment>
         )
     }

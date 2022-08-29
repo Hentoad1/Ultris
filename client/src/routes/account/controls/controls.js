@@ -84,6 +84,7 @@ class Controls extends React.Component {
                     </li>
                     )}
                 </ul>
+
                 <button className = 'AlternateColor' onClick = {() => this.setState({controls:Object.assign({},defaultControls)})} disabled = {ctrlsMatchDefault}>Set to Default</button>
                 <button disabled = {ctrlsMatchInitial} onClick = {this.save}>Save</button>
                 {this.state.popup}

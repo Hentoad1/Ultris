@@ -9,7 +9,7 @@ class AnimatedInput extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            minimized:false
+            minimized:(props.value !== undefined)
         }
 
         this.updatePlaceholder = this.updatePlaceholder.bind(this);
@@ -44,14 +44,10 @@ class AnimatedInput extends React.Component {
         };
         return (
             <div className = 'AnimatedInput' style = {parentStyle} onBlur = {this.updatePlaceholder} onFocus = {this.hidePlaceholder}>
-                <input ref = {this.ref} type = {this.props.type ?? 'text'} onKeyUp = {this.props.onKeyUp}/>
+                <input ref = {this.ref} type = {this.props.type ?? 'text'} onKeyUp = {this.props.onKeyUp} defaultValue = {this.props.value}/>
                 <span className = {this.state.minimized ? 'minimized' : ''}>{this.props.placeholder}</span>
                 <div className = 'iconWrapper'>
-                    {(this.props.children ?? []).map((icon, key) => 
-                        icon === undefined ? null : <div className = 'icon' key = {key}>
-                            {icon}
-                        </div>
-                    )}
+                    {React.Children.map(this.props.children,(icon,key) => <div className = 'icon' key = {key}>{icon}</div>)}
                 </div>
             </div>
         )
@@ -74,13 +70,16 @@ class AnimatedPasswordInput extends React.Component {
 
     render() {
         let svg = this.state.showingText ? 
-        <TextVisible onClick = {this.updateIcon}/> : 
-        <TextHidden onClick = {this.updateIcon}/>;
+        <TextVisible onClick = {this.updateIcon} key = {0}/> : 
+        <TextHidden onClick = {this.updateIcon} key = {0}/>;
+
+        let icons = [svg];
+
+        React.Children.forEach(this.props.children,e => icons.push(e));
 
         return (
             <AnimatedInput type = {this.state.showingText ? 'text' : 'password'} onKeyUp = {this.props.onKeyUp} placeholder = {this.props.placeholder} onRef = {this.props.onRef} color = {this.props.style} background = {this.props.background} iconColor = {this.props.iconColor}>
-                {svg}
-                {this.props.children}
+                {icons}
             </AnimatedInput>
         )
     }
