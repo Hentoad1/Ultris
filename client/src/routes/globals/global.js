@@ -1,0 +1,19 @@
+import {Fragment} from 'react';
+import {Outlet} from 'react-router-dom';
+
+import {Alerts} from '../../assets/hooks/useAlerts.js';
+import Navbar from './navbar.js';
+
+import './global.css';
+
+function Globals(props){
+  return (
+    <Fragment>
+      <Alerts/>
+      <Navbar/>
+      <Outlet/>
+    </Fragment>
+  );
+}
+
+export default Globals;

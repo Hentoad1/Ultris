@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Globals from './global/global.js';
+import Globals from './routes/globals/global.js';
 import PlayMenu from './routes/play/playMenu.js';
 import {Wrapper as Game} from './routes/play/wrapper.js';
 import Register from './routes/register/register.js';
@@ -10,6 +10,7 @@ import Login from './routes/login/login.js';
 import Account from './routes/account/account.js';
 import Controls from './routes/account/controls/controls.js';
 import Handling from './routes/account/handling/handling.js';
+import VerifySession from './routes/account/secure/verifySession.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -23,6 +24,9 @@ root.render(
             <Route path='account' element = {<Account />}>
               <Route path='controls' element = {<Controls />} />
               <Route path='handling' element = {<Handling />} />
+              <Route path='secure' element = {<VerifySession />} >
+                <Route path='*' element = {<h1>\text</h1>} />
+              </Route>
             </Route>
             <Route path='play'>
               <Route index element = {<PlayMenu />} />
