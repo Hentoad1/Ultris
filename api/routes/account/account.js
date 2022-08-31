@@ -54,7 +54,8 @@ router.post('/register', function(req, res, next) {
         lastLogged: Date.now()
       }
       req.session.save();
-      res.send(result);
+
+      res.send({redirect:'/play'});
     });
   });
 });
@@ -65,7 +66,11 @@ router.post('/email', function(req, res, next) {
   verifyEmail(email,function callback(err, response){
     if (err) return next (err)
 
-    res.send({error:response,email})
+    if (response){
+      res.send({error:response});
+    }else{
+      res.send({result:{email}})
+    }
   });
 });
 

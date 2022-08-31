@@ -27,6 +27,8 @@ function Register(){
           setStage(0);
         }
       });
+    }else{
+      setStage(stage);
     }
   }
 
@@ -66,8 +68,8 @@ function EmailSection(props){
     let emailJSON = {email:email.current.value};
 
 
-    console.log('calling queryapi');
     QueryAPI('/account/email/', emailJSON, (result) => {
+      console.log(result);
       props.setLoading(false);
       if (result){
         if (result.taken){
@@ -98,64 +100,54 @@ function EmailSection(props){
   )
 }
 
-class AccountSection extends React.Component {
-    constructor(props){
-        super(props);
+function AccountSection(props){
+  let [username, setUsername] = useState({current:{}});
+  let [password, setPassword] = useState({current:{}});
+  let [checked, setChecked] = useState(false);
 
-        this.state = {
-            checked:false
-        }
 
-        this.submit = this.submit.bind(this);
-        this.keyHandler = this.keyHandler.bind(this);
+  let submit = () => {
+    let usernameValue = username.current.value;
+    let passwordValue = password.current.value;
+
+    props.setLoading(true);
+    props.setStage({username:usernameValue, password:passwordValue},2);
+  }
+
+  let keyHandler = (e) => {
+    if (e.key === 'Enter' && checked){
+      submit();
     }
+  }
 
-    submit(){
-        let username = this.usernameRef.current.value;
-        let password = this.passwordRef.current.value;
-
-        this.props.setLoading(true);
-        this.props.setStage({username, password},2);
-    }
-
-    keyHandler(e){
-        if (e.key === 'Enter' && this.state.checked){
-            this.submit();
-        }
-    }
-
-    render() {
-        return (
-            <React.Fragment>
-                <div className = 'header'>
-                    <h1>Account Info</h1>
-                    <span>Enter a Username and Password.</span>
-                </div>
-                <AnimatedInput onKeyUp = {this.keyHandler} onRef = {ref => {this.usernameRef = ref; ref.current.focus()}} placeholder = 'USERNAME' background = '#0F0F0F11'/>
-                <AnimatedPasswordInput onKeyUp = {this.keyHandler} onRef = {ref => this.passwordRef = ref} placeholder = 'PASSWORD' background = '#0F0F0F11'/>
-                <div className = 'row'>
-                    <CustomCheckbox onInput = {function(e){this.setState({checked:e.target.checked})}.bind(this)} style = {{marginRight:'0.5em'}}/>
-                    <span>I agree to the <Link to = '/privacy' className = 'link' tabIndex = '-1'>Privacy Policy</Link></span>
-                </div>
-                <button onClick = {this.submit} disabled = {!this.state.checked}>REGISTER</button>
-            </React.Fragment>
-        )
-    }
+  return (
+    <React.Fragment>
+      <div className = 'header'>
+        <h1>Account Info</h1>
+        <span>Enter a Username and Password.</span>
+      </div>
+      <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setUsername(ref); ref.current.focus()}} placeholder = 'USERNAME' background = '#0F0F0F11'/>
+      <AnimatedPasswordInput onKeyUp = {keyHandler} onRef = {ref => setPassword(ref)} placeholder = 'PASSWORD' background = '#0F0F0F11'/>
+      <div className = 'row'>
+        <CustomCheckbox onInput = {e => setChecked(e.target.checked)} style = {{marginRight:'0.5em'}}/>
+        <span>I agree to the <Link to = '/privacy' className = 'link' tabIndex = '-1'>Privacy Policy</Link></span>
+      </div>
+      <button onClick = {submit} disabled = {!checked}>REGISTER</button>
+    </React.Fragment>
+  )
 }
 
-class SigninSection extends React.Component {
-    render() {
-        return (
-            <React.Fragment>
-                <div className = 'header'>
-                    <h1>An account with this email already exists.</h1>
-                    <span>Would you like to sign in instead?</span>
-                </div>
-                <Link to = '/login' style = {{width:'100%'}} tabIndex = '-1'><button>SIGN IN</button></Link>
-                <button className = 'AlternameColor' style = {{background:'white',color:'black'}} onClick = {() => this.props.setStage({},0)}>NO THANKS</button>
-            </React.Fragment>
-        )
-    }
+function SigninSection(props){
+  return (
+    <React.Fragment>
+      <div className = 'header'>
+        <h1>An account with this email already exists.</h1>
+        <span>Would you like to sign in instead?</span>
+      </div>
+      <Link to = '/login' style = {{width:'100%'}} tabIndex = '-1'><button>SIGN IN</button></Link>
+      <button className = 'AlternameColor' style = {{background:'white',color:'black'}} onClick = {() => props.setStage({},0)}>NO THANKS</button>
+    </React.Fragment>
+  )
 }
 
 export default Register;
