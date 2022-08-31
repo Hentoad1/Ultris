@@ -1,8 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
-var database = require('../modules/database.js');
+var database = require('../../modules/database.js');
+var secureRouter = require('./secure/secure.js');
 
+router.use('/secure', secureRouter);
 
 //LOGOUT BUTTON
 router.post('/logout', function(req, res, next) {
@@ -63,7 +65,7 @@ router.post('/email', function(req, res, next) {
   verifyEmail(email,function callback(err, response){
     if (err) return next (err)
 
-    res.send({err:response,email})
+    res.send({error:response,email})
   });
 });
 
@@ -88,23 +90,6 @@ router.post('/login', function(req, res, next) {
       res.send({error:'Incorrect Login Information.'});
     }
   });
-});
-
-//ACCOUNT ROUTE FROM CLIENT
-router.post('/secure', function(req, res, next) {
-  if (req.session.username ?? 'GUEST' === 'GUEST'){
-    res.send({err:'You must be logged in to access this page.'});
-    return;
-  }
-
-  let loggedInRecently = req.session.lastLogged > Date.now() - (1000 * 60 * 60 * 24);
-
-
-  let output = {
-    secure: loggedInRecently
-  };
-
-  res.send(output);
 });
 
 //MAIN API

@@ -39,7 +39,7 @@ var sessionMiddleware = sessions({
 app.use(sessionMiddleware);
 
 var indexRouter = require('./routes/index');
-var accountRouter = require('./routes/account');
+var accountRouter = require('./routes/account/account');
 
 app.use(async function(req, res, next){ //simulate latency
   await new Promise((resolve, reject) => setTimeout(resolve, 1000));
