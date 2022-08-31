@@ -90,7 +90,7 @@ router.post('/login', function(req, res, next) {
       }
       req.session.save();
 
-      res.send({error:null});
+      res.send({redirect:'/play'});
     }else{
       res.send({error:'Incorrect Login Information.'});
     }
