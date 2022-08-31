@@ -4,13 +4,30 @@ import {ReactComponent as Warning} from '../svgs/Warning.svg';
 
 import '../styles/alerts.css';
 
+let sharedAlerts = [];
+
+function useSharedState() {
+  const [state, _setState] = useState(sharedAlerts);
+
+  // If shared count is changed by other hook instances, update internal count
+  useEffect(() => {
+    _setState(sharedAlerts);
+  }, [sharedAlerts]);
+
+  const setState = (value) => {
+    sharedAlerts = value; // Update shared count for use by other hook instances
+    _setState(value);    // Update internal count
+  };
+  
+  return [state, setState];
+}
+
 function useAlerts(){
-  const [alerts, setAlerts] = useState([]);
-  const [count, setCount] = useState(0);
+  let [alerts, setAlerts] = useSharedState();
+  let [count, setCount] = useState(0);
 
   let add = (content) => {
     let remove = () => {
-      console.log('slicing alert here', alerts, 't');
       setAlerts(alerts => alerts.slice(1));
     };
 
@@ -27,21 +44,19 @@ function useAlerts(){
     setCount(count => count + 1);
   }
 
-  return [alerts,add];
+  return add;
 }
 
 function Alerts(){
-  let [alerts] = useAlerts();
-
-  console.log('alert render happened');
-
-  useEffect(() => {
-    console.log('alerts in function', alerts);
-  }, [alerts,alerts.length]);
+  let [alerts] = useSharedState();
   
+  useEffect(() => {
+    console.log('alerts', alerts);
+  }, [alerts])
+
   return (
     <div className = 'alerts'>
-      {'text'}
+      {alerts}
     </div>
   )
 }

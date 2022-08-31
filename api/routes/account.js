@@ -28,7 +28,7 @@ router.post('/register', function(req, res, next) {
   let errorMessage = usernameInvalid || passwordInvalid;
   if (errorMessage){
     return res.send({
-      err: errorMessage
+      error: errorMessage
     });
   }
 
@@ -38,7 +38,7 @@ router.post('/register', function(req, res, next) {
     if (err) return next (err);
     if (response){
       return res.send({
-        err: "An error has occurred.",
+        error: "An error has occurred.",
         reset: true
       });
     }
@@ -83,9 +83,9 @@ router.post('/login', function(req, res, next) {
       }
       req.session.save();
 
-      res.send({err:null});
+      res.send({error:null});
     }else{
-      res.send({err:'Incorrect Login Information.'});
+      res.send({error:'Incorrect Login Information.'});
     }
   });
 });

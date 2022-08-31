@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link , Navigate } from 'react-router-dom';
 
-//import Context from '../../global/context.js';
+//import Content from '../gbs.ssdf'
 
 import {AnimatedInput,AnimatedPasswordInput} from '../../assets/components/animatedInput.js';
 import CustomCheckbox from '../../assets/components/customCheckbox.js';
@@ -97,72 +97,6 @@ function EmailSection(props){
     </React.Fragment>
   )
 }
-
-/*class EmailSection extends React.Component {
-    constructor(props){
-        super(props);
-
-        this.submit = this.submit.bind(this);
-        this.keyHandler = this.keyHandler.bind(this);
-    }
-
-    //static contextType = Context;
-
-    throwError(err){
-        this.context.createNotification(err);
-    }
-
-    keyHandler(e){
-        if (e.key === 'Enter'){
-            this.submit();
-        }
-    }
-
-    submit(){
-        let email = this.inputRef.current.value;
-
-        fetch('http://localhost:9000/account/email', {
-            method: 'POST',
-            body: JSON.stringify({email}),
-            headers: {
-                'Content-type':'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(function(res){
-            this.props.setLoading(false);
-            if (res.err){
-                if (res.err === 'Email taken.'){
-                    this.props.setStage({},0.5);
-                }else{
-                    this.throwError(res.err);
-                }
-            }else{
-                this.props.setStage({email:res.email},1);
-            }
-        }.bind(this))
-        .catch(function(){
-            this.props.setLoading(false);
-            this.throwError('An unexpected error has occured. Please try again later.')
-        }.bind(this))
-
-        this.props.setLoading(true);
-    }
-
-    render() {
-        return (
-            <React.Fragment>
-                <div className = 'header'>
-                    <h1>Enter your Email Address.</h1>
-                    <span>You will need to verify it later.</span>
-                </div>
-                <AnimatedInput onKeyUp = {this.keyHandler} onRef = {ref => {this.inputRef = ref; ref.current.focus()}} placeholder = 'EMAIL ADDRESS' background = '#0F0F0F11'/>
-                <button onClick = {this.submit}>CONTINUE</button>
-                <span>Already have an account? <Link to = '/login' className = 'link'>Sign in</Link></span>
-            </React.Fragment>
-        )
-    }
-}*/
 
 class AccountSection extends React.Component {
     constructor(props){

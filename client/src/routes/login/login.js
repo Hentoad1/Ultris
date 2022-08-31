@@ -1,8 +1,6 @@
 import {useState} from 'react';
 import { Link , Navigate } from 'react-router-dom';
 
-//import Context from '../../global/context.js';
-
 import {AnimatedInput,AnimatedPasswordInput} from '../../assets/components/animatedInput.js';
 import useAPI from '../../assets/hooks/useAPI.js';
 import {ReactComponent as Loading} from '../../assets/svgs/Loading.svg';

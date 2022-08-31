@@ -4,12 +4,8 @@ import { useNavigate } from 'react-router';
 import useAlerts from './useAlerts';
 
 function useAPI(){
-  let [alerts, addAlert] = useAlerts();
+  let addAlert = useAlerts();
   let navigate = useNavigate();
-
-  useEffect(() => {
-    console.log('API', alerts);
-  }, [alerts])
 
   let APIcall = function(path, body, callback = function(){}){
     let options = (body) ? {
@@ -21,7 +17,7 @@ function useAPI(){
     } : {
       method: 'POST'
     }
-    
+
     let processResponse = function(response){
       console.log('response',response);
       if (response.redirect){
@@ -29,7 +25,7 @@ function useAPI(){
         callback(null);
       }else{
         if (response.error){
-          console.log('adding alert', alerts);
+          console.log('adding alerts');
           addAlert(response.error);
         }
         callback(response.result);
