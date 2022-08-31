@@ -33,6 +33,7 @@ function useAPI(){
     };
 
     let handleError = function(error){
+      console.log(error.message);
       addAlert('An error occured trying to communicate with the server.');
       callback(null);
     };

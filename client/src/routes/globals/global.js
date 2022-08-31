@@ -9,9 +9,10 @@ import './global.css';
 function Globals(props){
   return (
     <Fragment>
-      <Alerts/>
-      <Navbar/>
-      <Outlet/>
+      <Alerts>
+        <Navbar/>
+        <Outlet/>
+      </Alerts>
     </Fragment>
   );
 }

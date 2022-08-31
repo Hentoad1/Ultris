@@ -1,30 +1,15 @@
-import { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useContext, createContext } from 'react';
 
 import {ReactComponent as Warning} from '../svgs/Warning.svg';
 
 import '../styles/alerts.css';
 
-let sharedAlerts = [];
-
-function useSharedState() {
-  const [state, _setState] = useState(sharedAlerts);
-
-  // If shared count is changed by other hook instances, update internal count
-  useEffect(() => {
-    _setState(sharedAlerts);
-  }, [sharedAlerts]);
-
-  const setState = (value) => {
-    sharedAlerts = value; // Update shared count for use by other hook instances
-    _setState(value);    // Update internal count
-  };
-  
-  return [state, setState];
-}
+const AlertContext = createContext();
+const CountContext = createContext();
 
 function useAlerts(){
-  let [alerts, setAlerts] = useSharedState();
-  let [count, setCount] = useState(0);
+  let [alerts, setAlerts] = useContext(AlertContext);
+  let [count, setCount] = useContext(CountContext);
 
   let add = (content) => {
     let remove = () => {
@@ -32,32 +17,38 @@ function useAlerts(){
     };
 
     const newAlert = (
-      <div className = 'alert' onAnimationEnd = {remove} key = {count}>
+      <div className = 'alert' onAnimationEnd = {remove}>
         <Warning/>
         <span>
           {content}
         </span>
       </div>
-    )
+    );
 
-    setAlerts(alerts => [...alerts, newAlert]);
     setCount(count => count + 1);
+    setAlerts(alerts => [...alerts, newAlert]);
   }
 
   return add;
 }
 
-function Alerts(){
-  let [alerts] = useSharedState();
-  
-  useEffect(() => {
-    console.log('alerts', alerts);
-  }, [alerts])
+function Alerts(props){
+  const alerts = useState([]);
+  const count = useState(0);
 
+
+  console.log(alerts[0]);
   return (
-    <div className = 'alerts'>
-      {alerts}
-    </div>
+    <Fragment>
+      <div className = 'alerts'>
+        {alerts[0].map((x,i)=> <div key = {i}>{x}</div>)}
+      </div>
+      <AlertContext.Provider value={alerts}>
+        <CountContext.Provider value={count}>
+          {props.children}
+        </CountContext.Provider>
+      </AlertContext.Provider>
+    </Fragment>
   )
 }
 
