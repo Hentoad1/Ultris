@@ -1,23 +1,17 @@
-import { Fragment, useState, useEffect, useContext, createContext } from 'react';
+import { Fragment, useState, useEffect, useCallback, useContext, createContext } from 'react';
 
 import {ReactComponent as Warning} from '../svgs/Warning.svg';
 
 import '../styles/alerts.css';
 
 const AlertContext = createContext();
-const CountContext = createContext();
 
 function useAlerts(){
   let [alerts, setAlerts] = useContext(AlertContext);
-  let [count, setCount] = useContext(CountContext);
 
-  let add = (content) => {
-    let remove = () => {
-      setAlerts(alerts => alerts.slice(1));
-    };
-
+  let add = useCallback((content) => {
     const newAlert = (
-      <div className = 'alert' onAnimationEnd = {remove}>
+      <div className = 'alert' onAnimationEnd = {() => {}/*setAlerts(alerts => alerts.slice(1))*/}>
         <Warning/>
         <span>
           {content}
@@ -25,28 +19,26 @@ function useAlerts(){
       </div>
     );
 
-    setCount(count => count + 1);
     setAlerts(alerts => [...alerts, newAlert]);
-  }
+  },[setAlerts]);
 
   return add;
 }
 
 function Alerts(props){
-  const alerts = useState([]);
-  const count = useState(0);
+  const [alerts, setAlerts] = useState([]);
 
+  useEffect(() => {
+    console.log(alerts);
+  }, [alerts]);
 
-  console.log(alerts[0]);
   return (
     <Fragment>
       <div className = 'alerts'>
-        {alerts[0].map((x,i)=> <div key = {i}>{x}</div>)}
+        {alerts.map((x,i) => <Fragment key = {i}>{x}</Fragment>)}
       </div>
-      <AlertContext.Provider value={alerts}>
-        <CountContext.Provider value={count}>
+      <AlertContext.Provider value={[alerts, setAlerts]}>
           {props.children}
-        </CountContext.Provider>
       </AlertContext.Provider>
     </Fragment>
   )

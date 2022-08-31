@@ -26,7 +26,7 @@ function Login(props){
   };
 
   let keyHandler = function(e){
-    if (e.key === 'Enter' && (!loading || true)){
+    if (e.key === 'Enter' && loading){
         submit();
     }
   }
