@@ -38,16 +38,14 @@ var sessionMiddleware = sessions({
 
 app.use(sessionMiddleware);
 
-var indexRouter = require('./routes/index');
-var accountRouter = require('./routes/account/account');
+var router = require('./routes/index');
 
 app.use(async function(req, res, next){ //simulate latency
   await new Promise((resolve, reject) => setTimeout(resolve, 1000));
   next()
-})
+});
 
-app.use('/', indexRouter);
-app.use('/account', accountRouter);
+app.use('/', router);
 
 // create 404 if no route is found
 app.use(function(req, res, next) {

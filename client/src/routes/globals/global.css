@@ -44,15 +44,6 @@ li{
   justify-content: center;
 }
 
-::-webkit-scrollbar{
-  width:5px;
-	background:transparent;
-}
-
-::-webkit-scrollbar-thumb{
-	background:#FFFFFF88;
-}
-
 .link{
   color:inherit;
   text-decoration:underline;
@@ -85,12 +76,16 @@ html button{
 
   position:relative;
   user-select: none;
-  cursor:pointer;
+  cursor: pointer;
 }
 
 html button.AlternateColor{
   background:white;
   color:black;
+}
+
+html button:disabled{
+  pointer-events: none;
 }
 
 html button:disabled::after{
@@ -105,3 +100,16 @@ html button:disabled::after{
   border-radius:inherit;
 }
 
+::-webkit-scrollbar{
+  width:5px;
+	background:transparent;
+}
+
+::-webkit-scrollbar-thumb{
+	background:#FFFFFF88;
+}
+
+:-webkit-any-link {
+  color: inherit;
+  text-decoration: none;
+}

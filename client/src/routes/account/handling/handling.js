@@ -22,24 +22,24 @@ class Handling extends React.Component {
     render() {
         return (
             <div className = 'handling'>
-                <h1>Handling</h1>
-                <AnimatedInput placeholder = 'DAS' value = {2}>
-                    <InfoBox content = 'Delayed Auto Shift: The delay until your piece will start shifting when a direction is held down.'/>
-                </AnimatedInput>
-                <AnimatedInput placeholder = 'ARR'>
-                    <InfoBox content = 'Auto Refresh Rate: The delay between shifts when DAS is held.'/>
-                </AnimatedInput>
-                <AnimatedInput placeholder = 'SDF'>
-                    <InfoBox content = 'Soft Drop Factor: The factor soft drop will lower the piece by.'/>
-                </AnimatedInput>
-                <div className = 'row'>
-                    <CustomCheckbox className = 'checkbox'/>
-                    <span>Instant Soft Drop</span>
-                </div>
-                <div className = 'row'>
-                    <CustomCheckbox className = 'checkbox'/>
-                    <span>Measure with Frames</span>
-                </div>
+              <h1>Handling</h1>
+              <AnimatedInput placeholder = 'DAS' value = {2}>
+                <InfoBox content = 'Delayed Auto Shift: The delay until your piece will start shifting when a direction is held down.'/>
+              </AnimatedInput>
+              <AnimatedInput placeholder = 'ARR'>
+                <InfoBox content = 'Auto Refresh Rate: The delay between shifts when DAS is held.'/>
+              </AnimatedInput>
+              <AnimatedInput placeholder = 'SDF'>
+                <InfoBox content = 'Soft Drop Factor: The factor soft drop will lower the piece by.'/>
+              </AnimatedInput>
+              <div className = 'row'>
+                <CustomCheckbox className = 'checkbox'/>
+                <span>Instant Soft Drop</span>
+              </div>
+              <div className = 'row'>
+                <CustomCheckbox className = 'checkbox'/>
+                <span>Measure with Frames</span>
+              </div>
             </div>
         );
     }

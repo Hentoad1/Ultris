@@ -6,7 +6,7 @@ import useSession from '../../assets/hooks/useSession.js';
 import './navbar.css';
 
 function Navbar(){
-  let session = useSession();
+  let [session] = useSession();
 
   let userInfo = session.guest ? 
   <Fragment>

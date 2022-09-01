@@ -29,7 +29,7 @@ function Alerts(props){
   const [alerts, setAlerts] = useState([]);
 
   useEffect(() => {
-    console.log(alerts);
+    //console.log(alerts);
   }, [alerts]);
 
   return (

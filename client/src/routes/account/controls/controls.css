@@ -59,7 +59,6 @@
 }
 
 .controls > button{
-    pointer-events:auto;
     margin-top:1em;
 }
 

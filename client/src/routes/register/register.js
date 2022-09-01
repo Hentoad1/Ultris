@@ -69,7 +69,6 @@ function EmailSection(props){
 
 
     QueryAPI('/account/email/', emailJSON, (result) => {
-      console.log(result);
       props.setLoading(false);
       if (result){
         if (result.taken){

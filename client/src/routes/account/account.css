@@ -1,83 +1,89 @@
 .account{
-    display:grid;
-    grid-template-columns:15% 1fr;
-    height:100%;
+  display:grid;
+  grid-template-columns:15% 1fr;
+  height:100%;
 }
 
 .account-navbar{
-    display:flex;
-    flex-direction:column;
+  display:flex;
+  flex-direction:column;
 
-    user-select: none;
-    padding:1em;
-    margin:1em;
+  user-select: none;
+  padding:1em;
+  margin:1em;
 }
 
-.account-navbar .section{
-    display:flex;
-    flex-direction: column;
-    gap:0.2rem;
-    position:relative;
+.account-navbar > .section{
+  display:flex;
+  flex-direction: column;
+  gap:0.2rem;
+  position:relative;
 }
 
-.account-navbar .section:not(:last-child){
-    padding-bottom:1em;
-    margin-bottom:1em;
-    border-bottom:1px solid #fff5;
+.account-navbar > .section:not(:last-child){
+  padding-bottom:1em;
+  margin-bottom:1em;
+  border-bottom:1px solid #fff5;
 }
 
-.account-navbar .section.disabled{
-    pointer-events: none;
-    opacity: 0.4;
+.account-navbar > .section.disabled{
+  pointer-events: none;
+  opacity: 0.4;
 }
 
-.account-navbar h1{
-    padding:0.5em;
-    user-select: none;
-    color:white;
+.account-navbar > .section > h1{
+  padding:0.5em;
+  user-select: none;
+  color:white;
 }
 
-.account-navbar a{
-    border-radius:5px;
-    padding:0.5em;
-    opacity:0.7;
+.account-navbar > .section > :not(h1){
+  border-radius:5px;
+  padding:0.5em;
+  opacity:0.7;
+  cursor: pointer;
 }
 
-.account-navbar a:hover{
-    background:#fff1;
+.account-navbar > .section > :not(h1):hover{
+  background:#fff1;
 }
 
-.account-navbar a.active{
-    background:#fff1;
-    opacity:1;
+.account-navbar > .section > :not(h1):active{
+  background:#fff1;
+  opacity:1;
+}
+
+.account-navbar > .section > :not(h1).active{
+  background:#fff1;
+  opacity:1;
 }
 
 .account-content{
-    background:#242424;
+  background:#242424;
 
-    display:flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-direction: column;
+  display:flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
 
-    overflow:auto;
-    height:100%;
+  overflow:auto;
+  height:100%;
 }
 
 .loadingWrapper{
-    position:fixed;
+  position:fixed;
 
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    background:#0009;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:#0009;
 
-    display:flex;
-    align-items: center;
-    justify-content: center;
+  display:flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .loadingWrapper svg{
-    height:15%;
+  height:15%;
 }

@@ -1,11 +1,12 @@
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 import useAlerts from './useAlerts';
+import useSession from './useSession';
 
 function useAPI(){
   let addAlert = useAlerts();
   let navigate = useNavigate();
+  let [, refresh] = useSession();
 
   let APIcall = function(path, body, callback = function(){}){
     let options = (body) ? {
@@ -18,14 +19,15 @@ function useAPI(){
       method: 'POST'
     }
 
-    let processResponse = function(response){
-      console.log('response',response);
+    let processResponse = async function(response){
       if (response.redirect){
-        navigate(response.redirect);
+        if (response.redirect.refresh){
+          await new Promise(r => refresh(r));
+        }
+        navigate(response.redirect.path);
         callback(null);
       }else{
         if (response.error){
-          console.log('adding alerts');
           addAlert(response.error);
         }
         callback(response.result);
@@ -33,6 +35,7 @@ function useAPI(){
     };
 
     let handleError = function(error){
+      console.log('fetcherror', error)
       addAlert('An error occured trying to communicate with the server.');
       callback(null);
     };

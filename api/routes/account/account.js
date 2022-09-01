@@ -4,6 +4,7 @@ var router = express.Router();
 var database = require('../../modules/database.js');
 var secureRouter = require('./secure/secure.js');
 
+//SECURE ROUTE
 router.use('/secure', secureRouter);
 
 //LOGOUT BUTTON
@@ -11,7 +12,7 @@ router.post('/logout', function(req, res, next) {
   database.getUUID(function(err, uuid){
     if (err) return next (err);
 
-    req.session.username = 'GUEST';
+    req.session.username = undefined;
     req.session.uuid = uuid;
     req.session.save();
 
@@ -55,7 +56,7 @@ router.post('/register', function(req, res, next) {
       }
       req.session.save();
 
-      res.send({redirect:'/play'});
+      res.send({redirect:{path:'/play',refresh:true}});
     });
   });
 });
@@ -90,7 +91,7 @@ router.post('/login', function(req, res, next) {
       }
       req.session.save();
 
-      res.send({redirect:'/play'});
+      res.send({redirect:{path:'/play',refresh:true}});
     }else{
       res.send({error:'Incorrect Login Information.'});
     }

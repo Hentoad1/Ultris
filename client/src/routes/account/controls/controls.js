@@ -22,15 +22,13 @@ class Controls extends React.Component {
     constructor(props){
         super(props);
 
-        let controls = cookies.get('controls') ?? defaultControls;
+        let controls = JSON.parse(localStorage.getItem('controls') ?? JSON.stringify(defaultControls));
 
         this.state = {
             controls,
             popup:null,
             inital:Object.assign({},controls)
         }
-
-        
 
         this.rebind = this.rebind.bind(this);
         this.save = this.save.bind(this);
@@ -65,7 +63,7 @@ class Controls extends React.Component {
     }
 
     save(){
-        cookies.set('controls',this.state.controls, { path: '/' });
+        localStorage.setItem('controls', JSON.stringify(this.state.controls));
         this.setState({inital:Object.assign({},this.state.controls)});
     }
 
