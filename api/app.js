@@ -38,13 +38,34 @@ var sessionMiddleware = sessions({
 
 app.use(sessionMiddleware);
 
-var router = require('./routes/index');
 
 app.use(async function(req, res, next){ //simulate latency
   await new Promise((resolve, reject) => setTimeout(resolve, 1000));
   next()
 });
 
+
+var database = require('./modules/database.js');
+app.use(function(req,res,next){
+  if (req.session.data === undefined){
+    database.getUUID(function(err, uuid){
+      if (err) return next (err);
+      
+      req.session.data = {
+        username: 'GUEST',
+        uuid: uuid
+      }
+      req.session.save();
+      next();
+    });
+  }else{
+    next();
+  }
+});
+
+
+
+var router = require('./routes/index');
 app.use('/', router);
 
 // create 404 if no route is found
