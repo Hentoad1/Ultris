@@ -1,10 +1,10 @@
-.account{
+.dashboard{
   display:grid;
   grid-template-columns:15% 1fr;
   height:100%;
 }
 
-.account-navbar{
+.dashboard-navbar{
   display:flex;
   flex-direction:column;
 
@@ -13,52 +13,52 @@
   margin:1em;
 }
 
-.account-navbar > .section{
+.dashboard-navbar > .section{
   display:flex;
   flex-direction: column;
   gap:0.2rem;
   position:relative;
 }
 
-.account-navbar > .section:not(:last-child){
+.dashboard-navbar > .section:not(:last-child){
   padding-bottom:1em;
   margin-bottom:1em;
   border-bottom:1px solid #fff5;
 }
 
-.account-navbar > .section.disabled{
+.dashboard-navbar > .section.disabled{
   pointer-events: none;
   opacity: 0.4;
 }
 
-.account-navbar > .section > h1{
+.dashboard-navbar > .section > h1{
   padding:0.5em;
   user-select: none;
   color:white;
 }
 
-.account-navbar > .section > :not(h1){
+.dashboard-navbar > .section > :not(h1){
   border-radius:5px;
   padding:0.5em;
   opacity:0.7;
   cursor: pointer;
 }
 
-.account-navbar > .section > :not(h1):hover{
+.dashboard-navbar > .section > :not(h1):hover{
   background:#fff1;
 }
 
-.account-navbar > .section > :not(h1):active{
-  background:#fff1;
-  opacity:1;
-}
-
-.account-navbar > .section > :not(h1).active{
+.dashboard-navbar > .section > :not(h1):active{
   background:#fff1;
   opacity:1;
 }
 
-.account-content{
+.dashboard-navbar > .section > :not(h1).active{
+  background:#fff1;
+  opacity:1;
+}
+
+.dashboard-content{
   background:#242424;
 
   display:flex;

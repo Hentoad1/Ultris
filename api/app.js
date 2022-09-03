@@ -29,7 +29,7 @@ var sessionMiddleware = sessions({
   saveUninitialized:true,
   resave:false,
   cookie: {
-    //httpOnly: true,
+    httpOnly:true,
     expires:30 * 24 * 60 * 60 * 1000,
     secure:false,
     sameSite:false
@@ -45,23 +45,7 @@ app.use(async function(req, res, next){ //simulate latency
 });
 
 
-var database = require('./modules/database.js');
-app.use(function(req,res,next){
-  if (req.session.data === undefined){
-    database.getUUID(function(err, uuid){
-      if (err) return next (err);
-      
-      req.session.data = {
-        username: 'GUEST',
-        uuid: uuid
-      }
-      req.session.save();
-      next();
-    });
-  }else{
-    next();
-  }
-});
+
 
 
 

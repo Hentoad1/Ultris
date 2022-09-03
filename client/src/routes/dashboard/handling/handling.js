@@ -1,5 +1,4 @@
 import React from 'react';
-import Cookies from 'universal-cookie';
 
 import {AnimatedInput} from '../../../assets/components/animatedInput.js';
 import CustomCheckbox from '../../../assets/components/customCheckbox';

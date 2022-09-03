@@ -8,12 +8,7 @@ import './navbar.css';
 function Navbar(){
   let [session] = useSession();
 
-  let userInfo = session.guest ? 
-  <Fragment>
-    <Link to="/login">Login</Link>
-    <Link to="/register">Register</Link>
-  </Fragment> :
-  <Link to="/account">{session.username}</Link>
+  let userInfo = session.guest ? <Link to="/login">Sign In</Link> : null;
 
   return (
     <Fragment>
@@ -22,6 +17,7 @@ function Navbar(){
         <Link to="/leaderboard">Leaderboard</Link>
         <header>Ultris</header>
         {userInfo}
+        <Link to="/dashboard">Dashboard</Link>
       </nav>
     </Fragment>
   )

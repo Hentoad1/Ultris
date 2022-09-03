@@ -7,10 +7,11 @@ import PlayMenu from './routes/play/playMenu.js';
 import {Wrapper as Game} from './routes/play/wrapper.js';
 import Register from './routes/register/register.js';
 import Login from './routes/login/login.js';
-import Account from './routes/account/account.js';
-import Controls from './routes/account/controls/controls.js';
-import Handling from './routes/account/handling/handling.js';
-import VerifySession from './routes/account/secure/verifySession.js';
+import Dashboard from './routes/dashboard/dashboard.js';
+import Welcome from './routes/dashboard/welcome/welcome.js';
+import Controls from './routes/dashboard/controls/controls.js';
+import Handling from './routes/dashboard/handling/handling.js';
+import VerifySession from './routes/dashboard/secure/verifySession.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -21,7 +22,8 @@ root.render(
             <Route index element = {<h1>default</h1>} />
             <Route path='register' element = {<Register />} />
             <Route path='login' element = {<Login />} />
-            <Route path='account' element = {<Account />}>
+            <Route path='dashboard' element = {<Dashboard />}>
+              <Route index element = {<Welcome/>} />
               <Route path='controls' element = {<Controls />} />
               <Route path='handling' element = {<Handling />} />
               <Route path='secure' element = {<VerifySession />} >

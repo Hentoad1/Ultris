@@ -46,7 +46,7 @@ li{
 
 .link{
   color:inherit;
-  text-decoration:underline;
+  text-decoration:underline !important;
 }
 
 .link:hover{

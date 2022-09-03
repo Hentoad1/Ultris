@@ -49,7 +49,7 @@ router.post('/register', function(req, res, next) {
     database.register(input, function(err, result){
       if (err) return next (err);
       
-      req.session.data = {
+      req.session.user = {
         username: result.username,
         uuid: result.uuid,
         lastLogged: Date.now()
@@ -84,7 +84,7 @@ router.post('/login', function(req, res, next) {
 
     if (result){
       
-      req.session.data = {
+      req.session.user = {
         username: result.username,
         uuid: result.uuid,
         lastLogged: Date.now()
@@ -100,7 +100,7 @@ router.post('/login', function(req, res, next) {
 
 //MAIN API
 router.post('/', function(req, res, next) {
-  let session = req.session.data ?? {};
+  let session = req.session.user ?? {};
 
   res.send({
     username: session.username,

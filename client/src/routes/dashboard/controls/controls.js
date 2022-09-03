@@ -1,9 +1,7 @@
 import React from 'react';
-import Cookies from 'universal-cookie';
 
 import './controls.css';
 
-const cookies = new Cookies();
 const defaultControls = {
     exit:'Escape',
     reset:'r',
