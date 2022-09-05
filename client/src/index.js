@@ -11,7 +11,7 @@ import Dashboard from './routes/dashboard/dashboard.js';
 import Welcome from './routes/dashboard/welcome/welcome.js';
 import Controls from './routes/dashboard/controls/controls.js';
 import Handling from './routes/dashboard/handling/handling.js';
-import VerifySession from './routes/dashboard/secure/verifySession.js';
+import VerifyAccount from './routes/dashboard/account/VerifyAccount.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -26,7 +26,7 @@ root.render(
               <Route index element = {<Welcome/>} />
               <Route path='controls' element = {<Controls />} />
               <Route path='handling' element = {<Handling />} />
-              <Route path='secure' element = {<VerifySession />} >
+              <Route path='account' element = {<VerifyAccount />} >
                 <Route path='*' element = {<h1>\text</h1>} />
               </Route>
             </Route>

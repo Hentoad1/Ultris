@@ -20,7 +20,7 @@ function Login(props){
     }
 
     setLoading(true);
-    QueryAPI('/account/login', loginInfo,() => {
+    QueryAPI('/user/login', loginInfo,() => {
       setLoading(false);
     });
   };

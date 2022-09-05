@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 
-var database = require('./modules/database.js');
+var database = require('../modules/database.js');
 
 //INITALIZE SESSION IF NONE IS THERE
 router.use(function(req,res,next){
@@ -30,6 +30,7 @@ router.get('*', async function(req, res, next) {
 });
 
 //SEND POST REQUESTS TO SECONDARY ROUTES
+router.use('/user', require('./user/user'));
 router.use('/account', require('./account/account'));
 
 

@@ -10,7 +10,7 @@ const Provider = (props) => {
   const location = useLocation();
 
   useEffect(() => {
-    QueryAPI('/account', function(result){
+    QueryAPI('/user', function(result){
       if (result){
         setSession(result);
         cookies.set('session', result, {path:'/'});
@@ -29,7 +29,7 @@ function useSession(){
   const [session, setSession] = useContext(SessionContext);
 
   let refresh = function(callback){
-    QueryAPI('/account', function(result){
+    QueryAPI('/user', function(result){
       if (result){
         setSession(result);
       }
@@ -46,7 +46,7 @@ function useLogout(){
   const [, setSession] = useContext(SessionContext);
 
   let logout = function(callback){
-    QueryAPI('/account/logout', function(result){
+    QueryAPI('/user/logout', function(result){
       if (result){
         setSession(result);
       }

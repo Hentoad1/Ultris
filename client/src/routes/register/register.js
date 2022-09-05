@@ -21,7 +21,7 @@ function Register(){
     setUserData(newUserData);
 
     if (stage === 2){
-      QueryAPI('/account/register', newUserData, (result) => {
+      QueryAPI('/user/register', newUserData, (result) => {
         setLoading(false);
         if (result && result.reset){
           setStage(0);
@@ -68,7 +68,7 @@ function EmailSection(props){
     let emailJSON = {email:email.current.value};
 
 
-    QueryAPI('/account/email/', emailJSON, (result) => {
+    QueryAPI('/user/email/', emailJSON, (result) => {
       props.setLoading(false);
       if (result){
         if (result.taken){
