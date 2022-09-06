@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 
 import useAlerts from './useAlerts';
 import useSession from './useSession';
@@ -6,7 +6,10 @@ import useSession from './useSession';
 function useAPI(){
   let addAlert = useAlerts();
   let navigate = useNavigate();
+  let location = useLocation();
   let [, refresh] = useSession();
+
+  console.log(location);
 
   let APIcall = function(path, body, callback = function(){}){
     let options = (body) ? {
@@ -20,7 +23,7 @@ function useAPI(){
     }
 
     let processResponse = async function(response){
-      if (response.redirect){
+      if (response.redirect && location.pathname !== response.redirect.path){
         if (response.redirect.refresh){
           await new Promise(r => refresh(r));
         }

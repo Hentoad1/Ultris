@@ -9,7 +9,7 @@ function VerifyAccount(){
 
   useEffect(() => {
     QueryAPI('/account');
-  }, [location])
+  }, [location, QueryAPI])
 
   return (
     <Outlet/>

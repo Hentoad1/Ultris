@@ -11,7 +11,7 @@ import Dashboard from './routes/dashboard/dashboard.js';
 import Welcome from './routes/dashboard/welcome/welcome.js';
 import Controls from './routes/dashboard/controls/controls.js';
 import Handling from './routes/dashboard/handling/handling.js';
-import VerifyAccount from './routes/dashboard/account/VerifyAccount.js';
+import VerifyAccount from './routes/dashboard/account/verifyAccount.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

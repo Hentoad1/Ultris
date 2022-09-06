@@ -7,7 +7,7 @@ import '../styles/alerts.css';
 const AlertContext = createContext();
 
 function useAlerts(){
-  let [alerts, setAlerts] = useContext(AlertContext);
+  let [, setAlerts] = useContext(AlertContext);
 
   let add = useCallback((content) => {
     const newAlert = (
