@@ -12,6 +12,8 @@ import Welcome from './routes/dashboard/welcome/welcome.js';
 import Controls from './routes/dashboard/controls/controls.js';
 import Handling from './routes/dashboard/handling/handling.js';
 import VerifyAccount from './routes/dashboard/account/verifyAccount.js';
+import AccountInfo from './routes/dashboard/account/accountInfo/accountInfo';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -27,7 +29,7 @@ root.render(
               <Route path='controls' element = {<Controls />} />
               <Route path='handling' element = {<Handling />} />
               <Route path='account' element = {<VerifyAccount />} >
-                <Route path='*' element = {<h1>\text</h1>} />
+                <Route path='*' element = {<AccountInfo />} />
               </Route>
             </Route>
             <Route path='play'>

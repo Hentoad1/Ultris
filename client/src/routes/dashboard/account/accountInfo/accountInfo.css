@@ -1,0 +1,52 @@
+.splitmenu{
+  margin-top:10em;
+
+  display:flex;
+  flex-flow:column;
+  gap:0.5em;
+
+  background:transparent;
+}
+
+.splitmenu > div{
+  background:transparent;
+
+  flex-grow:1;
+
+  display:flex;
+  flex-flow:row;
+
+  width:100%;
+}
+
+.splitmenu > div > div{
+  flex-grow:1;
+
+  padding:2rem;
+}
+
+.splitmenu > div > .header{
+  background:#0009;
+  width: 30%;
+
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.splitmenu > div > .header > .title{
+  font-size:1.5rem;
+  font-weight:bold;
+}
+
+.splitmenu > div > .header > .description{
+  font-size:1rem;
+  margin-top:1em;
+}
+
+.splitmenu > div > .content{
+  background:#0004;
+  width: 70%;
+
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
