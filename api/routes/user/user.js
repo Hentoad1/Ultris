@@ -12,7 +12,7 @@ router.post('/logout', function(req, res, next) {
     console.log(req.session);
     
     req.session.initalized = undefined;
-    req.session.user = undefined;
+    req.session.user = {};
     req.session.save();
 
     res.end();
@@ -50,6 +50,7 @@ router.post('/register', function(req, res, next) {
       req.session.user = {
         username: result.username,
         uuid: result.uuid,
+        guest:false,
         lastLogged: Date.now()
       }
       req.session.save();
@@ -85,6 +86,7 @@ router.post('/login', function(req, res, next) {
       req.session.user = {
         username: result.username,
         uuid: result.uuid,
+        guest:false,
         lastLogged: Date.now()
       }
       req.session.save();
@@ -102,7 +104,7 @@ router.post('/', function(req, res, next) {
 
   res.send({
     username: session.username,
-    guest: !(session.lastLogged ?? false)
+    guest: session.guest
   });
 });
 

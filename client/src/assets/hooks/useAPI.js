@@ -27,7 +27,7 @@ function useAPI(){
         if (response.redirect.refresh){
           await new Promise(r => refresh(r));
         }
-        navigate(response.redirect.path);
+        navigate(response.redirect.path,{replace: true});
         callback(null);
       }else{
         if (response.error){

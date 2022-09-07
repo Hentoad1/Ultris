@@ -14,6 +14,7 @@ router.use(function(req,res,next){
       
       req.session.user = {
         username: 'GUEST',
+        guest:true,
         uuid: uuid
       }
       next();

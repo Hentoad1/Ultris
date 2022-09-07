@@ -44,11 +44,6 @@ app.use(async function(req, res, next){ //simulate latency
   next()
 });
 
-
-
-
-
-
 var router = require('./routes/index');
 app.use('/', router);
 
