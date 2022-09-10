@@ -39,55 +39,6 @@ function AnimatedInput(props){
   )
 }
 
-/*class AnimatedInput extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            minimized:(props.value !== undefined)
-        }
-
-        this.updatePlaceholder = this.updatePlaceholder.bind(this);
-        this.hidePlaceholder = this.hidePlaceholder.bind(this);
-
-        this.ref = React.createRef();
-    }
-    
-    componentDidMount(){
-        if (this.props.onRef){
-            this.props.onRef(this.ref);
-        }
-    }
-
-    updatePlaceholder(e){
-        if (e.target.value === ''){
-            this.setState({minimized:false});
-        }else{
-            this.setState({minimized:true});
-        }
-    }
-
-    hidePlaceholder(e){
-        this.setState({minimized:true});
-    }
-
-    render() {
-        let parentStyle = {
-            background:this.props.background ?? null,
-            color:this.props.color ?? null,
-            '--iconColor':this.props.iconColor ?? null
-        };
-        return (
-            <div className = 'AnimatedInput' style = {parentStyle} onBlur = {this.updatePlaceholder} onFocus = {this.hidePlaceholder}>
-                <input ref = {this.ref} type = {this.props.type ?? 'text'} onKeyUp = {this.props.onKeyUp} defaultValue = {this.props.value}/>
-                <span className = {this.state.minimized ? 'minimized' : ''}>{this.props.placeholder}</span>
-                <div className = 'iconWrapper'>
-                    {React.Children.map(this.props.children,(icon,key) => <div className = 'icon' key = {key}>{icon}</div>)}
-                </div>
-            </div>
-        )
-    }
-}*/
-
 class AnimatedPasswordInput extends React.Component {
     constructor(props){
         super(props);
