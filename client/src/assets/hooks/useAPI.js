@@ -9,8 +9,6 @@ function useAPI(){
   let location = useLocation();
   let [, refresh] = useSession();
 
-  console.log(location);
-
   let APIcall = function(path, body, callback = function(){}){
     let options = (body) ? {
       method: 'POST',
@@ -23,6 +21,7 @@ function useAPI(){
     }
 
     let processResponse = async function(response){
+      console.log(response);
       if (response.redirect && location.pathname !== response.redirect.path){
         if (response.redirect.refresh){
           await new Promise(r => refresh(r));

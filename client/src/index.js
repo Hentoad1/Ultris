@@ -28,7 +28,7 @@ root.render(
               <Route index element = {<Welcome/>} />
               <Route path='controls' element = {<Controls />} />
               <Route path='handling' element = {<Handling />} />
-              <Route path='account' element = {<VerifyAccount />} >
+              <Route path='account' /*element = {<VerifyAccount />}*/ >
                 <Route path='*' element = {<AccountInfo />} />
               </Route>
             </Route>

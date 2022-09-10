@@ -14,6 +14,7 @@ function Dashboard(){
     <div className = 'section'>
       <h1>Account Settings</h1>
       <NavLink to = '/dashboard/account/information' className = ''>Account Infomation</NavLink>
+      <NavLink to = '/dashboard/account/2' className = ''>Account 2</NavLink>
       <span onClick = {() => logout()}>Logout</span>
     </div>
   )

@@ -21,6 +21,10 @@ router.use(function(req, res, next){
   }
 });
 
+router.post('/getInfo', function(req,res,rext){
+  res.send({result:{username:'qqq'}});
+});
+
 router.post('*', function(req,res,next){
 
 });
