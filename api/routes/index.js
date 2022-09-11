@@ -9,7 +9,7 @@ router.use(function(req,res,next){
   if (req.session.initalized === undefined){
     req.session.initalized = true;
     
-    database.getUUID(function(err, uuid){
+    database.genUUID(function(err, uuid){
       if (err) return next (err);
       
       req.session.user = {

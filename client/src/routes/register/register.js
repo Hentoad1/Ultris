@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { Link , Navigate } from 'react-router-dom';
-
-//import Content from '../gbs.ssdf'
+import { Link } from 'react-router-dom';
 
 import {AnimatedInput,AnimatedPasswordInput} from '../../assets/components/animatedInput.js';
 import CustomCheckbox from '../../assets/components/customCheckbox.js';
 import useAPI from '../../assets/hooks/useAPI.js';
-import {ReactComponent as Loading} from '../../assets/svgs/Loading.svg';
+import LoadingOverlay from '../../assets/components/loadingOverlay.js';
 
 import '../../assets/styles/menu.css';
 
@@ -43,11 +41,7 @@ function Register(){
     stageContent = <AccountSection setStage = {nextStage} setLoading = {setLoading}/>
   }
 
-  let loadingContent = loading ? 
-  <div className = 'loading'>
-    <Loading/>
-  </div>
-  : null;
+  let loadingContent = loading ? <LoadingOverlay /> : null;
 
   return (
     <div className = "page_content centered">

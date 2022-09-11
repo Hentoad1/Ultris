@@ -32,7 +32,7 @@ function register(input, callback){
 		bcrypt.hash(preHash, salt, function(err, hash) {
 			if (err) return callback(err);
 			input.password = hash;
-			getUUID(function(err, result){
+			genUUID(function(err, result){
 				if (err) return callback(err);
 				input.uuid = result;
 
@@ -69,7 +69,19 @@ function login(input, callback){
 	});
 }
 
-function getUUID(callback){
+function getInfo(uuid, callback){
+  const con = mysql.createConnection(options);
+
+  console.log(uuid);
+	con.query("SELECT * FROM account WHERE uuid = ?", uuid, function (err, results) {
+		if (err) return callback(err);
+
+    let info = results[0];
+    callback(err, info);
+	});
+}
+
+function genUUID(callback){
 	const con = mysql.createConnection(options);
 	let id = uuid.v4();
 
@@ -80,11 +92,11 @@ function getUUID(callback){
         let result = Object.values(object)[0];
 
 		if (result === 1){
-			getUUID(callback); //try again
+			genUUID(callback); //try again
 		}else{
 			callback(err, id);
 		}
 	});
 }
 
-module.exports = {register, login, getUUID, uniqueEmail};
+module.exports = {register, login, genUUID, getInfo, uniqueEmail};

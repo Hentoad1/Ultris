@@ -1,0 +1,58 @@
+.codeInput{
+  display:flex;
+  flex-flow:row;
+}
+
+.codeInput > .digit{
+  font-size:2rem;
+  width:1em;
+  height:1em;
+
+  position:relative;
+
+  margin:0.1em;
+}
+
+.codeInput > .digit::before{
+  content:'';
+  position:absolute;
+  top:calc(100% + 2px);
+  left:0;
+  right:0;
+  height:2px;
+  
+  background:#444;
+}
+
+.codeInput > .digit::after{
+  content:'';
+  position:absolute;
+  top:calc(100% + 2px);
+  height:2px;
+  left:50%;
+  right:50%;
+  
+  transition:all 0.25s ease-in-out;
+
+  background:white;
+}
+
+.codeInput > .digit:focus-within:after{
+  left:0;
+  right:0;
+}
+
+.codeInput > .digit > input{
+  color:white;
+  border:none;
+  background:transparent;
+  outline:none;
+
+  text-align: center;
+
+  position: absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+}

@@ -5,7 +5,7 @@ var database = require('../../modules/database.js');
 
 //USER
 router.post('/logout', function(req, res, next) {
-  database.getUUID(function(err, uuid){
+  database.genUUID(function(err, uuid){
     if (err) return next (err);
 
     console.log('logout');
