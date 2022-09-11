@@ -14,11 +14,13 @@ function Relog(){
 
 
   return (
-    <div className = 'splitmenu'>
+    <div className = 'centered'>
       <div className = "menu">
         <div className = 'header'>
-          <h1>Extra Verification Required</h1>
-          <span>For added security, an E-Mail containing a code has been sent to {email}</span>
+          Extra Verification Required
+        </div>
+        <div className = 'subheader'>
+          As an extra security measure, an E-Mail containing a code has been sent to {email}
         </div>
         <CodeInput/>
         <button>

@@ -2,8 +2,9 @@
     background:#202020;
     color:white;
 
-    width:var(--menu-width,fit-content);
-    max-width:var(--menu-width, fit-content);
+    width:fit-content;
+    /*width:var(--menu-width,fit-content);*/
+    /*max-width:var(--menu-width, fit-content);*/
 
     display:grid;
     grid-template-rows:auto;
@@ -18,14 +19,15 @@
     position:relative;
 }
 
-.menu > .header > h2{
-    font-size:0.8em;
-    margin-bottom:2em;
+.menu > .header{
+  font-weight:bold;
+  font-size:1.25rem;
 }
 
-.menu > .header > h1{
-    font-weight:bold;
-    font-size:1.25rem;
+.menu > .subheader{
+    font-size:1em;
+    margin-bottom:2em;
+    word-wrap: normal;
 }
 
 .menu > .row{
