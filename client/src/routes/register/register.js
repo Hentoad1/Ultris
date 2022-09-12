@@ -83,8 +83,10 @@ function EmailSection(props){
   return (
     <React.Fragment>
       <div className = 'header'>
-        <h1>Enter your Email Address.</h1>
-        <span>You will need to verify it later.</span>
+        Enter your Email Address.
+      </div>
+      <div className = 'subheader'>
+        You will need to verify it later.
       </div>
       <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setEmail(ref); ref.current.focus()}} placeholder = 'EMAIL ADDRESS' background = '#0F0F0F11'/>
       <button onClick = {submit}>CONTINUE</button>

@@ -20,7 +20,7 @@ function Relog(){
           Extra Verification Required
         </div>
         <div className = 'subheader'>
-          As an extra security measure, an E-Mail containing a code has been sent to {email}
+          As an extra security measure, an Email containing a code has been sent to {email}
         </div>
         <CodeInput/>
         <button>

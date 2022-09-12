@@ -37,8 +37,10 @@ function Login(props){
     <div className = "page_content centered">
         <div className = "menu">
             <div className = 'header'>
-                <h1>Account Info</h1>
-                <span>Enter your Email and Password.</span>
+              Account Info
+            </div>
+            <div className = 'subheader'>
+              Enter your Email and Password.
             </div>
             <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setEmail(ref); ref.current.focus()}} placeholder = 'EMAIL' background = '#0F0F0F11'/>
             <AnimatedPasswordInput onKeyUp = {keyHandler} onRef = {ref => setPassword(ref)} placeholder = 'PASSWORD' background = '#0F0F0F11'/>

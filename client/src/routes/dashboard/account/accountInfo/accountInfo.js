@@ -50,7 +50,7 @@ function AccountInfo(){
       </div>
       <div className = 'section'>
         <div className = 'header'>
-          <div className = 'title'>E-Mail</div>
+          <div className = 'title'>Email</div>
           <div className = 'description'>Your Email address is where all information involving your account and its security be sent to.</div>
         </div>
         <div className = 'content'>

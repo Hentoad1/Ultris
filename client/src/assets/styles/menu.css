@@ -2,7 +2,7 @@
     background:#202020;
     color:white;
 
-    width:fit-content;
+    width:min-content;
     /*width:var(--menu-width,fit-content);*/
     /*max-width:var(--menu-width, fit-content);*/
 
@@ -17,6 +17,7 @@
 
     text-align: center;
     position:relative;
+    white-space: nowrap;
 }
 
 .menu > .header{
@@ -25,9 +26,10 @@
 }
 
 .menu > .subheader{
-    font-size:1em;
-    margin-bottom:2em;
-    word-wrap: normal;
+  font-size:1em;
+  margin-top:-1em;
+  margin-bottom:2em;
+  white-space: normal;
 }
 
 .menu > .row{
