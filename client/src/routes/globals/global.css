@@ -81,6 +81,27 @@ html button{
   cursor: pointer;
 }
 
+html button::after{
+  content:'';
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+
+  background:transparent;
+  pointer-events: none;
+  border-radius:inherit;
+}
+
+html button:hover::after{
+  background:#fff1;
+}
+
+html button:active::after{
+  background:#fff2;
+}
+
 html button.AlternateColor{
   background:white;
   color:black;
@@ -91,15 +112,7 @@ html button:disabled{
 }
 
 html button:disabled::after{
-  content:'';
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  pointer-events: none;
   background:#00000099;
-  border-radius:inherit;
 }
 
 ::-webkit-scrollbar{

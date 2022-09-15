@@ -1,30 +1,60 @@
 var express = require('express');
+var crypto = require('crypto');
 var router = express.Router();
 
 var database = require('../../modules/database.js');
+const { path } = require('express/lib/application.js');
 
+//send all guests to the login page
 router.use(function(req, res, next){
-  const session = req.session;
-  const validUser = session.initalized && !session.user.guest;
-  const needsRelog = session.user.lastLogged < (Date.now() - 1000 * 10/*60 * 60 * 24*/);
-
-  //return next(); //just for testing, remove later
+  const validUser = req.session.initalized && !req.session.user.guest;
 
   if (validUser){
-    if (needsRelog){
-      database.getInfo(req.session.user.uuid, function(err, info){
-        if (err) return next(err);
-    
-        let params = new URLSearchParams();
-        params.append('email',info.email);
-
-        res.send({redirect:{path:'/dashboard/account/relog?' + params.toString()}})
-      });
-    }else{
-      next();
-    }
+    next();
   }else{
     res.send({redirect:{path:'/login'}})
+  }
+});
+
+router.post('/relog', function(req,res,rext){
+  if (req.session.token.value === req.body.token && Date.now() < req.session.token.expiration){
+    req.session.secure = {
+      value:true,
+      expiration:Date.now() + 1000 * 60 * 60
+    };
+    
+    res.send({redirect:{path:'/dashboard/account/'}});
+  }else{
+    res.send({error:'The code is incorrect or has expired.'})
+  }
+
+});
+
+router.use(function(req, res, next){
+  if (!req.session.secure.value || Date.now() > req.session.secure.expiration){
+    database.getInfo(req.session.user.uuid, function(err, info){
+      if (err) return next(err);
+      
+      crypto.randomBytes(0.5 * 6,function(err, buffer){
+        if (err) next (err);
+
+        let code = buffer.toString('hex').toUpperCase();
+        console.log(code);
+
+        req.session.token = {
+          value:code,
+          expiration:Date.now() + 1000 * 60 * 15
+        }
+  
+        //generate params
+        let params = new URLSearchParams();
+        params.append('email',hideEmail(info.email));
+  
+        res.send({redirect:{path:'/dashboard/account/relog?' + params.toString()}})
+      });
+    });
+  }else{
+    next();
   }
 });
 
@@ -32,18 +62,16 @@ router.post('/getInfo', function(req,res,rext){
   database.getInfo(req.session.user.uuid, function(err, info){
     if (err) return next(err);
 
-    console.log('pre formatted');
-    console.log(info);
-
     info.email = hideEmail(info.email);
     delete info.password;
     delete info.uuid;
 
-    console.log('post format')
-    console.log(info);
-
     res.send({result:info});
   });
+});
+
+router.post('/setUsername', function(req,res,rext){
+  res.send({error:'test'})
 });
 
 router.post('*', function(req,res,next){

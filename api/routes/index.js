@@ -7,16 +7,25 @@ var database = require('../modules/database.js');
 //INITALIZE SESSION IF NONE IS THERE
 router.use(function(req,res,next){
   if (req.session.initalized === undefined){
-    req.session.initalized = true;
     
     database.genUUID(function(err, uuid){
       if (err) return next (err);
       
+      req.session.initalized = true;
       req.session.user = {
         username: 'GUEST',
         guest:true,
         uuid: uuid
       }
+      req.session.secure = {
+        value:false,
+        expiration:null
+      };
+      req.session.token = {
+        value:null,
+        expiration:null
+      }
+
       next();
     });
   }else{
