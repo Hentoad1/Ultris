@@ -50,10 +50,11 @@ function UsernameSection(props){
   function submit(){
     if (!loading){
       setLoading(true);
-      QueryAPI('/account/setUsername', {username:value}, function(result){
+      QueryAPI('/account/setUsername', {username:value}, function(username){
         setLoading(false);
-        if (result){
-          //
+        if (username){
+          setInital(username);
+          setValue(username);
         }
       });
     }
@@ -77,9 +78,28 @@ function PasswordSection(props){
   let [password1, setPassword1] = useState('');
   let [password2, setPassword2] = useState('');
   let [password3, setPassword3] = useState('');
+  let [loading, setLoading] = useState(false);
   let QueryAPI = useAPI();
 
   let filled = password1 !== '' && password2 !== '' && password3 !== '';
+
+  function submit(){
+    if (!loading){
+      setLoading(true);
+      let passwordJSON = {
+        currentPassword:password1,
+        newPassword:password2,
+        newPasswordConfirm:password3
+      };
+      QueryAPI('/account/setPassword', passwordJSON, function(password){
+        setLoading(false);
+        if (password){
+          setInital(password);
+          setValue(password);
+        }
+      });
+    }
+  }
 
   return (
     <div className = 'section'>
@@ -91,7 +111,7 @@ function PasswordSection(props){
         <AnimatedPasswordInput placeholder = 'Current Password' onValueChange = {e => setPassword1(e)} />
         <AnimatedPasswordInput placeholder = 'New Password' onValueChange = {e => setPassword2(e)} />
         <AnimatedPasswordInput placeholder = 'Confirm New Password' onValueChange = {e => setPassword3(e)} />
-        <button className = 'save' disabled = {!filled}>SAVE CHANGES</button>
+        <button className = 'save' disabled = {!filled} onClick = {submit}>SAVE CHANGES</button>
       </div>
     </div>
   )

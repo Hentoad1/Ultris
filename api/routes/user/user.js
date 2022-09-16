@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var database = require('../../modules/database.js');
-var {verifyEmail, verifyPassword, verifyUsername} = require('../../modules/verifyInfo.js')
+var {verifyEmail, verifyPassword, verifyUsername} = require('../../modules/verifyInfo.js');
 
 //USER
 router.post('/logout', function(req, res, next) {
@@ -22,7 +22,7 @@ router.post('/register', function(req, res, next) {
   let input = req.body;
 
   let [usernameInvalid, username] = verifyUsername(input.username);
-  let passwordInvalid = verifyPassword(input.password);
+  let [passwordInvalid] = verifyPassword(input.password);
 
   let errorMessage = usernameInvalid || passwordInvalid;
   if (errorMessage){

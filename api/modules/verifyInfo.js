@@ -1,5 +1,5 @@
 var database = require('./database.js');
-  
+
 function verifyUsername(input){
   let regex = /^[a-zA-Z0-9]+$/g;
   let username = input.toUpperCase();
@@ -24,6 +24,18 @@ function verifyUsername(input){
   return [response, username];
 }
 
+function verifyPassword(password){
+  let response = '';
+
+  if (password.length < 8){
+      response = 'Your password must have 8 or more characters.';
+  }else if (password.length >= 128){
+      response = 'Your password must be less than 128 characters.';
+  }
+
+  return [response, password];
+}
+
 function verifyEmail(email, callback){
   let whitespaceRegex = /\s/g;
   let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,18 +55,6 @@ function verifyEmail(email, callback){
     }
     callback(err, response);
   });
-}
-
-function verifyPassword(password){
-  let response = '';
-
-  if (password.length < 8){
-      response = 'Your password must have 8 or more characters.';
-  }else if (password.length >= 128){
-      response = 'Your password must be less than 128 characters.';
-  }
-
-  return response;
 }
 
 module.exports = {verifyEmail, verifyPassword, verifyUsername};

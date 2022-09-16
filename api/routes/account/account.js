@@ -3,7 +3,7 @@ var crypto = require('crypto');
 var router = express.Router();
 
 var database = require('../../modules/database.js');
-const { path } = require('express/lib/application.js');
+var {verifyEmail, verifyPassword, verifyUsername} = require('../../modules/verifyInfo.js');
 
 //send all guests to the login page
 router.use(function(req, res, next){
@@ -71,7 +71,32 @@ router.post('/getInfo', function(req,res,rext){
 });
 
 router.post('/setUsername', function(req,res,rext){
-  res.send({error:'test'})
+  let [clientError, username] = verifyUsername(req.body.username);
+
+  if (clientError){
+    res.send({error:clientError});
+  }else{
+    //set username
+
+    res.send({result:username});
+  }
+
+});
+
+router.post('/setPassword', function(req,res,rext){
+  if (req.body.newPassword !== req.body.newPasswordConfirm){
+    return res.send({error:'The Passwords Do not Match'});
+  }
+
+  let [clientError, password] = verifyUsername(req.body.username);
+
+  if (clientError){
+    res.send({error:clientError});
+  }else{
+    //set username
+
+    res.send({result:password});
+  }
 });
 
 router.post('*', function(req,res,next){

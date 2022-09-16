@@ -48,8 +48,10 @@ function register(input, callback){
 
 function login(input, callback){
 	const con = mysql.createConnection(options);
-	con.query("SELECT * FROM account WHERE email = ?", input.email, function(err, [user]){
+	con.query("SELECT * FROM account WHERE email = ?", input.email, function(err, result){
 		if (err) return callback(err);
+
+    let user = result[0];
 
 		if (user){
 			bcrypt.compare(input.password, user.password, function(err,match){
