@@ -67,7 +67,7 @@ function UsernameSection(props){
         <div className = 'description'>The Display Name is what other players will see when battling against you in online matches. It will also display when you get a high score on leaderboards.</div>
       </div>
       <div className = 'content'>
-        <AnimatedInput placeholder = 'Display Name' value = {props.username} onValueChange = {v => setValue(v)}/>
+        <AnimatedInput placeholder = 'Display Name' value = {props.username} onValueChange = {v => setValue(v)} inputHandler = {e => e.target.value = e.target.value.toUpperCase()}/>
         <button className = 'save' disabled = {inital === value} onClick = {submit}>SAVE CHANGES</button>
       </div>
     </div>
@@ -78,6 +78,7 @@ function PasswordSection(props){
   let [password1, setPassword1] = useState('');
   let [password2, setPassword2] = useState('');
   let [password3, setPassword3] = useState('');
+  let [refs, setRefs] = useState([]);
   let [loading, setLoading] = useState(false);
   let QueryAPI = useAPI();
 
@@ -91,14 +92,24 @@ function PasswordSection(props){
         newPassword:password2,
         newPasswordConfirm:password3
       };
-      QueryAPI('/account/setPassword', passwordJSON, function(password){
+      QueryAPI('/account/setPassword', passwordJSON, function(){
         setLoading(false);
-        if (password){
-          setInital(password);
-          setValue(password);
-        }
+        setPassword1('');
+        setPassword2('');
+        setPassword3('');
+        refs.forEach(ref => {
+          ref.current.value = '';
+        })
       });
     }
+  }
+
+  let updateRef = function(ref, index){
+    setRefs(refs => {
+      refs.slice();
+      refs[index] = ref;
+      return refs;
+    })
   }
 
   return (
@@ -108,9 +119,9 @@ function PasswordSection(props){
         <div className = 'description'>Your password is used only to log into your account. Do not share this with anyone.</div>
       </div>
       <div className = 'content'>
-        <AnimatedPasswordInput placeholder = 'Current Password' onValueChange = {e => setPassword1(e)} />
-        <AnimatedPasswordInput placeholder = 'New Password' onValueChange = {e => setPassword2(e)} />
-        <AnimatedPasswordInput placeholder = 'Confirm New Password' onValueChange = {e => setPassword3(e)} />
+        <AnimatedPasswordInput placeholder = 'Current Password' onValueChange = {e => setPassword1(e)} onRef = {r => updateRef(r, 0)}/>
+        <AnimatedPasswordInput placeholder = 'New Password' onValueChange = {e => setPassword2(e)} onRef = {r => updateRef(r, 1)}/>
+        <AnimatedPasswordInput placeholder = 'Confirm New Password' onValueChange = {e => setPassword3(e)} onRef = {r => updateRef(r, 2)}/>
         <button className = 'save' disabled = {!filled} onClick = {submit}>SAVE CHANGES</button>
       </div>
     </div>

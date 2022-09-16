@@ -30,15 +30,18 @@ function useAPI(){
         callback(null);
       }else{
         if (response.error){
-          addAlert(response.error);
+          addAlert(response.error, {type:'error'});
+        }
+        if (response.alert){
+          addAlert(response.alert);
         }
         callback(response.result);
-      } 
+      }
     };
 
     let handleError = function(error){
       console.log('fetcherror', error)
-      addAlert('An error occured trying to communicate with the server.');
+      addAlert('An error occured trying to communicate with the server.',{type:'error'});
       callback(null);
     };
 

@@ -101,4 +101,8 @@ function genUUID(callback){
 	});
 }
 
-module.exports = {register, login, genUUID, getInfo, uniqueEmail};
+function con(){
+  return mysql.createConnection(options);
+}
+
+module.exports = {register, login, getInfo, uniqueEmail, genUUID, con};

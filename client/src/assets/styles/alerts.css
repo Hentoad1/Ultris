@@ -17,7 +17,7 @@
 .alert{
   pointer-events:auto;
 
-  outline:2px solid var(--PrimaryColor,red);
+  outline:2px solid white;
 
   color:white;
 
@@ -30,7 +30,7 @@
   opacity:0; /* only applies when out of transition */
 
   animation-name:notification;
-  animation-duration:var(--AnimationTime,5s);
+  animation-duration:5s;
   animation-iteration-count:1;
 
   display:flex;
@@ -38,7 +38,11 @@
   justify-content:flex-start;
 }
 
-.alert svg{
+.alert.error{
+  outline:2px solid red;
+}
+
+.alert > svg{
   flex-grow:0;
   flex-shrink:0;
 
@@ -47,7 +51,16 @@
   
   margin-right:1em;
 
-  color:var(--PrimaryColor,red);
+  color:white;
+}
+
+.alert.error > svg{
+  color:red;
+}
+
+.alert > span{
+  flex-grow:1;
+  flex-shrink:1;
 }
 
 @keyframes notification{

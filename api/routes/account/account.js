@@ -1,8 +1,9 @@
 var express = require('express');
-var crypto = require('crypto');
 var router = express.Router();
+var crypto = require('crypto');
+var bcrypt = require('bcrypt');
 
-var database = require('../../modules/database.js');
+var {con, getInfo} = require('../../modules/database.js');
 var {verifyEmail, verifyPassword, verifyUsername} = require('../../modules/verifyInfo.js');
 
 //send all guests to the login page
@@ -16,7 +17,7 @@ router.use(function(req, res, next){
   }
 });
 
-router.post('/relog', function(req,res,rext){
+router.post('/relog', function(req,res,next){
   if (req.session.token.value === req.body.token && Date.now() < req.session.token.expiration){
     req.session.secure = {
       value:true,
@@ -32,7 +33,7 @@ router.post('/relog', function(req,res,rext){
 
 router.use(function(req, res, next){
   if (!req.session.secure.value || Date.now() > req.session.secure.expiration){
-    database.getInfo(req.session.user.uuid, function(err, info){
+    getInfo(req.session.user.uuid, function(err, info){
       if (err) return next(err);
       
       crypto.randomBytes(0.5 * 6,function(err, buffer){
@@ -58,8 +59,8 @@ router.use(function(req, res, next){
   }
 });
 
-router.post('/getInfo', function(req,res,rext){
-  database.getInfo(req.session.user.uuid, function(err, info){
+router.post('/getInfo', function(req,res,next){
+  getInfo(req.session.user.uuid, function(err, info){
     if (err) return next(err);
 
     info.email = hideEmail(info.email);
@@ -70,7 +71,7 @@ router.post('/getInfo', function(req,res,rext){
   });
 });
 
-router.post('/setUsername', function(req,res,rext){
+router.post('/setUsername', function(req,res,next){
   let [clientError, username] = verifyUsername(req.body.username);
 
   if (clientError){
@@ -83,20 +84,44 @@ router.post('/setUsername', function(req,res,rext){
 
 });
 
-router.post('/setPassword', function(req,res,rext){
-  if (req.body.newPassword !== req.body.newPasswordConfirm){
-    return res.send({error:'The Passwords Do not Match'});
-  }
+router.post('/setPassword', function(req,res,next){
+  getInfo(req.session.user.uuid, function(err, info){
+    if (err) return next(err);
 
-  let [clientError, password] = verifyUsername(req.body.username);
+    bcrypt.compare(req.body.currentPassword, info.password, function(err, same){
+      if (err) return next (err);
 
-  if (clientError){
-    res.send({error:clientError});
-  }else{
-    //set username
+      if (same){
+        if (req.body.newPassword !== req.body.newPasswordConfirm){
+          return res.send({error:'The passwords do not match'});
+        }
 
-    res.send({result:password});
-  }
+        let [clientError] = verifyPassword(req.body.currentPassword);
+        if (clientError){
+          res.send({error:clientError});
+        }else{
+          //set password
+          res.send({alert:'Password has been updated'});
+        }
+      }else{
+        res.send({error:'The current password is incorrect'});
+      }
+    })
+  })
+});
+
+router.post('/setEmail', function(req,res,next){
+  verifyEmail(req.body.email, function(err, clientError){
+    if (err) return next (err);
+
+    if (clientError){
+      res.send({error:clientError});
+    }else{
+      //set username
+  
+      res.send({result:username});
+    }
+  });
 });
 
 router.post('*', function(req,res,next){

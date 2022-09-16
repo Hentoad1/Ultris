@@ -47,6 +47,8 @@ function verifyEmail(email, callback){
     return callback(null, 'Please Enter a Valid Email.');
   }
 
+
+
   database.uniqueEmail(email, function(err, result){
     if (err) return callback(err);
 
