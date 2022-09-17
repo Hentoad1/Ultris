@@ -3,7 +3,7 @@ var router = express.Router();
 var crypto = require('crypto');
 var bcrypt = require('bcrypt');
 
-var {con, getInfo} = require('../../modules/database.js');
+var {queryDB} = require('../../modules/database.js');
 var {verifyEmail, verifyPassword, verifyUsername} = require('../../modules/verifyInfo.js');
 
 //send all guests to the login page
@@ -33,8 +33,10 @@ router.post('/relog', function(req,res,next){
 
 router.use(function(req, res, next){
   if (!req.session.secure.value || Date.now() > req.session.secure.expiration){
-    getInfo(req.session.user.uuid, function(err, info){
+    queryDB("SELECT * FROM account WHERE uuid = ?", req.session.user.uuid, function(err, result){
       if (err) return next(err);
+
+      let info = result[0];
       
       crypto.randomBytes(0.5 * 6,function(err, buffer){
         if (err) next (err);
@@ -60,8 +62,10 @@ router.use(function(req, res, next){
 });
 
 router.post('/getInfo', function(req,res,next){
-  getInfo(req.session.user.uuid, function(err, info){
+  queryDB("SELECT * FROM account WHERE uuid = ?", req.session.user.uuid, function(err, result){
     if (err) return next(err);
+
+    info = result[0];
 
     info.email = hideEmail(info.email);
     delete info.password;
@@ -79,14 +83,16 @@ router.post('/setUsername', function(req,res,next){
   }else{
     //set username
 
-    res.send({result:username});
+    res.send({result:username,alert:'Your password has been updated'});
   }
 
 });
 
 router.post('/setPassword', function(req,res,next){
-  getInfo(req.session.user.uuid, function(err, info){
+  queryDB("SELECT * FROM account WHERE uuid = ?",req.session.user.uuid, function(err, result){
     if (err) return next(err);
+
+    info = result[0];
 
     bcrypt.compare(req.body.currentPassword, info.password, function(err, same){
       if (err) return next (err);
@@ -101,7 +107,7 @@ router.post('/setPassword', function(req,res,next){
           res.send({error:clientError});
         }else{
           //set password
-          res.send({alert:'Password has been updated'});
+          res.send({alert:'Your password has been updated'});
         }
       }else{
         res.send({error:'The current password is incorrect'});
@@ -119,7 +125,7 @@ router.post('/setEmail', function(req,res,next){
     }else{
       //set username
   
-      res.send({result:username});
+      res.send({alert:'Your password has been updated'});
     }
   });
 });

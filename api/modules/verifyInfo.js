@@ -49,14 +49,27 @@ function verifyEmail(email, callback){
 
 
 
-  database.uniqueEmail(email, function(err, result){
+  /*database.uniqueEmail(email, function(err, result){
     if (err) return callback(err);
 
     if (result){
       response = 'Email taken.';
     }
     callback(err, response);
-  });
+  });*/
+
+  queryDB("SELECT EXISTS(SELECT * FROM account WHERE email = ?)", email, function (err, results) {
+		if (err) return callback(err);
+
+    let object = results[0]; //gives the object of the result, for example {"EXISTS(SELECT * FROM account WHERE username = 'example')":0}
+    let result = Object.values(object)[0]; //gets the actual 0 or 1 value
+					
+    if (result === 1){
+      response = 'Email taken.'
+    }
+
+    callback(null, response);
+	});
 }
 
 module.exports = {verifyEmail, verifyPassword, verifyUsername};

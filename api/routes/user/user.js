@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var bcrypt = require('bcrypt');
 
 var database = require('../../modules/database.js');
 var {verifyEmail, verifyPassword, verifyUsername} = require('../../modules/verifyInfo.js');
@@ -42,7 +43,7 @@ router.post('/register', function(req, res, next) {
       });
     }
     
-    database.register(input, function(err, result){
+    register(input, function(err, result){
       if (err) return next (err);
       
       req.session.user = {
@@ -75,7 +76,7 @@ router.post('/email', function(req, res, next) {
 router.post('/login', function(req, res, next) {
   let input = req.body;
 
-  database.login(input, function(err, result){
+  login(input, function(err, result){
     if (err) return next (err);
 
     if (result){
@@ -104,5 +105,41 @@ router.post('/', function(req, res, next) {
   });
 });
 
-
 module.exports = router;
+
+function login(input, callback){
+	queryDB("SELECT * FROM account WHERE email = ?", input.email, function(err, result){
+		if (err) return callback(err);
+
+    let user = result[0];
+
+		if (user){
+			bcrypt.compare(input.password, user.password, function(err,match){
+				if (err) return callback(err);
+				
+				if (match){
+					callback(err, user);
+				}else{
+					callback(err, null);
+				}
+			});
+		}else{
+			return callback(err, null);
+		}
+	});
+}
+
+function register(input, callback){
+	bcrypt.hash(preHash, 10, function(err, hash) {
+		if (err) return callback(err);
+		input.password = hash;
+		genUUID(function(err, result){
+			if (err) return callback(err);
+			input.uuid = result;
+
+			queryDB("INSERT INTO account SET ?", [input], function(err, result){	
+				callback(err,input);
+			});
+		});
+	});
+}

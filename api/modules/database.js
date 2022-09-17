@@ -10,88 +10,14 @@ const options = {
 	port:'3306'
 }
 
-function uniqueEmail(input, callback){
-	const con = mysql.createConnection(options);
-
-    con.query("SELECT EXISTS(SELECT * FROM account WHERE email = ?)", input, function (err, results) {
-		if (err) return callback(err);
-
-        let object = results[0]; //gives the object of the result, for example {"EXISTS(SELECT * FROM account WHERE username = 'example')":0}
-        let result = Object.values(object)[0]; //gets the actual 0 or 1 value
-					
-        callback(err, result === 1);
-	});
-}
-
-function register(input, callback){
-	const con = mysql.createConnection(options);
-	var preHash = input.password;
-	
-	bcrypt.genSalt(10, function(err, salt) {
-		if (err) return callback(err);
-		bcrypt.hash(preHash, salt, function(err, hash) {
-			if (err) return callback(err);
-			input.password = hash;
-			genUUID(function(err, result){
-				if (err) return callback(err);
-				input.uuid = result;
-
-				con.query("INSERT INTO account SET ?", [input], function(err, result){	
-					callback(err,input);
-				});
-			});
-		});
-	});
-	
-	
-}
-
-function login(input, callback){
-	const con = mysql.createConnection(options);
-	con.query("SELECT * FROM account WHERE email = ?", input.email, function(err, result){
-		if (err) return callback(err);
-
-    let user = result[0];
-
-		if (user){
-			bcrypt.compare(input.password, user.password, function(err,match){
-				if (err) return callback(err);
-				
-				if (match){
-					callback(err, user);
-				}else{
-					callback(err, null);
-				}
-			});
-		}else{
-			return callback(err, null);
-		}
-		
-		
-	});
-}
-
-function getInfo(uuid, callback){
-  const con = mysql.createConnection(options);
-
-  console.log(uuid);
-	con.query("SELECT * FROM account WHERE uuid = ?", uuid, function (err, results) {
-		if (err) return callback(err);
-
-    let info = results[0];
-    callback(err, info);
-	});
-}
-
 function genUUID(callback){
-	const con = mysql.createConnection(options);
 	let id = uuid.v4();
 
-	con.query("SELECT EXISTS(SELECT * FROM account WHERE uuid = ?)", id, function (err, results) {
+	queryDB("SELECT EXISTS(SELECT * FROM account WHERE uuid = ?)", id, function (err, results) {
 		if (err) return callback(err);
 
-        let object = results[0];
-        let result = Object.values(object)[0];
+    let object = results[0];
+    let result = Object.values(object)[0];
 
 		if (result === 1){
 			genUUID(callback); //try again
@@ -101,8 +27,17 @@ function genUUID(callback){
 	});
 }
 
-function con(){
-  return mysql.createConnection(options);
+function queryDB(...query){
+  let callback = query.pop();
+
+  let connection = mysql.createConnection(options);
+  connection.query(...query, function(err, result) {
+    connection.end();
+
+    callback(err, result);
+  });
 }
 
-module.exports = {register, login, getInfo, uniqueEmail, genUUID, con};
+
+
+module.exports = {genUUID, queryDB};
