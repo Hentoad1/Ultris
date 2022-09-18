@@ -88,7 +88,7 @@ function EmailSection(props){
       <div className = 'subheader'>
         You will need to verify it later.
       </div>
-      <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setEmail(ref); ref.current.focus()}} placeholder = 'EMAIL ADDRESS' background = '#0F0F0F11'/>
+      <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setEmail(ref); ref.current.focus()}} title = 'EMAIL ADDRESS' background = '#0F0F0F11'/>
       <button onClick = {submit}>CONTINUE</button>
       <span>Already have an account? <Link to = '/login' className = 'link'>Sign in</Link></span>
     </React.Fragment>
@@ -118,11 +118,13 @@ function AccountSection(props){
   return (
     <React.Fragment>
       <div className = 'header'>
-        <h1>Account Info</h1>
-        <span>Enter a Username and Password.</span>
+        Account Info
       </div>
-      <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setUsername(ref); ref.current.focus()}} placeholder = 'USERNAME' background = '#0F0F0F11'/>
-      <AnimatedPasswordInput onKeyUp = {keyHandler} onRef = {ref => setPassword(ref)} placeholder = 'PASSWORD' background = '#0F0F0F11'/>
+      <div className = 'subheader'>
+        Enter a Username and Password.
+      </div>
+      <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setUsername(ref); ref.current.focus()}} title = 'USERNAME' background = '#0F0F0F11'/>
+      <AnimatedPasswordInput onKeyUp = {keyHandler} onRef = {ref => setPassword(ref)} title = 'PASSWORD' background = '#0F0F0F11'/>
       <div className = 'row'>
         <CustomCheckbox onInput = {e => setChecked(e.target.checked)} style = {{marginRight:'0.5em'}}/>
         <span>I agree to the <Link to = '/privacy' className = 'link' tabIndex = '-1'>Privacy Policy</Link></span>
@@ -136,8 +138,10 @@ function SigninSection(props){
   return (
     <React.Fragment>
       <div className = 'header'>
-        <h1>An account with this email already exists.</h1>
-        <span>Would you like to sign in instead?</span>
+        This email is already in use.
+      </div>
+      <div className = 'subheader'>
+        Would you like to sign in instead?
       </div>
       <Link to = '/login' style = {{width:'100%'}} tabIndex = '-1'><button>SIGN IN</button></Link>
       <button className = 'AlternameColor' style = {{background:'white',color:'black'}} onClick = {() => props.setStage({},0)}>NO THANKS</button>

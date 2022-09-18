@@ -67,7 +67,7 @@ function UsernameSection(props){
         <div className = 'description'>The Display Name is what other players will see when battling against you in online matches. It will also display when you get a high score on leaderboards.</div>
       </div>
       <div className = 'content'>
-        <AnimatedInput placeholder = 'Display Name' value = {props.username} onValueChange = {v => setValue(v)} inputHandler = {e => e.target.value = e.target.value.toUpperCase()}/>
+        <AnimatedInput title = 'Display Name' value = {props.username} onValueChange = {v => setValue(v)} inputHandler = {e => e.target.value = e.target.value.toUpperCase()}/>
         <button className = 'save' disabled = {inital === value} onClick = {submit}>SAVE CHANGES</button>
       </div>
     </div>
@@ -119,9 +119,9 @@ function PasswordSection(props){
         <div className = 'description'>Your password is used only to log into your account. Do not share this with anyone.</div>
       </div>
       <div className = 'content'>
-        <AnimatedPasswordInput placeholder = 'Current Password' onValueChange = {e => setPassword1(e)} onRef = {r => updateRef(r, 0)}/>
-        <AnimatedPasswordInput placeholder = 'New Password' onValueChange = {e => setPassword2(e)} onRef = {r => updateRef(r, 1)}/>
-        <AnimatedPasswordInput placeholder = 'Confirm New Password' onValueChange = {e => setPassword3(e)} onRef = {r => updateRef(r, 2)}/>
+        <AnimatedPasswordInput title = 'Current Password' onValueChange = {e => setPassword1(e)} onRef = {r => updateRef(r, 0)}/>
+        <AnimatedPasswordInput title = 'New Password' onValueChange = {e => setPassword2(e)} onRef = {r => updateRef(r, 1)}/>
+        <AnimatedPasswordInput title = 'Confirm New Password' onValueChange = {e => setPassword3(e)} onRef = {r => updateRef(r, 2)}/>
         <button className = 'save' disabled = {!filled} onClick = {submit}>SAVE CHANGES</button>
       </div>
     </div>
@@ -131,6 +131,8 @@ function PasswordSection(props){
 function EmailSection(props){
   let [inital, setInital] = useState(props.email);
   let [value, setValue] = useState(inital);
+  let [loading, setLoading] = useState(false);
+  let [ref, setRef] = useState();
   let QueryAPI = useAPI();
 
 
@@ -139,6 +141,21 @@ function EmailSection(props){
     setValue(props.email);
   }, [props.email])
 
+  function submit(){
+    if (!loading){
+      setLoading(true);
+      QueryAPI('/account/setEmail', {email:value}, function(email){
+        setLoading(false);
+        ref.current.value = '';
+        if (email){
+          ref.current.placeholder = email;
+          setInital(email);
+          setValue(email);
+          console.log(email);
+        }
+      });
+    }
+  }
 
   return (
     <div className = 'section'>
@@ -147,8 +164,8 @@ function EmailSection(props){
         <div className = 'description'>Your Email address is where all information involving your account and its security be sent to.</div>
       </div>
       <div className = 'content'>
-        <AnimatedInput placeholder = 'Email' value = {props.email} onValueChange = {v => setValue(v)}/>
-        <button className = 'save' disabled = {inital === value}>SAVE CHANGES</button>
+        <AnimatedInput title = 'Email' placeholder = {inital} onValueChange = {v => setValue(v)} onRef = {r => setRef(r)}/>
+        <button className = 'save' disabled = {inital === value} onClick = {submit}>SAVE CHANGES</button>
       </div>
     </div>
   )

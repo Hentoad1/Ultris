@@ -1,4 +1,4 @@
-var database = require('./database.js');
+var {queryDB} = require('./database.js');
 
 function verifyUsername(input){
   let regex = /^[a-zA-Z0-9]+$/g;
@@ -40,32 +40,20 @@ function verifyEmail(email, callback){
   let whitespaceRegex = /\s/g;
   let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   let valid = emailRegex.test(email) && !whitespaceRegex.test(email);
-  
-  let response = null;
 
   if (!valid){
-    return callback(null, 'Please Enter a Valid Email.');
+    return callback(null, {error:'Please Enter a Valid Email.'});
   }
-
-
-
-  /*database.uniqueEmail(email, function(err, result){
-    if (err) return callback(err);
-
-    if (result){
-      response = 'Email taken.';
-    }
-    callback(err, response);
-  });*/
 
   queryDB("SELECT EXISTS(SELECT * FROM account WHERE email = ?)", email, function (err, results) {
 		if (err) return callback(err);
 
     let object = results[0]; //gives the object of the result, for example {"EXISTS(SELECT * FROM account WHERE username = 'example')":0}
     let result = Object.values(object)[0]; //gets the actual 0 or 1 value
-					
+
+    let response = {taken:false, error:null};
     if (result === 1){
-      response = 'Email taken.'
+      response = {taken:true, error:'Email is already in use.'}
     }
 
     callback(null, response);

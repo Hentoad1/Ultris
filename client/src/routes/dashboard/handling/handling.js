@@ -22,13 +22,13 @@ class Handling extends React.Component {
         return (
             <div className = 'handling'>
               <h1>Handling</h1>
-              <AnimatedInput placeholder = 'DAS' value = {2}>
+              <AnimatedInput title = 'DAS' value = {2}>
                 <InfoBox content = 'Delayed Auto Shift: The delay until your piece will start shifting when a direction is held down.'/>
               </AnimatedInput>
-              <AnimatedInput placeholder = 'ARR'>
+              <AnimatedInput title = 'ARR'>
                 <InfoBox content = 'Auto Refresh Rate: The delay between shifts when DAS is held.'/>
               </AnimatedInput>
-              <AnimatedInput placeholder = 'SDF'>
+              <AnimatedInput title = 'SDF'>
                 <InfoBox content = 'Soft Drop Factor: The factor soft drop will lower the piece by.'/>
               </AnimatedInput>
               <div className = 'row'>

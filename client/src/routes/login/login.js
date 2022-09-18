@@ -42,8 +42,8 @@ function Login(props){
             <div className = 'subheader'>
               Enter your Email and Password.
             </div>
-            <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setEmail(ref); ref.current.focus()}} placeholder = 'EMAIL' background = '#0F0F0F11'/>
-            <AnimatedPasswordInput onKeyUp = {keyHandler} onRef = {ref => setPassword(ref)} placeholder = 'PASSWORD' background = '#0F0F0F11'/>
+            <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setEmail(ref); ref.current.focus()}} title = 'EMAIL' background = '#0F0F0F11'/>
+            <AnimatedPasswordInput onKeyUp = {keyHandler} onRef = {ref => setPassword(ref)} title = 'PASSWORD' background = '#0F0F0F11'/>
             <button onClick = {submit}>LOGIN</button>
             <span>Don't have an account? <Link to = '/register' className = 'link'>Sign Up</Link></span>
             {loadingContent}

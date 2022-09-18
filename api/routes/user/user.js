@@ -2,20 +2,16 @@ var express = require('express');
 var router = express.Router();
 var bcrypt = require('bcrypt');
 
-var database = require('../../modules/database.js');
+var {genUUID, queryDB} = require('../../modules/database.js');
 var {verifyEmail, verifyPassword, verifyUsername} = require('../../modules/verifyInfo.js');
 
 //USER
 router.post('/logout', function(req, res, next) {
-  database.genUUID(function(err, uuid){
-    if (err) return next (err);
-    
-    req.session.initalized = undefined;
-    req.session.user = {};
-    req.session.save();
+  req.session.initalized = undefined;
+  req.session.user = {};
+  req.session.save();
 
-    res.end();
-  });
+  res.end();
 });
 
 //REGISTER ROUTE FROM CLIENT
@@ -36,7 +32,8 @@ router.post('/register', function(req, res, next) {
 
   verifyEmail(input.email, function(err, response){
     if (err) return next (err);
-    if (response){
+
+    if (response.error){
       return res.send({
         error: "An error has occurred.",
         reset: true
@@ -64,8 +61,10 @@ router.post('/email', function(req, res, next) {
   verifyEmail(email,function callback(err, response){
     if (err) return next (err)
 
-    if (response){
-      res.send({error:response});
+    if (response.taken){
+      res.send({result:{taken:true}});
+    }else if (response.error){
+      res.send({error:response.error});
     }else{
       res.send({result:{email}})
     }
@@ -130,7 +129,7 @@ function login(input, callback){
 }
 
 function register(input, callback){
-	bcrypt.hash(preHash, 10, function(err, hash) {
+	bcrypt.hash(input.password, 10, function(err, hash) {
 		if (err) return callback(err);
 		input.password = hash;
 		genUUID(function(err, result){

@@ -76,25 +76,27 @@ router.post('/getInfo', function(req,res,next){
 });
 
 router.post('/setUsername', function(req,res,next){
-  let [clientError, username] = verifyUsername(req.body.username);
+  let [clientError, newUsername] = verifyUsername(req.body.username);
 
   if (clientError){
     res.send({error:clientError});
   }else{
     //set username
+    queryDB('UPDATE account SET username = ? WHERE uuid = ?',[newUsername, req.session.user.uuid], function(err,result){
+      if (err) return next(err);
 
-    res.send({result:username,alert:'Your password has been updated'});
+      res.send({result:newUsername,alert:'Your username has been updated'});
+    });
   }
-
 });
 
 router.post('/setPassword', function(req,res,next){
   queryDB("SELECT * FROM account WHERE uuid = ?",req.session.user.uuid, function(err, result){
     if (err) return next(err);
 
-    info = result[0];
+    let currentHash = result[0].password;
 
-    bcrypt.compare(req.body.currentPassword, info.password, function(err, same){
+    bcrypt.compare(req.body.currentPassword, currentHash, function(err, same){
       if (err) return next (err);
 
       if (same){
@@ -102,12 +104,19 @@ router.post('/setPassword', function(req,res,next){
           return res.send({error:'The passwords do not match'});
         }
 
-        let [clientError] = verifyPassword(req.body.currentPassword);
+        let [clientError] = verifyPassword(req.body.newPassword);
         if (clientError){
           res.send({error:clientError});
         }else{
-          //set password
-          res.send({alert:'Your password has been updated'});
+          // set password
+          bcrypt.hash(req.body.newPassword, 10, function(err, newHash) {
+            if (err) return next (err);
+            queryDB('UPDATE account SET password = ? WHERE uuid = ?',[newHash, req.session.user.uuid], function(err,result){
+              if (err) return next(err);
+      
+              res.send({alert:'Your password has been updated'});
+            });
+          });
         }
       }else{
         res.send({error:'The current password is incorrect'});
@@ -117,15 +126,18 @@ router.post('/setPassword', function(req,res,next){
 });
 
 router.post('/setEmail', function(req,res,next){
-  verifyEmail(req.body.email, function(err, clientError){
+  verifyEmail(req.body.email, function(err, result){
     if (err) return next (err);
 
-    if (clientError){
-      res.send({error:clientError});
+    if (result.error){
+      res.send({error:result.error});
     }else{
       //set username
-  
-      res.send({alert:'Your password has been updated'});
+      queryDB('UPDATE account SET email = ? WHERE uuid = ?',[req.body.email, req.session.user.uuid], function(err,result){
+        if (err) return next(err);
+
+        res.send({alert:'Your email has been updated', result:hideEmail(req.body.email)});
+      });
     }
   });
 });
