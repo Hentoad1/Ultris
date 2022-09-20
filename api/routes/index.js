@@ -14,8 +14,9 @@ router.use(function(req,res,next){
       req.session.initalized = true;
       req.session.user = {
         username: 'GUEST',
-        guest:true,
-        uuid: uuid
+        guest: true,
+        uuid: uuid,
+        verified: false
       }
       req.session.secure = {
         value:false,

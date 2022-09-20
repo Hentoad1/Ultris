@@ -131,6 +131,7 @@ function PasswordSection(props){
 function EmailSection(props){
   let [inital, setInital] = useState(props.email);
   let [value, setValue] = useState(inital);
+  let [verified, setVerified] = useState(false);
   let [loading, setLoading] = useState(false);
   let [ref, setRef] = useState();
   let QueryAPI = useAPI();
@@ -144,18 +145,19 @@ function EmailSection(props){
   function submit(){
     if (!loading){
       setLoading(true);
-      QueryAPI('/account/setEmail', {email:value}, function(email){
+      QueryAPI('/account/setEmail', {email:value}, function(result){
         setLoading(false);
         ref.current.value = '';
-        if (email){
-          ref.current.placeholder = email;
-          setInital(email);
-          setValue(email);
-          console.log(email);
+        if (result){
+          ref.current.placeholder = result.email;
+          setInital(result.email);
+          setValue(result.email);
         }
       });
     }
   }
+
+  let verifyButton = verified ? <button>Verify Email</button> : null;
 
   return (
     <div className = 'section'>
@@ -165,7 +167,10 @@ function EmailSection(props){
       </div>
       <div className = 'content'>
         <AnimatedInput title = 'Email' placeholder = {inital} onValueChange = {v => setValue(v)} onRef = {r => setRef(r)}/>
-        <button className = 'save' disabled = {inital === value} onClick = {submit}>SAVE CHANGES</button>
+        <div>
+          {verifyButton}
+          <button className = 'save' disabled = {inital === value} onClick = {submit}>SAVE CHANGES</button>
+        </div>
       </div>
     </div>
   )

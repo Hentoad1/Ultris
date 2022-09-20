@@ -1,6 +1,5 @@
 var mysql = require('mysql2');
 var uuid = require("uuid");
-var bcrypt = require("bcrypt");
 
 const options = {
 	host: "localhost",
@@ -10,33 +9,71 @@ const options = {
 	port:'3306'
 }
 
-function genUUID(callback){
-	let id = uuid.v4();
+function genUUID(){
+  return new Promise(function(resolve, reject){
+    let id = uuid.v4();
 
-	queryDB("SELECT EXISTS(SELECT * FROM account WHERE uuid = ?)", id, function (err, results) {
-		if (err) return callback(err);
+    queryDB("SELECT EXISTS(SELECT * FROM account WHERE uuid = ?)", id).then(function(results){
+      let object = results[0];
+      let result = Object.values(object)[0];
 
-    let object = results[0];
-    let result = Object.values(object)[0];
-
-		if (result === 1){
-			genUUID(callback); //try again
-		}else{
-			callback(err, id);
-		}
-	});
+      if (result === 1){
+        resolve(genUUID()); //try again
+      }else{
+        resolve(id);
+      }
+    }).catch(reject);
+  })
 }
 
 function queryDB(...query){
-  let callback = query.pop();
+  return new Promise((resolve, reject) => {
 
-  let connection = mysql.createConnection(options);
-  connection.query(...query, function(err, result) {
-    connection.end();
+    let connection = mysql.createConnection(options);
+    connection.query(...query, function(err, result) {
+      connection.end();
+      if (err) return reject (err);
 
-    callback(err, result);
+      resolve(result);
+    });
   });
 }
+
+/*function genUUID(callback){
+  try {
+    let id = uuid.v4();
+
+    queryDB("SELECT EXISTS(SELECT * FROM account WHERE uuid = ?)", id, function (err, results) {
+      if (err) return callback(err);
+
+      let object = results[0];
+      let result = Object.values(object)[0];
+
+      if (result === 1){
+        genUUID(callback); //try again
+      }else{
+        callback(err, id);
+      }
+    });
+  } catch (error) {
+    callback(error);
+  }
+}*/
+
+/*function queryDB(...query){
+  try {
+    let callback = query.pop();
+
+    let connection = mysql.createConnection(options);
+    connection.query(...query, function(err, result) {
+      connection.end();
+
+      callback(err, result);
+    });
+  } catch (error) {
+   callback(error); 
+  }
+}*/
 
 
 

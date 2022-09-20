@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var crypto = require('crypto');
+var {randomBytes} = require('crypto');
 var bcrypt = require('bcrypt');
 
 var {queryDB} = require('../../modules/database.js');
@@ -9,6 +9,8 @@ var {verifyEmail, verifyPassword, verifyUsername} = require('../../modules/verif
 //send all guests to the login page
 router.use(function(req, res, next){
   const validUser = req.session.initalized && !req.session.user.guest;
+
+  return next();
 
   if (validUser){
     next();
@@ -34,27 +36,31 @@ router.post('/relog', function(req,res,next){
 router.use(function(req, res, next){
   if (!req.session.secure.value || Date.now() > req.session.secure.expiration){
     queryDB("SELECT * FROM account WHERE uuid = ?", req.session.user.uuid, function(err, result){
-      if (err) return next(err);
-
-      let info = result[0];
-      
-      crypto.randomBytes(0.5 * 6,function(err, buffer){
-        if (err) next (err);
-
+      try {
+        if (err) return next(err);
+        let info = result[0];
+        
+        if (!req.session.user.verified){
+          return next(); //if not verified, dont send a code, the email could be wrong
+        }
+        
+        let buffer = randomBytes(0.5 * 6);
         let code = buffer.toString('hex').toUpperCase();
         console.log(code);
-
+  
         req.session.token = {
           value:code,
           expiration:Date.now() + 1000 * 60 * 15
         }
-  
+    
         //generate params
         let params = new URLSearchParams();
         params.append('email',hideEmail(info.email));
-  
-        res.send({redirect:{path:'/dashboard/account/relog?' + params.toString()}})
-      });
+    
+        res.send({redirect:{path:'/dashboard/account/relog?' + params.toString()}});
+      } catch (error) {
+        next (error);
+      }
     });
   }else{
     next();
@@ -76,18 +82,22 @@ router.post('/getInfo', function(req,res,next){
 });
 
 router.post('/setUsername', function(req,res,next){
-  let [clientError, newUsername] = verifyUsername(req.body.username);
+  verifyUsername(req.body.username, function(err, result){
+    if (err) return next (err);
 
-  if (clientError){
-    res.send({error:clientError});
-  }else{
-    //set username
-    queryDB('UPDATE account SET username = ? WHERE uuid = ?',[newUsername, req.session.user.uuid], function(err,result){
-      if (err) return next(err);
+    let [clientError, newUsername] = result;
 
-      res.send({result:newUsername,alert:'Your username has been updated'});
-    });
-  }
+    if (clientError){
+      res.send({error:clientError});
+    }else{
+      //set username
+      queryDB('UPDATE account SET username = ? WHERE uuid = ?',[newUsername, req.session.user.uuid], function(err,result){
+        if (err) return next(err);
+  
+        res.send({result:newUsername,alert:'Your username has been updated'});
+      });
+    }
+  });
 });
 
 router.post('/setPassword', function(req,res,next){
@@ -104,20 +114,23 @@ router.post('/setPassword', function(req,res,next){
           return res.send({error:'The passwords do not match'});
         }
 
-        let [clientError] = verifyPassword(req.body.newPassword);
-        if (clientError){
-          res.send({error:clientError});
-        }else{
-          // set password
-          bcrypt.hash(req.body.newPassword, 10, function(err, newHash) {
-            if (err) return next (err);
-            queryDB('UPDATE account SET password = ? WHERE uuid = ?',[newHash, req.session.user.uuid], function(err,result){
-              if (err) return next(err);
-      
-              res.send({alert:'Your password has been updated'});
+        verifyPassword(req.body.newPassword, function(err, clientError){
+          if (err) return next (err);
+
+          if (clientError){
+            res.send({error:clientError});
+          }else{
+            // set password
+            bcrypt.hash(req.body.newPassword, 10, function(err, newHash) {
+              if (err) return next (err);
+              queryDB('UPDATE account SET password = ? WHERE uuid = ?',[newHash, req.session.user.uuid], function(err,result){
+                if (err) return next(err);
+        
+                res.send({alert:'Your password has been updated'});
+              });
             });
-          });
-        }
+          }
+        })
       }else{
         res.send({error:'The current password is incorrect'});
       }
@@ -126,26 +139,33 @@ router.post('/setPassword', function(req,res,next){
 });
 
 router.post('/setEmail', function(req,res,next){
-  verifyEmail(req.body.email, function(err, result){
-    if (err) return next (err);
-
-    if (result.error){
-      res.send({error:result.error});
-    }else{
-      //set username
-      queryDB('UPDATE account SET email = ? WHERE uuid = ?',[req.body.email, req.session.user.uuid], function(err,result){
-        if (err) return next(err);
-
-        res.send({alert:'Your email has been updated', result:hideEmail(req.body.email)});
-      });
-    }
-  });
+  try {
+    verifyEmail(req.body.email, function(err, result){
+      if (err) return next (err);
+  
+      if (result.error){
+        res.send({error:result.error});
+      }else{
+        //set username
+        queryDB('UPDATE account SET email = ? WHERE uuid = ?',[req.body.email, req.session.user.uuid], function(err,result){
+          if (err) return next(err);
+  
+          res.send({alert:'Your email has been updated', result:{email:hideEmail(req.body.email)}});
+        });
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post('*', function(req,res,next){
 
 });
 
+module.exports = router;
+
+//an error being thrown here is fine, as it will be caught by the try catch because this is a synchronous function.
 function hideEmail(email){
   let atIndex = email.indexOf('@');
 
@@ -156,5 +176,3 @@ function hideEmail(email){
 
   return start.slice(0,3) + '*****@***' + end.slice(dotIndex);
 }
-
-module.exports = router;

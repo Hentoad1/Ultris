@@ -18,39 +18,49 @@ router.post('/logout', function(req, res, next) {
 router.post('/register', function(req, res, next) {
   let input = req.body;
 
-  let [usernameInvalid, username] = verifyUsername(input.username);
-  let [passwordInvalid] = verifyPassword(input.password);
-
-  let errorMessage = usernameInvalid || passwordInvalid;
-  if (errorMessage){
-    return res.send({
-      error: errorMessage
-    });
-  }
-
-  input.username = username;
-
-  verifyEmail(input.email, function(err, response){
+  verifyUsername(input.username, function(err, result){
     if (err) return next (err);
 
-    if (response.error){
-      return res.send({
-        error: "An error has occurred.",
-        reset: true
-      });
-    }
-    
-    register(input, function(err, result){
-      if (err) return next (err);
-      
-      req.session.user = {
-        username: result.username,
-        uuid: result.uuid,
-        guest:false
-      }
-      req.session.save();
+    let [usernameInvalid, username] = result;
 
-      res.send({redirect:{path:'/play',refresh:true}});
+    verifyPassword(input.password, function(err, result){
+      if (err) return next (err);
+
+      let [passwordInvalid] = result;
+
+      let errorMessage = usernameInvalid || passwordInvalid;
+      if (errorMessage){
+        return res.send({
+          error: errorMessage
+        });
+      }
+
+      input.username = username;
+
+      verifyEmail(input.email, function(err, response){
+        if (err) return next (err);
+    
+        if (response.error){
+          return res.send({
+            error: "An error has occurred.",
+            reset: true
+          });
+        }
+        
+        register(input, function(err, result){
+          if (err) return next (err);
+          
+          req.session.user = {
+            username: result.username,
+            uuid: result.uuid,
+            guest: false,
+            verified: false //always will be false
+          }
+          req.session.save();
+    
+          res.send({redirect:{path:'/play',refresh:true}});
+        });
+      });
     });
   });
 });
@@ -83,7 +93,8 @@ router.post('/login', function(req, res, next) {
       req.session.user = {
         username: result.username,
         uuid: result.uuid,
-        guest:false
+        guest:false,
+        verified: result.verified === 1
       }
       req.session.save();
 
@@ -107,38 +118,46 @@ router.post('/', function(req, res, next) {
 module.exports = router;
 
 function login(input, callback){
-	queryDB("SELECT * FROM account WHERE email = ?", input.email, function(err, result){
-		if (err) return callback(err);
-
-    let user = result[0];
-
-		if (user){
-			bcrypt.compare(input.password, user.password, function(err,match){
-				if (err) return callback(err);
-				
-				if (match){
-					callback(err, user);
-				}else{
-					callback(err, null);
-				}
-			});
-		}else{
-			return callback(err, null);
-		}
-	});
+  try {
+    queryDB("SELECT * FROM account WHERE email = ?", input.email, function(err, result){
+      if (err) return callback(err);
+  
+      let user = result[0];
+  
+      if (user){
+        bcrypt.compare(input.password, user.password, function(err,match){
+          if (err) return callback(err);
+          
+          if (match){
+            callback(err, user);
+          }else{
+            callback(err, null);
+          }
+        });
+      }else{
+        return callback(err, null);
+      }
+    });
+  } catch (error) {
+    callback(error);
+  }
 }
 
 function register(input, callback){
-	bcrypt.hash(input.password, 10, function(err, hash) {
-		if (err) return callback(err);
-		input.password = hash;
-		genUUID(function(err, result){
-			if (err) return callback(err);
-			input.uuid = result;
-
-			queryDB("INSERT INTO account SET ?", [input], function(err, result){	
-				callback(err,input);
-			});
-		});
-	});
+  try {
+    bcrypt.hash(input.password, 10, function(err, hash) {
+      if (err) return callback(err);
+      input.password = hash;
+      genUUID(function(err, result){
+        if (err) return callback(err);
+        input.uuid = result;
+  
+        queryDB("INSERT INTO account SET ?", [input], function(err, result){	
+          callback(err,input);
+        });
+      });
+    });
+  } catch (error) {
+    callback(error);
+  }
 }
