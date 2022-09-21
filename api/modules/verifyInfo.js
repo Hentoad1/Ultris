@@ -26,7 +26,7 @@ function verifyUsername(input){
   });
 }
 
-function verifyPassword(password, callback){
+function verifyPassword(password){
   return new Promise(function(resolve, reject){
     let response = '';
 
@@ -36,13 +36,13 @@ function verifyPassword(password, callback){
         response = 'Your password must be less than 128 characters.';
     }
     
-    resolve(response)
+    resolve(response);
   });
 }
 
 
 //async needs try catch after it
-function verifyEmail(email, callback){
+function verifyEmail(email){
   return new Promise(function(resolve, reject){
     let whitespaceRegex = /\s/g;
     let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -60,7 +60,7 @@ function verifyEmail(email, callback){
       if (result === 1){
         response = {taken:true, error:'Email is already in use.'}
       }
-      
+
       resolve(response);
     }).catch(reject);
   });

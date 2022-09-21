@@ -48,7 +48,16 @@ var router = require('./routes/index');
 app.use('/', router);
 
 // create 404 if no route is found
-app.use(function(req, res, next) {
+app.use(function(err, req, res, next) {
+  if (err){
+    return next(err);
+  }
+  
+  if (res.headersSent){
+    return;
+  }
+
+  console.log('not found on path: ' + req.url);
   next(createError(404));
 });
 
@@ -60,11 +69,11 @@ app.use(function(err, req, res, next) {
 
   console.log(err);
 
-  // render the error page
+  if (res.headersSent){
+    return;
+  }
   res.status(err.status ?? 500);
-  res.send({
-    err:'An unexpected error has occured. Please try again later.'
-  });
+  res.send({error:'An unexpected error has occured. Please try again later.'});
 });
 
 module.exports = {app, sessionMiddleware};

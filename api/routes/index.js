@@ -2,36 +2,33 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 
-var database = require('../modules/database.js');
+var {genUUID} = require('../modules/database.js');
 
 //INITALIZE SESSION IF NONE IS THERE
 router.use(function(req,res,next){
-  if (req.session.initalized === undefined){
-    
-    database.genUUID(function(err, uuid){
-      if (err) return next (err);
-      
-      req.session.initalized = true;
-      req.session.user = {
-        username: 'GUEST',
-        guest: true,
-        uuid: uuid,
-        verified: false
-      }
-      req.session.secure = {
-        value:false,
-        expiration:null
-      };
-      req.session.token = {
-        value:null,
-        expiration:null
-      }
-
-      next();
-    });
-  }else{
+  if (req.session.initalized){
     next();
   }
+
+  genUUID().then(function(uuid){
+    req.session.initalized = true;
+    req.session.user = {
+      username: 'GUEST',
+      guest: true,
+      uuid: uuid,
+      verified: false
+    }
+    req.session.secure = {
+      value:false,
+      expiration:null
+    };
+    req.session.token = {
+      value:null,
+      expiration:null
+    }
+
+    next();
+  }).catch(next);
 });
 
 //ALL GET REQUESTS ARE GIVEN THE APP

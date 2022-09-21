@@ -9,7 +9,11 @@ const options = {
 	port:'3306'
 }
 
-function genUUID(){
+function genUUID(callback){
+  if (typeof callback === 'function'){
+    throw new Error('Callback was provided, change to Promise');
+  }
+
   return new Promise(function(resolve, reject){
     let id = uuid.v4();
 
@@ -27,6 +31,10 @@ function genUUID(){
 }
 
 function queryDB(...query){
+  if (typeof query[query.length - 1] === 'function'){
+    throw new Error('Callback was provided, change to Promise');
+  }
+
   return new Promise((resolve, reject) => {
 
     let connection = mysql.createConnection(options);

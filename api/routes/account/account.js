@@ -30,47 +30,39 @@ router.post('/relog', function(req,res,next){
   }else{
     res.send({error:'The code is incorrect or has expired.'})
   }
-
 });
 
 router.use(function(req, res, next){
-  if (!req.session.secure.value || Date.now() > req.session.secure.expiration){
-    queryDB("SELECT * FROM account WHERE uuid = ?", req.session.user.uuid, function(err, result){
-      try {
-        if (err) return next(err);
-        let info = result[0];
-        
-        if (!req.session.user.verified){
-          return next(); //if not verified, dont send a code, the email could be wrong
-        }
-        
-        let buffer = randomBytes(0.5 * 6);
-        let code = buffer.toString('hex').toUpperCase();
-        console.log(code);
-  
-        req.session.token = {
-          value:code,
-          expiration:Date.now() + 1000 * 60 * 15
-        }
-    
-        //generate params
-        let params = new URLSearchParams();
-        params.append('email',hideEmail(info.email));
-    
-        res.send({redirect:{path:'/dashboard/account/relog?' + params.toString()}});
-      } catch (error) {
-        next (error);
-      }
-    });
-  }else{
+  if (req.session.secure.value && Date.now() < req.session.secure.expiration){
     next();
   }
+
+  queryDB("SELECT * FROM account WHERE uuid = ?", req.session.user.uuid).then(function(result){
+    let info = result[0];
+        
+    if (!req.session.user.verified){
+      return next(); //if not verified, dont send a code, the email could be wrong
+    }
+        
+    let buffer = randomBytes(0.5 * 6);
+    let code = buffer.toString('hex').toUpperCase();
+    console.log(code);
+  
+    req.session.token = {
+      value:code,
+      expiration:Date.now() + 1000 * 60 * 15
+    }
+    
+    //generate params
+    let params = new URLSearchParams();
+    params.append('email',hideEmail(info.email));
+    
+    res.send({redirect:{path:'/dashboard/account/relog?' + params.toString()}});
+  }).catch(next);
 });
 
 router.post('/getInfo', function(req,res,next){
-  queryDB("SELECT * FROM account WHERE uuid = ?", req.session.user.uuid, function(err, result){
-    if (err) return next(err);
-
+  queryDB("SELECT * FROM account WHERE uuid = ?", req.session.user.uuid).then(function(result){
     info = result[0];
 
     info.email = hideEmail(info.email);
@@ -78,85 +70,62 @@ router.post('/getInfo', function(req,res,next){
     delete info.uuid;
 
     res.send({result:info});
-  });
+  }).catch(next);
 });
 
 router.post('/setUsername', function(req,res,next){
-  verifyUsername(req.body.username, function(err, result){
-    if (err) return next (err);
-
+  verifyUsername(req.body.username).then(function(result){
     let [clientError, newUsername] = result;
 
     if (clientError){
-      res.send({error:clientError});
-    }else{
-      //set username
-      queryDB('UPDATE account SET username = ? WHERE uuid = ?',[newUsername, req.session.user.uuid], function(err,result){
-        if (err) return next(err);
-  
-        res.send({result:newUsername,alert:'Your username has been updated'});
-      });
+      return res.send({error:clientError});
     }
-  });
+    
+    queryDB('UPDATE account SET username = ? WHERE uuid = ?',[newUsername, req.session.user.uuid]).then(function(){
+      res.send({result:newUsername,alert:'Your username has been updated'});
+    }).catch(next);
+  }).catch(next);
 });
 
 router.post('/setPassword', function(req,res,next){
-  queryDB("SELECT * FROM account WHERE uuid = ?",req.session.user.uuid, function(err, result){
-    if (err) return next(err);
-
+  queryDB("SELECT * FROM account WHERE uuid = ?",req.session.user.uuid).then(function(result){
     let currentHash = result[0].password;
 
-    bcrypt.compare(req.body.currentPassword, currentHash, function(err, same){
-      if (err) return next (err);
+    bcrypt.compare(req.body.currentPassword, currentHash).then(function(match){
+      if (!match){
+        return res.send({error:'The current password is incorrect'});
+      }
+      
+      if (req.body.newPassword !== req.body.newPasswordConfirm){
+        return res.send({error:'The passwords do not match'});
+      }
 
-      if (same){
-        if (req.body.newPassword !== req.body.newPasswordConfirm){
-          return res.send({error:'The passwords do not match'});
+      verifyPassword(req.body.newPassword).then(function(clientError){
+        if (clientError){
+          return res.send({error:clientError});
         }
 
-        verifyPassword(req.body.newPassword, function(err, clientError){
-          if (err) return next (err);
-
-          if (clientError){
-            res.send({error:clientError});
-          }else{
-            // set password
-            bcrypt.hash(req.body.newPassword, 10, function(err, newHash) {
-              if (err) return next (err);
-              queryDB('UPDATE account SET password = ? WHERE uuid = ?',[newHash, req.session.user.uuid], function(err,result){
-                if (err) return next(err);
-        
-                res.send({alert:'Your password has been updated'});
-              });
-            });
-          }
-        })
-      }else{
-        res.send({error:'The current password is incorrect'});
-      }
-    })
-  })
+        bcrypt.hash(req.body.newPassword, 10).then(function(newHash){
+          queryDB('UPDATE account SET password = ? WHERE uuid = ?',[newHash, req.session.user.uuid]).then(function(){
+            res.send({alert:'Your password has been updated'});
+          }).catch(next);
+        }).catch(next);
+      }).catch(next);
+    }).catch(next);
+  }).catch(next);
 });
 
 router.post('/setEmail', function(req,res,next){
-  try {
-    verifyEmail(req.body.email, function(err, result){
-      if (err) return next (err);
-  
-      if (result.error){
-        res.send({error:result.error});
-      }else{
-        //set username
-        queryDB('UPDATE account SET email = ? WHERE uuid = ?',[req.body.email, req.session.user.uuid], function(err,result){
-          if (err) return next(err);
-  
-          res.send({alert:'Your email has been updated', result:{email:hideEmail(req.body.email)}});
-        });
-      }
-    });
-  } catch (error) {
-    next(error);
-  }
+  verifyEmail(req.body.email).then(function(result){
+    if (result.error){
+      return res.send({error:result.error});
+    }
+
+    //set username
+    queryDB('UPDATE account SET email = ? WHERE uuid = ?',[req.body.email, req.session.user.uuid]).then(function(result){
+      res.send({alert:'Your email has been updated', result:{email:hideEmail(req.body.email)}});
+    }).catch(next);
+  }).catch(next);
 });
 
 router.post('*', function(req,res,next){
