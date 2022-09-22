@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 
 
+import {ReactComponent as Warning} from '../../../../assets/svgs/Filled_Warning.svg';
+
 import { AnimatedInput, AnimatedPasswordInput } from '../../../../assets/components/animatedInput';
 import LoadingOverlay from '../../../../assets/components/loadingOverlay';
 import useAPI from '../../../../assets/hooks/useAPI';
@@ -17,6 +19,7 @@ function AccountInfo(){
     QueryAPI('/account/getInfo', null, function(result){
       setLoading(false);
       if (result){
+        console.log(result);
         setInfo(result);
       }
     });
@@ -28,7 +31,7 @@ function AccountInfo(){
     <div className = 'splitmenu'>
       <UsernameSection username = {info.username}/>
       <PasswordSection/>
-      <EmailSection email = {info.email}/>
+      <EmailSection email = {info.email} verified = {info.verified}/>
     {loadingContent}
     </div>
   )
@@ -68,7 +71,9 @@ function UsernameSection(props){
       </div>
       <div className = 'content'>
         <AnimatedInput title = 'Display Name' value = {props.username} onValueChange = {v => setValue(v)} inputHandler = {e => e.target.value = e.target.value.toUpperCase()}/>
-        <button className = 'save' disabled = {inital === value} onClick = {submit}>SAVE CHANGES</button>
+        <div className = 'buttons'>
+          <button className = 'save' disabled = {inital === value} onClick = {submit}>SAVE CHANGES</button>
+        </div>
       </div>
     </div>
   )
@@ -122,7 +127,9 @@ function PasswordSection(props){
         <AnimatedPasswordInput title = 'Current Password' onValueChange = {e => setPassword1(e)} onRef = {r => updateRef(r, 0)}/>
         <AnimatedPasswordInput title = 'New Password' onValueChange = {e => setPassword2(e)} onRef = {r => updateRef(r, 1)}/>
         <AnimatedPasswordInput title = 'Confirm New Password' onValueChange = {e => setPassword3(e)} onRef = {r => updateRef(r, 2)}/>
-        <button className = 'save' disabled = {!filled} onClick = {submit}>SAVE CHANGES</button>
+        <div className = 'buttons'>
+          <button className = 'save' disabled = {!filled} onClick = {submit}>SAVE CHANGES</button>
+        </div>
       </div>
     </div>
   )
@@ -142,6 +149,11 @@ function EmailSection(props){
     setValue(props.email);
   }, [props.email])
 
+  useEffect(() => {
+    setVerified(props.verified);
+  }, [props.verified])
+
+
   function submit(){
     if (!loading){
       setLoading(true);
@@ -157,7 +169,8 @@ function EmailSection(props){
     }
   }
 
-  let verifyButton = verified ? <button>Verify Email</button> : null;
+  let verifyButton = verified ? <button className = 'save'>VERIFY EMAIL</button> : null;
+  let verifyError = verified || true ? <div className = 'error'><Warning/> test</div> : null;
 
   return (
     <div className = 'section'>
@@ -167,7 +180,8 @@ function EmailSection(props){
       </div>
       <div className = 'content'>
         <AnimatedInput title = 'Email' placeholder = {inital} onValueChange = {v => setValue(v)} onRef = {r => setRef(r)}/>
-        <div>
+        {verifyError}
+        <div className = 'buttons'>
           {verifyButton}
           <button className = 'save' disabled = {inital === value} onClick = {submit}>SAVE CHANGES</button>
         </div>
