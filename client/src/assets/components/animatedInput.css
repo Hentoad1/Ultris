@@ -1,12 +1,18 @@
 .AnimatedInput{
+  --border-color:#aaa;
+  --border-focus-color: #fff;
+  --placeholder-color: #fff8;
+  --background-color: transparent;
+  --background-focus-color: transparent;
+
   position:relative;
   padding-left:1em;
   padding-right:0;
   padding-top:1em;
   padding-bottom:0.5em;
-  background:transparent;
+  background:var(--background-color);
 
-  border:1px solid #aaa;
+  border:1px solid var(--border-color);
   outline:none;
 
   border-radius:3px;
@@ -16,8 +22,9 @@
 }
 
 .AnimatedInput:focus-within{
-  border:1px solid white;
-  outline:1px solid white;
+  border:1px solid var(--border-focus-color);
+  outline:1px solid var(--border-focus-color);
+  background:var(--background-focus-color);
 }
 
 .AnimatedInput > input{
@@ -55,7 +62,7 @@
   pointer-events: none;
   user-select: none;
 
-  opacity:0.5;
+  color:var(--placeholder-color);
 
   line-height:100%;
 

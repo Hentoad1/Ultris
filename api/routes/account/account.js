@@ -5,12 +5,11 @@ var bcrypt = require('bcrypt');
 
 var {queryDB} = require('../../modules/database.js');
 var {verifyEmail, verifyPassword, verifyUsername} = require('../../modules/verifyInfo.js');
+const { info } = require('console');
 
 //send all guests to the login page
 router.use(function(req, res, next){
   const validUser = req.session.initalized && !req.session.user.guest;
-
-  return next();
 
   if (validUser){
     next();
@@ -44,7 +43,7 @@ router.use(function(req, res, next){
       return next(); //if not verified, dont send a code, the email could be wrong
     }
         
-    let buffer = randomBytes(0.5 * 6);
+    let buffer = randomBytes(6 * 0.5);
     let code = buffer.toString('hex').toUpperCase();
     console.log(code);
   
@@ -63,9 +62,10 @@ router.use(function(req, res, next){
 
 router.post('/getInfo', function(req,res,next){
   queryDB("SELECT * FROM account WHERE uuid = ?", req.session.user.uuid).then(function(result){
-    info = result[0];
+    let info = result[0];
 
     info.email = hideEmail(info.email);
+    info.verified = info.verified === 1;
     delete info.password;
     delete info.uuid;
 
@@ -128,8 +128,29 @@ router.post('/setEmail', function(req,res,next){
   }).catch(next);
 });
 
-router.post('*', function(req,res,next){
+router.post('/verify', function(req,res,next){
+  queryDB("SELECT * FROM account WHERE uuid = ?",req.session.user.uuid).then(function(result){
+    let email = result[0].email;
 
+    let token = generateCode(50);
+
+    let expiration = new Date();
+    expiration.setHours(expiration.getHours() + 1)
+
+    let data = {
+      uuid:req.session.user.uuid,
+      email,
+      token,
+      expiration
+    }
+
+    queryDB('DELETE FROM emailtoken WHERE uuid = ?', req.session.user.uuid).then(function(){
+      queryDB('INSERT INTO emailtoken SET ?', data).then(function(result){
+        console.log(`${req.get('host')}/verify?token=${token}`);
+        res.send({alert:`A verification email has been sent to ${hideEmail(email)}`})
+      }).catch(next);
+    }).catch(next);
+  }).catch(next);
 });
 
 module.exports = router;
@@ -144,4 +165,10 @@ function hideEmail(email){
   let dotIndex = end.indexOf('.');
 
   return start.slice(0,3) + '*****@***' + end.slice(dotIndex);
+}
+
+function generateCode(length){
+  let buffer = randomBytes(length * (36 / 32));
+  let code = buffer.toString('base64url');
+  return code.slice(0, length);
 }

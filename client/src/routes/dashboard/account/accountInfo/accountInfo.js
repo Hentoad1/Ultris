@@ -164,14 +164,34 @@ function EmailSection(props){
           ref.current.placeholder = result.email;
           setInital(result.email);
           setValue(result.email);
+        }else{
+          setValue('');
         }
       });
     }
   }
 
-  let verifyButton = verified ? <button className = 'save'>VERIFY EMAIL</button> : null;
-  let verifyError = verified || true ? <div className = 'error'><Warning/> test</div> : null;
+  function verify(){
+    if (!loading){
+      setLoading(true);
+      QueryAPI('/account/verify', null, function(){
+        setLoading(false);
+      });
+    }
+  }
 
+  let verifyButton = null;
+  let verifyError = null;
+  let verifyStyle = {};
+  if (!verified){
+    verifyButton = <button className = 'save' onClick = {verify}>VERIFY EMAIL</button>;
+    verifyError = <div className = 'error'><Warning/> Your email is not verified.</div>;
+    verifyStyle = {
+      '--background-color':'#6F2DBD22',
+      '--border-color':'#6F2DBD',
+      '--border-focus-color':'#6F2DBD'
+    };
+  }
   return (
     <div className = 'section'>
       <div className = 'header'>
@@ -179,11 +199,11 @@ function EmailSection(props){
         <div className = 'description'>Your Email address is where all information involving your account and its security be sent to.</div>
       </div>
       <div className = 'content'>
-        <AnimatedInput title = 'Email' placeholder = {inital} onValueChange = {v => setValue(v)} onRef = {r => setRef(r)}/>
+        <AnimatedInput title = 'Email' placeholder = {inital} onValueChange = {v => setValue(v)} onRef = {r => setRef(r)} parentStyle = {verifyStyle}/>
         {verifyError}
         <div className = 'buttons'>
           {verifyButton}
-          <button className = 'save' disabled = {inital === value} onClick = {submit}>SAVE CHANGES</button>
+          <button className = 'save' disabled = {inital === value || value === ''} onClick = {submit}>SAVE CHANGES</button>
         </div>
       </div>
     </div>

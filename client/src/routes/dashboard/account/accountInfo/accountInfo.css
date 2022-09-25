@@ -84,3 +84,19 @@
 .splitmenu > .section > .content > .buttons > .save:disabled::after{
   display:none;
 }
+
+.splitmenu > .section > .content > .error{
+  color:#935AD8;
+
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  
+  gap:0.5em;
+
+  padding:0 1em;
+}
+
+.splitmenu > .section > .content > .error > svg{
+  height:1.5em;
+}

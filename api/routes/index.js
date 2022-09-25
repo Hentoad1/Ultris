@@ -7,7 +7,7 @@ var {genUUID} = require('../modules/database.js');
 //INITALIZE SESSION IF NONE IS THERE
 router.use(function(req,res,next){
   if (req.session.initalized){
-    next();
+    return next();
   }
 
   genUUID().then(function(uuid){
@@ -30,6 +30,9 @@ router.use(function(req,res,next){
     next();
   }).catch(next);
 });
+
+//SEND VERIFY ROUTER BEFORE REACT APP
+router.use('/verify', require('./verify/verify'));
 
 //ALL GET REQUESTS ARE GIVEN THE APP
 const build = path.resolve(__dirname + '/../../client/build');

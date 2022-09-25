@@ -47,16 +47,9 @@ app.use(async function(req, res, next){ //simulate latency
 var router = require('./routes/index');
 app.use('/', router);
 
-// create 404 if no route is found
-app.use(function(err, req, res, next) {
-  if (err){
-    return next(err);
-  }
-  
-  if (res.headersSent){
-    return;
-  }
 
+// create 404 if no route is found
+app.use(function(req, res, next) {
   console.log('not found on path: ' + req.url);
   next(createError(404));
 });
