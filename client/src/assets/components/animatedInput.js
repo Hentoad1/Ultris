@@ -11,10 +11,10 @@ function AnimatedInput(props){
   let ref = useRef();
 
   useEffect(() => {
-    if (props.onRef){
+    if (typeof props.onRef === 'function'){
       props.onRef(ref);
     }
-  }, [])
+  }, [props])
 
   useEffect(() => { //incase the default value changes, the internal value also needs to change.
     if (props.value){
@@ -23,10 +23,10 @@ function AnimatedInput(props){
   }, [props.value]);
 
   useEffect(() => {
-    if (props.onValueChange){
+    if (typeof props.onValueChange === 'function'){
       props.onValueChange(value);
     }
-  }, [value])
+  }, [props, value])
 
   let inputHandler = function(e){
     setValue(e.target.value);

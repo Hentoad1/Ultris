@@ -33,7 +33,7 @@ router.post('/relog', function(req,res,next){
 
 router.use(function(req, res, next){
   if (req.session.secure.value && Date.now() < req.session.secure.expiration){
-    next();
+    return next();
   }
 
   queryDB("SELECT * FROM account WHERE uuid = ?", req.session.user.uuid).then(function(result){

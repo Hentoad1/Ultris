@@ -1,8 +1,5 @@
 import React, {useRef, useEffect, useState} from 'react';
 
-import {ReactComponent as TextHidden} from '../../assets/svgs/Text_Hidden.svg';
-import {ReactComponent as TextVisible} from '../../assets/svgs/Text_Visible.svg';
-
 import './codeInput.css';
 
 function CodeInput(props){
@@ -107,7 +104,7 @@ function Digit(props){
     if (typeof props.onRef === 'function'){
       return props.onRef(ref);
     }
-  }, [])
+  }, [props])
 
   
 

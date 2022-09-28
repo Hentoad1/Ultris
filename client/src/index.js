@@ -11,7 +11,6 @@ import Dashboard from './routes/dashboard/dashboard.js';
 import Welcome from './routes/dashboard/welcome/welcome.js';
 import Controls from './routes/dashboard/controls/controls.js';
 import Handling from './routes/dashboard/handling/handling.js';
-import VerifyAccount from './routes/dashboard/account/verifyAccount.js';
 import AccountInfo from './routes/dashboard/account/accountInfo/accountInfo.js';
 import Relog from './routes/dashboard/account/relog/relog.js'
 
@@ -28,9 +27,10 @@ root.render(
               <Route index element = {<Welcome/>} />
               <Route path='controls' element = {<Controls />} />
               <Route path='handling' element = {<Handling />} />
-              <Route path='account' /*element = {<VerifyAccount />}*/ >
+              <Route path='account'>
+                <Route index element = {<AccountInfo />} />
+                <Route path='information' element = {<AccountInfo />} />
                 <Route path='relog' element = {<Relog/>} />
-                <Route path='*' element = {<AccountInfo />} />
               </Route>
             </Route>
             <Route path='play'>

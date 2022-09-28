@@ -234,10 +234,15 @@ class Room{
 	}
 }
 
+function generateRoomCode(){
+  let number = Math.floor(Math.random() * 2176782335);
+  let str = number.toString(36).toUpperCase();
+  return str;
+}
+
 new Room('quickplay',{},true);
 
-function bind(input){
-	io = input;
+function bind(io){
 	io.on('connection',function(socket){
 		socket.username = socket.request.session.username ?? 'GUEST';
 		socket.uuid = socket.request.session.uuid ?? null;
@@ -550,12 +555,6 @@ function bind(input){
 			callback(roomcode);
 		});
 	});
-
-	function generateRoomCode(){
-		let number = Math.floor(Math.random() * 2176782335);
-		let str = number.toString(36).toUpperCase();
-		return str;
-	}
 }
 
 module.exports = bind;

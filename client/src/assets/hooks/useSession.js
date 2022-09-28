@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, createContext } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
@@ -44,12 +44,15 @@ function useSession(){
 
 function useLogout(){
   const [, setSession] = useContext(SessionContext);
+  let navigate = useNavigate();
+
 
   let logout = function(callback){
     QueryAPI('/user/logout', function(result){
       if (result){
         setSession(result);
       }
+      navigate('/play');
       if (callback){
         callback();
       }

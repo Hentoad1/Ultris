@@ -11,7 +11,7 @@ router.post('/logout', function(req, res, next) {
   req.session.user = {};
   req.session.save();
 
-  res.end();
+  res.send({redirect:{path:'/play',refresh:true}});
 });
 
 //REGISTER ROUTE FROM CLIENT

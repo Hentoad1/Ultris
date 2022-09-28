@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router';
 
-import { AnimatedInput, AnimatedPasswordInput } from '../../../../assets/components/animatedInput';
 import LoadingOverlay from '../../../../assets/components/loadingOverlay';
 import CodeInput from '../../../../assets/components/codeInput';
 import useAPI from '../../../../assets/hooks/useAPI';

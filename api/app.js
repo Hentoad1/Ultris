@@ -38,7 +38,6 @@ var sessionMiddleware = sessions({
 
 app.use(sessionMiddleware);
 
-
 app.use(async function(req, res, next){ //simulate latency
   await new Promise((resolve, reject) => setTimeout(resolve, 1000));
   next()
