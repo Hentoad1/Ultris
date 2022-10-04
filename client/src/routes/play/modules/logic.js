@@ -559,7 +559,9 @@ function newBag(){
 		remaining.delete(weighted);
 		output.push(weighted);
 	}
-	
+
+  console.log(output);
+
 	return output;
 }
 
@@ -580,9 +582,13 @@ function holdCurrent(){
 			hold.reset();
 			current.reset();
 		}
+
+    if (gameMode === 'online'){
+      socket.emit('hold');
+    }
 	}
 	justHeld = true;
-	
+
 	displayQueue();
 	displayHold();
 }
@@ -701,6 +707,10 @@ function place(){
 	
 	current.place();
 	
+	if (gameMode === 'online'){
+		socket.emit('placed',board);
+  }
+
 	var linesCleared = updateBoard();
 	
 	if (gameMode === 'online'){
@@ -717,9 +727,6 @@ function place(){
 				}
 				displayGarbage();
 			}
-			socket.emit('send board',board);
-		}else{
-			socket.emit('cleared line',board,pOffsets(current.pType),current.x,current.y,current.colorIndex,current.kick3,lastMovement);
 		}
 	}
 	
@@ -982,10 +989,6 @@ function initalize(...args){ // im using bad variable names but otherwise they w
 			}
 			
 			displayGarbage();
-		});
-	
-		socket.on('request garbage',function(){
-			socket.emit('sync garbage',garbageMeter.reduce((a,b) => a + b, 0));
 		});
 	}else{ // if not online then juts initialize the game immidiately.
 		reset();
