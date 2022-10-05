@@ -1,136 +1,124 @@
-import React from 'react';
+import {useRef,useEffect} from 'react';
 
 
 import {initalize, keyDownHandler, keyUpHandler} from './logic.js'
 import './game.css';
 
-const defaultState = {
+function Game(props){
+  //CANVASES
+  let holdRef = useRef();
+  let meterRef = useRef();
+  let mainRef = useRef();
+  let queueRef = useRef();
 
-};
+  //STATS
+  let scoreRef = useRef();
+  let levelRef = useRef();
+  let linesRef = useRef();
+  let timeRef = useRef();
 
-class Game extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = defaultState;
-        
-        //CANVASES
-        this.holdRef = React.createRef();
-        this.meterRef = React.createRef();
-        this.mainRef = React.createRef();
-        this.queueRef = React.createRef();
+  let b2bref = useRef();
+  let broadcastRef = useRef();
+  let comboRef = useRef();
 
-        //STATS
-        this.scoreRef = React.createRef();
-        this.levelRef = React.createRef();
-        this.linesRef = React.createRef();
-        this.timeRef = React.createRef();
+  let titleRef = useRef();
+  
+  //WRAPPER
+  let wrapperRef = useRef();
 
-        this.b2bref = React.createRef();
-        this.broadcastRef = React.createRef();
-        this.comboRef = React.createRef();
+  let removeListeners = function(){
+      document.removeEventListener('keydown', keyDownHandler, false);
+      document.removeEventListener('keyup', keyUpHandler, false);
+  }
 
-        this.titleRef = React.createRef();
-        
-        //WRAPPER
-        this.wrapperRef = React.createRef();
+  let addListeners = function(){
+      document.addEventListener('keydown', keyDownHandler, false);
+      document.addEventListener('keyup', keyUpHandler, false);
+  }
 
-        props.globals.game = {
-            setState:this.setState.bind(this),
-            reset:this.reset,
-            addListeners:this.addListeners,
-            removeListeners:this.removeListeners,
-        }
-    }
+  let reset = function(){
+    addListeners();
+    initalize();
+  }
 
-    reset(){
-        this.addListeners();
-        initalize();
-    }
+  props.globals.game = {
+    reset,
+    addListeners,
+    removeListeners
+  }
 
-    componentDidMount(){
-        let globals = this.props.globals;
-        let DOM = {
-            hold: this.holdRef.current,
-            meter: this.meterRef.current,
-            main: this.mainRef.current,
-            queue: this.queueRef.current,
-            score: this.scoreRef.current,
-            level: this.levelRef.current,
-            lines: this.linesRef.current,
-            time: this.timeRef.current,
-            b2b: this.b2bref.current,
-            broadcast: this.broadcastRef.current,
-            combo: this.comboRef.current,
-            title: this.titleRef.current,
-            full: this.wrapperRef.current
-        }
-        globals.game.clientRef = this.wrapperRef;
+  useEffect(() => {
+      let globals = props.globals;
+      let DOM = {
+          hold: holdRef.current,
+          meter: meterRef.current,
+          main: mainRef.current,
+          queue: queueRef.current,
+          score: scoreRef.current,
+          level: levelRef.current,
+          lines: linesRef.current,
+          time: timeRef.current,
+          b2b: b2bref.current,
+          broadcast: broadcastRef.current,
+          combo: comboRef.current,
+          title: titleRef.current,
+          full: wrapperRef.current
+      }
+      globals.game.clientRef = wrapperRef;
 
 
-        let callbacks = {
-            end:globals.statmenu.gameEnd
-        }
+      let callbacks = {
+          end:globals.statmenu.gameEnd
+      }
 
-        initalize(DOM,callbacks,globals.gameMode,globals.socket);
+      initalize(DOM,callbacks,globals.gameMode,globals.socket);
 
-        this.addListeners();
-    }
+      addListeners();
 
-    componentWillUnmount(){
-        this.addListeners();
-    }
+      return function(){
+        removeListeners();
+      }
+  },[]);
 
-    removeListeners(){
-        document.removeEventListener('keydown', keyDownHandler, false);
-        document.removeEventListener('keyup', keyUpHandler, false);
-    }
-
-    addListeners(){
-        document.addEventListener('keydown', keyDownHandler, false);
-        document.addEventListener('keyup', keyUpHandler, false);
-    }
-
-    render() {
-        return (
-            <div className = 'clientWrapper' ref = {this.wrapperRef}>
-                <div className = "inner_left_wrapper">
-                    <canvas width = '100' height = '100' ref={this.holdRef} className = "box"></canvas>
-                    <div className = "broadcast_wrapper" > {/*this is for lines being cleared, the css is not yet implemented / transfered; should be re-named to minor broadcast wrapper */}
-                        <span className = "minor_broadcast" ref={this.b2bref}/>
-                        <span className = "broadcast" ref={this.broadcastRef}/>
-                        <span className = "minor_broadcast" ref={this.comboRef}/>
-                    </div>
-                    <div className = "statBox">
-                        Score
-                        <span className = "statOutput" ref={this.scoreRef}>0</span>
-                    </div>
-                    <div className = "statBox">
-                        Level
-                        <span className = "statOutput" ref={this.levelRef}>1</span>
-                    </div>
-                    <div className = "statBox">
-                        Lines
-                        <span className = "statOutput" ref={this.linesRef}>0</span>
-                    </div>
-                    <div className = "statBox">
-                        Time
-                        <span className = "statOutput" ref={this.timeRef}>0:00.000</span>
-                    </div>
-                </div>
-                <div>
-                    <canvas height = '400' width = '20' ref={this.meterRef} className = 'meter'></canvas>
-                </div>
-                <div className = 'inner_center_wrapper'>
-                    <span className = "center_output" ref={this.titleRef}></span>
-                    <canvas height = '400' width = '200' ref={this.mainRef} className = "box"></canvas>
-                    <span className = 'inner_username_wrapper'>PLAYER</span>
-                </div>
-                <div className = "inner_right_wrapper">
-                    <canvas id = "queueDisp" height = '400' width = '100' ref={this.queueRef} className = "box"></canvas>
-                </div>
-            </div>
-        )
-    }
+  return (
+    <div className = 'clientWrapper' ref = {wrapperRef}>
+      <div className = "inner_left_wrapper">
+        <canvas width = '100' height = '100' ref={holdRef} className = "box"></canvas>
+        <div className = "broadcast_wrapper" > {/*this is for lines being cleared, the css is not yet implemented / transfered; should be re-named to minor broadcast wrapper */}
+          <span className = "minor_broadcast" ref={b2bref}/>
+          <span className = "broadcast" ref={broadcastRef}/>
+          <span className = "minor_broadcast" ref={comboRef}/>
+        </div>
+        <div className = "statBox">
+          Score
+          <span className = "statOutput" ref={scoreRef}>0</span>
+        </div>
+        <div className = "statBox">
+          Level
+          <span className = "statOutput" ref={levelRef}>1</span>
+        </div>
+        <div className = "statBox">
+          Lines
+          <span className = "statOutput" ref={linesRef}>0</span>
+        </div>
+        <div className = "statBox">
+          Time
+          <span className = "statOutput" ref={timeRef}>0:00.000</span>
+        </div>
+      </div>
+      <div>
+        <canvas height = '400' width = '20' ref={meterRef} className = 'meter'></canvas>
+      </div>
+      <div className = 'inner_center_wrapper'>
+        <span className = "center_output" ref={titleRef}></span>
+        <canvas height = '400' width = '200' ref={mainRef} className = "box"></canvas>
+        <span className = 'inner_username_wrapper'>PLAYER</span>
+      </div>
+      <div className = "inner_right_wrapper">
+        <canvas id = "queueDisp" height = '400' width = '100' ref={queueRef} className = "box"></canvas>
+      </div>
+    </div>
+  )
 }
   
 export default Game;
