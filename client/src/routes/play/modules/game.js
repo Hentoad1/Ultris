@@ -1,7 +1,7 @@
 import {useRef,useEffect} from 'react';
 
 
-import {initalize, keyDownHandler, keyUpHandler} from './logic.js'
+import {initalize} from './logic.js'
 import './game.css';
 
 function Game(props){
@@ -26,58 +26,50 @@ function Game(props){
   //WRAPPER
   let wrapperRef = useRef();
 
-  let removeListeners = function(){
-      document.removeEventListener('keydown', keyDownHandler, false);
-      document.removeEventListener('keyup', keyUpHandler, false);
-  }
-
-  let addListeners = function(){
-      document.addEventListener('keydown', keyDownHandler, false);
-      document.addEventListener('keyup', keyUpHandler, false);
-  }
-
-  let reset = function(){
-    addListeners();
-    initalize();
-  }
-
-  props.globals.game = {
-    reset,
-    addListeners,
-    removeListeners
-  }
+  
 
   useEffect(() => {
-      let globals = props.globals;
-      let DOM = {
-          hold: holdRef.current,
-          meter: meterRef.current,
-          main: mainRef.current,
-          queue: queueRef.current,
-          score: scoreRef.current,
-          level: levelRef.current,
-          lines: linesRef.current,
-          time: timeRef.current,
-          b2b: b2bref.current,
-          broadcast: broadcastRef.current,
-          combo: comboRef.current,
-          title: titleRef.current,
-          full: wrapperRef.current
-      }
-      globals.game.clientRef = wrapperRef;
+    let globals = props.globals;
 
+    let DOM = {
+      hold: holdRef.current,
+      meter: meterRef.current,
+      main: mainRef.current,
+      queue: queueRef.current,
+      score: scoreRef.current,
+      level: levelRef.current,
+      lines: linesRef.current,
+      time: timeRef.current,
+      b2b: b2bref.current,
+      broadcast: broadcastRef.current,
+      combo: comboRef.current,
+      title: titleRef.current,
+      full: wrapperRef.current
+    }
 
-      let callbacks = {
-          end:globals.statmenu.gameEnd
-      }
+    let callbacks = {
+      end:globals.statmenu.gameEnd
+    }
 
-      initalize(DOM,callbacks,globals.gameMode,globals.socket);
+    let {addListeners, removeListeners} = initalize(DOM,callbacks,globals.gameMode,globals.socket);
 
-      addListeners();
+    let reset = function(){
+      //addListeners();
+      //initalize();
+    }
 
-      return function(){
-        removeListeners();
-      }
+    globals.game = {
+      reset,
+      addListeners,
+      removeListeners,
+      clientRef: wrapperRef
+    }
+
+    addListeners();
+
+    return function(){
+      removeListeners();
+    }
   },[]);
 
   return (

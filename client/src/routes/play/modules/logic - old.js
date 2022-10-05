@@ -941,8 +941,8 @@ function refreshDOM(elem = DOM.full){
 }
 
 //EXPORTS
-function initalize(...args){ // im using bad variable names but otherwise they would be litearlly identical.
-    DOM = DOM ?? args[0];
+function initalize(...args){
+  DOM = DOM ?? args[0];
 	callbacks = callbacks ?? args[1];
 	gameMode = args[2];
 
@@ -996,6 +996,8 @@ function initalize(...args){ // im using bad variable names but otherwise they w
 
 	window.requestAnimationFrame(fullLoop);
 	setInterval(backupLoop,100);
+
+  return {addListeners, removeListeners}
 }
 
 function keyDownHandler(event){
@@ -1021,6 +1023,14 @@ function keyUpHandler(event){
     }
 }
 
+function removeListeners(){
+  document.removeEventListener('keydown', keyDownHandler, false);
+  document.removeEventListener('keyup', keyUpHandler, false);
+}
 
+function addListeners(){
+    document.addEventListener('keydown', keyDownHandler, false);
+    document.addEventListener('keyup', keyUpHandler, false);
+}
 
 export {initalize, keyDownHandler, keyUpHandler};
