@@ -1,7 +1,7 @@
 import {useRef,useEffect} from 'react';
 
 
-import {initalize} from './logic.js'
+import initalize from './logic.js'
 import './game.css';
 
 function Game(props){
@@ -30,6 +30,7 @@ function Game(props){
 
   useEffect(() => {
     let globals = props.globals;
+    let socket = globals.socket;
 
     let DOM = {
       hold: holdRef.current,
@@ -51,7 +52,7 @@ function Game(props){
       end:globals.statmenu.gameEnd
     }
 
-    let {addListeners, removeListeners} = initalize(DOM,callbacks,globals.gameMode,globals.socket);
+    let {addListeners, removeListeners} = initalize(DOM,callbacks,globals.gameMode,socket);
 
     let reset = function(){
       //addListeners();
@@ -69,6 +70,7 @@ function Game(props){
 
     return function(){
       removeListeners();
+      socket.emit('reset');
     }
   },[]);
 
