@@ -784,6 +784,9 @@ function initalize(DOM, callbacks, gameMode, socket) {
     /*This is genius, this calls a non test of a shift of 0,0 returning a boolean value of if the peice spawns inside another peice already but also because it is not doing a test it will update the falling varabile causing peices spawning on top of blocks to still place properly.*/
     if (!current.shift(0, 0)) {
       end(false);
+      if (gameMode === 'blitz'){
+        socket.emit('timeout', 0);
+      }
     }
 
     queue.shift();

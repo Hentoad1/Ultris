@@ -1,6 +1,5 @@
 const getMoveData = require('./moveData');
 const getClearData = require('./clearData');
-const calculatePoints = require('./points');
 const Queue = require('./queue');
 
 class Board {
