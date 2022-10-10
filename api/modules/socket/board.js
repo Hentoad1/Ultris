@@ -13,7 +13,8 @@ class Board {
     this.garbageQueue = [],
     this.linesSent = 0,
     this.linesReceived = 0,
-    this.desyncs = 0 //remove eventually
+    this.totalLines = 0, 
+    this.level = 0
   }
 
   reset(salt){ //needs salt for queue and then queue uses .reset
@@ -25,7 +26,8 @@ class Board {
     this.garbageQueue = [],
     this.linesSent = 0,
     this.linesReceived = 0,
-    this.desyncs = 0 //remove eventually
+    this.totalLines = 0, 
+    this.level = 0
   }
 
   //add garbage to the queue
@@ -67,14 +69,17 @@ class Board {
     }
   }
 
-  newBoard(newBoard){
+  newMove(newBoard, movementType){
     let preGarbageData = getMoveData(this.board, newBoard); //this only should be used for clear data as clear data only uses the move data if a line is cleared and garabage wouldnt be added in that case
-    let [clearData, clearedBoard] = getClearData(newBoard,preGarbageData);
+    let [clearData, clearedBoard] = getClearData(newBoard, preGarbageData, movementType);
 
     if (clearData.linesCleared === 0){
       this.convertGarbage();//only convert garbage if line isnt cleared
       this.combo = 0;
     }else{
+      this.totalLines += clearData.linesCleared;
+      this.level = Math.floor(this.totalLines / 10) + 1;
+
       this.combo++;
       if (clearData.complexMove){
         this.b2b++;
@@ -109,8 +114,11 @@ class Board {
     //pass off point data for server to use depending on game mode
     let pointData = {
       lines: clearData.linesCleared,
+      type: clearData.type, 
       combo: this.combo,
-      b2b: this.b2b
+      b2b: this.b2b,
+      level: this.level,
+      pc: clearData.perfectClear
     }
 
     //returns [valid, outgoing lines]

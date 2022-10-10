@@ -38,6 +38,7 @@ class StatMenu extends React.Component {
     }
 
     gameEnd(stats){
+      console.log('display', this.state.display);
         document.addEventListener('keyup', this.KeyHandler, false);
         new Promise(function(resolve){
             setTimeout(resolve,2000,stats.display);

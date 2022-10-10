@@ -35,13 +35,26 @@ function getCorners(state){
   return corners;
 }
 
-function getClearData(board, moveData){
+function isBlank(board){
+  for (let i = 0; i < board.length; i++){
+    for (let j = 0; j < board[i].length; j++){
+      if (board[i][j] !== 0){
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+function getClearData(board, moveData, clientClaimedKick3){
   let [linesCleared, clearedBoard] = clearBoard(board);
+  let perfectClear = isBlank(clearedBoard);
 
   var clearData = {
     linesCleared,
     type:'Normal',
-    complexMove:linesCleared == 4
+    complexMove:linesCleared == 4,
+    perfectClear
   }
 
   if (linesCleared === 0){
@@ -68,7 +81,11 @@ function getClearData(board, moveData){
 
     if (totalCorners >= 3){
       clearData.complexMove = true;
-      if (cornerValues[0] && cornerValues[1]){
+
+      let commonCase = cornerValues[0] && cornerValues[1];
+      let kick3Case = clientClaimedKick3; //vulnerability that slight cheating via client modification making illigitmate claims a move used kick3 when it did not, but not much is lost here considering the work put in to do this.
+
+      if (commonCase || kick3Case){
         clearData.type = 'T-Spin';
       }else{
         clearData.type = 'T-Spin-Mini';

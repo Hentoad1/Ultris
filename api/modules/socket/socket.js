@@ -42,6 +42,7 @@ function resetBinds(socket){
   socket.removeAllListeners();
 
   socket.on('join room',handle(function(roomcode,callback){
+    resetBinds(socket)
     if (!rooms.has(roomcode)){
       callback(null,'Room does not exist.');
       return;
@@ -87,8 +88,8 @@ function resetBinds(socket){
     }))
 
     //MANAGE GAME EVENTS
-    socket.on('placed',handle(function(board){
-      let [valid, pointInfo] = socket.boardData.newBoard(board);
+    socket.on('placed',handle(function(board, movement){
+      let [valid, pointInfo] = socket.boardData.newMove(board, movement);
 
       socket.broadcast.emit('recieve board',board,socket.publicID);
     }));
@@ -98,22 +99,99 @@ function resetBinds(socket){
     }));
   }));
 
-  socket.on('start', handle(function(gameMode, salt){
+  socket.on('sprint', handle(function(salt){
+    resetBinds(socket);
     socket.boardData.reset(salt);
 
+    let totalLinesCleared = 0; //finish condition
+    let startDate = Date.now(); //score measurement
+
+    let synced = true;
     socket.on('hold', handle(function(){
       socket.boardData.hold();
     }))
 
     //MANAGE GAME EVENTS
-    socket.on('placed',handle(function(board){
-      let [valid, pointInfo] = socket.boardData.newBoard(board);
-      console.log(pointInfo);
-
-
-      socket.broadcast.emit('recieve board',board,socket.publicID);
+    socket.on('placed',handle(function(board, movement){
+      let [valid, pointInfo] = socket.boardData.newMove(board, movement);
+      if (synced){
+        if (valid){
+          totalLinesCleared += pointInfo.lines;
+          if (totalLinesCleared >= 40){
+            console.log(Date.now() - startDate);
+            socket.emit('end');
+          };
+        }else{
+          synced = false;
+        }
+      }
     }));
-  }))
+  }));
+
+  socket.on('blitz', handle(function(salt){
+    resetBinds(socket);
+    socket.boardData.reset(salt);
+
+    let startDate = Date.now(); //finish condition
+    let totalPoints = 0; //score measurement
+
+    let synced = true;
+    socket.on('hold', handle(function(){
+      socket.boardData.hold();
+    }))
+
+    //MANAGE GAME EVENTS
+    socket.on('placed',handle(function(board, movement, fallPoints){
+      let [valid, pointInfo] = socket.boardData.newMove(board, movement);
+      if (synced){
+        if (valid){
+          if (fallPoints > 80){
+            synced = false;
+          }else{
+            totalPoints += fallPoints;
+          }
+
+          if (Date.now() - startDate < 1000 * 60 * 20){
+            totalPoints += calcPoints(pointInfo);
+            console.log(totalPoints);
+          };
+        }else{
+          synced = false;
+        }
+      }
+    }));
+
+    socket.on('timeout', function(fallPoints){
+      if (synced){ 
+        if (fallPoints > 80){
+          synced = false;
+          return;
+        }else{
+          totalPoints += fallPoints;
+        }
+
+        console.log(totalPoints);
+        console.log('would be sending points here');
+      }
+    })
+
+    function calcPoints(data){
+      if (data.lines === 0){
+        return 0;
+      }
+      console.log(data);
+      const linesToPoints = [100, 300, 500, 800];
+      
+      var points = linesToPoints[Math.min(data.lines, 4) - 1];
+      var spinMultiplier = data.type === 'T-Spin' ? 4 : data.type === 'T-Spin-Mini' ? 4 / 3 : 1;
+      var b2bMultiplier = data.b2b > 1 ? 1.5 : 1;
+      var pcBonus = data.pc ? 3500 : 0;
+
+      var points = ((Math.floor(points * spinMultiplier * b2bMultiplier / 100) * 100) + pcBonus + ((data.combo - 1) * 50)) * data.level;
+
+      return points;
+    }
+  }));
 
   socket.on('create room',handle(function(callback){
     if (socket.uuid && socket.username){
