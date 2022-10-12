@@ -124,6 +124,8 @@ function bind(io){
 
               socket.emit('end');
               socket.emit('overwritePrimaryStat', formatted);
+              
+              addLeaderboardScore('sprint', socket.uuid, formatted);
             };
           }else{
             synced = false;
@@ -174,8 +176,7 @@ function bind(io){
             totalPoints += fallPoints;
           }
   
-          console.log(totalPoints);
-          console.log('would be sending points here');
+          addLeaderboardScore('blitz', socket.uuid, totalPoints);
         }
       })
   

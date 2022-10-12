@@ -33,19 +33,19 @@ function Game(props){
     let socket = globals.socket;
 
     let DOM = {
-      hold: holdRef.current,
-      meter: meterRef.current,
-      main: mainRef.current,
-      queue: queueRef.current,
-      score: scoreRef.current,
-      level: levelRef.current,
-      lines: linesRef.current,
-      time: timeRef.current,
-      b2b: b2bref.current,
-      broadcast: broadcastRef.current,
-      combo: comboRef.current,
-      title: titleRef.current,
-      full: wrapperRef.current
+      hold: holdRef,
+      meter: meterRef,
+      main: mainRef,
+      queue: queueRef,
+      score: scoreRef,
+      level: levelRef,
+      lines: linesRef,
+      time: timeRef,
+      b2b: b2bref,
+      broadcast: broadcastRef,
+      combo: comboRef,
+      title: titleRef,
+      full: wrapperRef
     }
 
     let callbacks = {

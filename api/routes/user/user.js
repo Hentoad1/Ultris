@@ -30,9 +30,9 @@ router.post('/register', function(req, res, next) {
         });
       }
 
-      input.username = username;
+      userData.username = username;
 
-      verifyEmail(input.email).then(function(response){
+      verifyEmail(userData.email).then(function(response){
         if (response.error){
           return res.send({
             error: "An error has occurred.",
@@ -41,20 +41,28 @@ router.post('/register', function(req, res, next) {
         }
         
         //register
-        bcrypt.hash(input.password, 10).then(function(hash){
-          input.password = hash;
+        bcrypt.hash(userData.password, 10).then(function(hash){
+          userData.password = hash;
           genUUID().then(function(result){
-            input.uuid = result;
+            userData.uuid = result;
       
-            queryDB("INSERT INTO account SET ?", [input]).then(function(){	
-              req.session.user = {
-                username: result.username,
-                uuid: result.uuid,
-                guest: false,
-                verified: false //always will be false
-              }
-              
-              res.send({redirect:{path:'/play',refresh:true}});
+            queryDB("INSERT INTO account SET ?", [userData]).then(function(){
+              let defaultScoreData = {
+                uuid: userData.uuid,
+                username: userData.username
+              }	
+              queryDB("INSERT INTO sprint SET ?", [defaultScoreData]).then(function(){
+                queryDB("INSERT INTO blitz SET ?", [defaultScoreData]).then(function(){
+                  req.session.user = {
+                    username: result.username,
+                    uuid: result.uuid,
+                    guest: false,
+                    verified: false //always will be false
+                  }
+                  
+                  res.send({redirect:{path:'/play',refresh:true}});
+                }).catch(next);
+              }).catch(next);
             }).catch(next);
           }).catch(next);
         }).catch(next);

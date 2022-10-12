@@ -103,7 +103,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
     }
 
     display() {
-      let canvas = DOM.main;
+      let canvas = DOM.main.current;
       let ctx = canvas.getContext('2d');
 
       ctx.fillStyle = this.color + "88";
@@ -251,9 +251,15 @@ function initalize(DOM, callbacks, gameMode, socket) {
     }
   }
 
-  DOM.full.style = null; // makes it so it will cancel the animation if it is still running.
+  console.log(DOM);
+
+  new Promise(r => setTimeout(r, 1000)).then(() => {
+    console.log(DOM);
+  }) 
+
+  DOM.full.current.style = null; // makes it so it will cancel the animation if it is still running.
   refreshDOM(DOM.full);
-  DOM.full.style = null;
+  DOM.full.current.style = null;
 
   socket.on('recieve garbage', function(lines,x){
     let fullGarbage = new Array(10).fill(9);
@@ -378,7 +384,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
       function: function () {
         if (gameRunning) {
           while (current.shift(0, -1)) {
-            DOM.score.innerHTML = parseInt(DOM.score.innerHTML) + 1;
+            DOM.score.current.innerHTML = parseInt(DOM.score.current.innerHTML) + 1;
             dropBonusCounter++;
           }
           place();
@@ -410,17 +416,17 @@ function initalize(DOM, callbacks, gameMode, socket) {
     displayGarbage();
 
     clearInterval(timer);
-    DOM.time.innerHTML = "0:00.000";
-    DOM.score.innerHTML = 0;
-    DOM.level.innerHTML = 1;
-    DOM.lines.innerHTML = 0;
+    DOM.time.current.innerHTML = "0:00.000";
+    DOM.score.current.innerHTML = 0;
+    DOM.level.current.innerHTML = 1;
+    DOM.lines.current.innerHTML = 0;
     gameRunning = false;
 
     garbageQueue = [];
     garbageMeter = [];
 
-    DOM.full.style = null;
-    DOM.full.onanimationend = null;
+    DOM.full.current.style = null;
+    DOM.full.current.onanimationend = null;
 
     countdown().then((passed) => {
       if (passed){
@@ -434,7 +440,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
   }
 
   async function countdown() {
-    let elem = DOM.title;
+    let elem = DOM.title.current;
 
     elem.style.animation = "";
     refreshDOM(elem); //refresh;
@@ -443,9 +449,16 @@ function initalize(DOM, callbacks, gameMode, socket) {
     for (let i = 3; i > 0; i--) {
       elem.innerHTML = i;
       refreshDOM(elem); //refresh;
+
+      var resolveFunc;
+
       var killed = await new Promise(resolve => {
         setTimeout(() => resolve(false), 1000);
-        window.addEventListener("killCountdown", () => resolve(true))
+        resolveFunc = () => resolve(true);
+
+        window.addEventListener("killCountdown", resolveFunc);
+      }).then(() => {
+        window.removeEventListener("killCountdown", resolveFunc);
       });
       if (killed) {
         return false;
@@ -459,27 +472,27 @@ function initalize(DOM, callbacks, gameMode, socket) {
 
   //DISPLAY CANVAS
   function display() {
-    let canvas = DOM.main;
+    let canvas = DOM.main.current;
     let ctx = canvas.getContext('2d');
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);//clears all
 
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#AAAAAA';
-    for (let i = 0; i < 10; i++) {
+    ctx.strokeStyle = '#AAAAAA'; 
+    for (let i = 0; i < 10; i++) { //draw lines
       for (let j = 0; j < 20; j++) {
         ctx.strokeRect(i * cellSize + 0.5, (19 - j) * cellSize + 0.5, cellSize, cellSize);
       }
     }
 
-    for (let i = 0; i < board.length; i++) {
+    for (let i = 0; i < board.length; i++) { //draw board colors
       for (let j = 0; j < board[i].length; j++) {
         if (board[i][j] !== 0) {
           pasteOnGrid(j, i, board[i][j]);
         }
       }
     }
-    if (current !== null) {
+    if (current !== null) { //draw piece
       current.display();
       if (gameMode === 'online' && socket.constants.displayLines) {
         socket.emit('send peice', current.export(), current.exportShadow(), current.colorIndex);
@@ -488,7 +501,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
   }
 
   function displayHold() {
-    let canvas = DOM.hold;
+    let canvas = DOM.hold.current;
     let ctx = canvas.getContext('2d');
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -498,7 +511,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
   }
 
   function displayQueue() {
-    let canvas = DOM.queue;
+    let canvas = DOM.queue.current;
     let ctx = canvas.getContext('2d');
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -508,7 +521,8 @@ function initalize(DOM, callbacks, gameMode, socket) {
   }
 
   function displayGarbage() {
-    if (DOM.meter === null) {
+    let meter = DOM.meter.current;
+    if (meter === null) {
       return;
     }
     const tierColors = ['#BF1E1E', '#BF601E', '#1EBFBF', '#1E1EBF', '#1EBF1E', '#D4D421'];
@@ -518,22 +532,22 @@ function initalize(DOM, callbacks, gameMode, socket) {
     const hiddenGarbage = (tier - offset) * 20;
     let displayMeter = garbageMeter.slice();
 
-    let ctx = DOM.meter.getContext('2d');
+    let ctx = meter.getContext('2d');
 
     for (var count = 0; count + displayMeter[0] < hiddenGarbage; count += displayMeter.shift()) { }
     displayMeter[0] -= hiddenGarbage - count;
 
     ctx.fillStyle = tier === 0 ? '#191919' : tierColors[(tier - 1) % tierColors.length];
-    ctx.fillRect(0, 0, DOM.meter.width, DOM.meter.height);
+    ctx.fillRect(0, 0, meter.width, meter.height);
 
     let y = 0;
     for (let i = 0; i < displayMeter.length; i++) {
       const height = 20 * displayMeter[i];
       ctx.fillStyle = tierColors[tier % (tierColors.length)];
-      ctx.fillRect(0, 400 - y, DOM.meter.width, -1 * height + (tier === 0 ? 1 : 0));
+      ctx.fillRect(0, 400 - y, meter.width, -1 * height + (tier === 0 ? 1 : 0));
       if (i < displayMeter.length - 1) {
         ctx.fillStyle = 'black';
-        ctx.fillRect(0, 400 - y - height, DOM.meter.width, -1);
+        ctx.fillRect(0, 400 - y - height, meter.width, -1);
       }
       y += height;
     }
@@ -554,7 +568,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
   }
 
   function pasteOnGrid(x, y, colorIndex) {
-    let canvas = DOM.main;
+    let canvas = DOM.main.current;
     let ctx = canvas.getContext('2d');
 
     ctx.fillStyle = outerColors[colorIndex];
@@ -658,11 +672,11 @@ function initalize(DOM, callbacks, gameMode, socket) {
         var time = minutes + ":" + formattedSeconds + "." + ms;
 
         if (gameMode === "blitz" && time > "2:00") {
-          DOM.time.innerHTML = "2:00";
+          DOM.time.current.innerHTML = "2:00";
           end(true);
           socket.emit('timeout', dropBonusCounter);
         } else {
-          DOM.time.innerHTML = time;
+          DOM.time.current.innerHTML = time;
         }
 
       }, 10);
@@ -672,7 +686,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
     var leftDown = controls.left.held;
     var rightDown = controls.right.held;
     var downDown = controls.soft.held;
-    let fallMultiplier = (gameMode === 'online') ? socket.constants.fallMultiplier : Math.pow(0.8, DOM.level.innerHTML);
+    let fallMultiplier = (gameMode === 'online') ? socket.constants.fallMultiplier : Math.pow(0.8, DOM.level.current.innerHTML);
 
     if (gameRunning) {
       if (leftDown || rightDown) {
@@ -696,7 +710,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
 
       if (downDown && handling.ISDF) {
         while (current.shift(0, -1)) {
-          DOM.score.innerHTML = parseInt(DOM.score.innerHTML) + 1;
+          DOM.score.current.innerHTML = parseInt(DOM.score.current.innerHTML) + 1;
           dropBonusCounter++;
         }
         display();
@@ -706,7 +720,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
         while (fallTimer <= 0) {
           let fallTotal = fallSpeed * fallMultiplier;
           if (current.shift(0, -1) && downDown) {
-            DOM.score.innerHTML = parseInt(DOM.score.innerHTML) + 1;
+            DOM.score.current.innerHTML = parseInt(DOM.score.current.innerHTML) + 1;
             dropBonusCounter++;
           }
           display();
@@ -827,22 +841,30 @@ function initalize(DOM, callbacks, gameMode, socket) {
   }
 
   function lineCleared(justCleared) {
-    DOM.lines.innerHTML = parseInt(DOM.lines.innerHTML) + justCleared;
-    DOM.level.innerHTML = Math.floor(DOM.lines.innerHTML / 10) + 1;
+    let lines = DOM.lines.current;
+    let level = DOM.level.current;
+    let score = DOM.score.current;
+
+    lines.innerHTML = parseInt(lines.innerHTML) + justCleared;
+    level.innerHTML = Math.floor(lines.innerHTML / 10) + 1;
 
     //updates the broadcast text  
 
-    DOM.broadcast.style.transition = "opacity 0s linear";
-    DOM.broadcast.style.opacity = "1";
-    refreshDOM(DOM.broadcast);
-    DOM.broadcast.style.transition = "opacity 1s linear 2s";
-    DOM.broadcast.style.opacity = "0";
+    let broadcast = DOM.broadcast.current;
 
-    DOM.combo.style.transition = "opacity 0s linear";
-    DOM.combo.style.opacity = "1";
-    refreshDOM(DOM.combo);
-    DOM.combo.style.transition = "opacity 1s linear 2s";
-    DOM.combo.style.opacity = "0";
+    broadcast.style.transition = "opacity 0s linear";
+    broadcast.style.opacity = "1";
+    refreshDOM(broadcast);
+    broadcast.style.transition = "opacity 1s linear 2s";
+    broadcast.style.opacity = "0";
+
+    let comboElem = DOM.combo.current;
+
+    comboElem.style.transition = "opacity 0s linear";
+    comboElem.style.opacity = "1";
+    refreshDOM(comboElem);
+    comboElem.style.transition = "opacity 1s linear 2s";
+    comboElem.style.opacity = "0";
 
     var pc = true;
     board.every(a => a.forEach(b => {
@@ -852,20 +874,22 @@ function initalize(DOM, callbacks, gameMode, socket) {
       }
     }));
     if (pc) {
-      DOM.title.innerHTML = "ALL<br>CLEAR";
-      DOM.title.style.animation = "";
-      refreshDOM(DOM.title);
-      DOM.title.style.animation = "allClear 5s 1 linear";
+      let title = DOM.title.current;
+
+      title.innerHTML = "ALL<br>CLEAR";
+      title.style.animation = "";
+      refreshDOM(title);
+      title.style.animation = "allClear 5s 1 linear";
       pcCount++;
     }
     if (current.tSpin) {
-      DOM.broadcast.innerHTML = "T-SPIN " + linesToText[Math.min(justCleared, 11) - 1];
+      broadcast.innerHTML = "T-SPIN " + linesToText[Math.min(justCleared, 11) - 1];
       fullSpins[justCleared - 1]++;
     } else if (current.miniSpin) {
-      DOM.broadcast.innerHTML = "T-SPIN MINI " + linesToText[Math.min(justCleared, 11) - 1];
+      broadcast.innerHTML = "T-SPIN MINI " + linesToText[Math.min(justCleared, 11) - 1];
       miniSpins[justCleared - 1]++;
     } else {
-      DOM.broadcast.innerHTML = linesToText[Math.min(justCleared, 11) - 1];
+      broadcast.innerHTML = linesToText[Math.min(justCleared, 11) - 1];
       normalClears[justCleared - 1]++;
     }
 
@@ -879,24 +903,23 @@ function initalize(DOM, callbacks, gameMode, socket) {
       b2bCounter++;
       if (b2bCounter > 0) {
         b2bMultiplier = 1.5;
-        DOM.b2b.style.opacity = "1";
+        DOM.b2b.current.style.opacity = "1";
       }
     } else {
       b2bCounter = -1;
-      DOM.b2b.style.opacity = "0";
+      DOM.b2b.current.style.opacity = "0";
     }
-    DOM.b2b.innerHTML = "B2B x" + b2bCounter;
+    DOM.b2b.current.innerHTML = "B2B x" + b2bCounter;
     if (combo > 0) {
       DOM.combo.innerHTML = "Combo x" + combo;
     } else {
       DOM.combo.innerHTML = "";
     }
-    console.log(b2bMultiplier);
-    DOM.score.innerHTML = parseInt(DOM.score.innerHTML) + ((Math.floor(points * spinMultiplier * b2bMultiplier / 100) * 100) + pcBonus + combo * 50) * DOM.level.innerHTML;
+    score.innerHTML = parseInt(score.innerHTML) + ((Math.floor(points * spinMultiplier * b2bMultiplier / 100) * 100) + pcBonus + combo * 50) * parseInt(level.innerHTML);
 
     b2bMax = Math.max(b2bMax, b2bCounter);
 
-    if (gameMode === "sprint" && DOM.lines.innerHTML >= 40) {
+    if (gameMode === "sprint" && lines.innerHTML >= 40) {
       end(true);
     }
 
@@ -922,60 +945,68 @@ function initalize(DOM, callbacks, gameMode, socket) {
       needsFormatting: false
     }
 
+    let time = DOM.time.current.innerHTML;
+    let score = DOM.score.current.innerHTML;
+    let lines = DOM.lines.current.innerHTML;
+    let level = DOM.level.current.innerHTML;
+
+
     if (gameMode === 'sprint') {
       if (victory) {
         stats.primaryStat = 'TIME';
-        stats.primaryStatValue = DOM.time.innerHTML;
+        stats.primaryStatValue = time;
         stats.secondaryStats = [
-          { title: 'SCORE', value: DOM.score.innerHTML }
+          { title: 'SCORE', value: score }
         ]
       } else {
         stats.primaryStat = 'LINES';
-        stats.primaryStatValue = DOM.lines.innerHTML + '/40';
+        stats.primaryStatValue = lines + '/40';
         stats.displayMinors = false;
         //secondary stats dont need to be defined because display minors are false.
       }
     } else if (gameMode === 'blitz') {
       stats.primaryStat = 'SCORE';
-      stats.primaryStatValue = DOM.score.innerHTML;
+      stats.primaryStatValue = score;
       stats.secondaryStats = [
-        { title: 'LINES', value: DOM.lines.innerHTML },
-        { title: 'LEVEL', value: DOM.level.innerHTML }
+        { title: 'LINES', value: lines },
+        { title: 'LEVEL', value: level }
       ]
     } else if (gameMode === 'endless') {
       stats.primaryStat = 'SCORE';
-      stats.primaryStatValue = DOM.score.innerHTML;
+      stats.primaryStatValue = score;
       stats.secondaryStats = [
-        { title: 'TIME', value: DOM.time.innerHTML },
-        { title: 'LINES', value: DOM.lines.innerHTML },
-        { title: 'LEVEL', value: DOM.level.innerHTML }
+        { title: 'TIME', value: time },
+        { title: 'LINES', value: lines },
+        { title: 'LEVEL', value: level }
       ]
     }
+
+    let full = DOM.full.current;
 
     if (gameMode === 'online') {
       socket.emit('defeat');
 
-      DOM.full.style = null;
-      refreshDOM(DOM.full);
-      DOM.full.style.animation = "spectateAnimation 1s cubic-bezier(0.0, 0.0, 1.0, 1.0)";
+      full.style = null;
+      refreshDOM(full);
+      full.style.animation = "spectateAnimation 1s cubic-bezier(0.0, 0.0, 1.0, 1.0)";
 
-      DOM.full.onanimationend = function () {
-        DOM.full.style.display = 'none';
+      full.onanimationend = function () {
+        full.style.display = 'none';
       }
     } else {
       console.log(callbacks);
       callbacks.end(stats);
 
-      DOM.full.style = null;
-      refreshDOM(DOM.full);
-      DOM.full.style.animation = "gameEnd 5s linear";
-      DOM.full.style.opacity = "0";
+      full.style = null;
+      refreshDOM(full);
+      full.style.animation = "gameEnd 5s linear";
+      full.style.opacity = "0";
     }
 
   }
 
   //HELPER FUNCTIONS
-  function refreshDOM(elem = DOM.full) {
+  function refreshDOM(elem = DOM.full.current) {
     if (elem !== undefined && elem !== null) {
       return elem.offsetHeight;
     }
@@ -1005,8 +1036,14 @@ function initalize(DOM, callbacks, gameMode, socket) {
   }
 
   function removeListeners() {
+    console.log('called');
     document.removeEventListener('keydown', keyDownHandler, false);
     document.removeEventListener('keyup', keyUpHandler, false);
+    gameRunning = false;
+    current = null;
+    clearInterval(timer);
+    clearInterval(backupLoop);
+    window.cancelAnimationFrame(fullLoop);
   }
 
   function addListeners() {
