@@ -3,16 +3,20 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Globals from './routes/globals/global.js';
-import PlayMenu from './routes/play/playMenu.js';
-import {Wrapper as Game} from './routes/play/wrapper.js';
 import Register from './routes/register/register.js';
 import Login from './routes/login/login.js';
+import Leaderboard from './routes/leaderboard/leaderboard.js';
+//dashboard
 import Dashboard from './routes/dashboard/dashboard.js';
 import Welcome from './routes/dashboard/welcome/welcome.js';
 import Controls from './routes/dashboard/controls/controls.js';
 import Handling from './routes/dashboard/handling/handling.js';
 import AccountInfo from './routes/dashboard/account/accountInfo/accountInfo.js';
 import Relog from './routes/dashboard/account/relog/relog.js'
+//play
+import PlayMenu from './routes/play/playMenu.js';
+import {Wrapper as Game} from './routes/play/wrapper.js';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -23,6 +27,7 @@ root.render(
             <Route index element = {<h1>default</h1>} />
             <Route path='register' element = {<Register />} />
             <Route path='login' element = {<Login />} />
+            <Route path = 'leaderboard' element = {<Leaderboard/>} />
             <Route path='dashboard' element = {<Dashboard />}>
               <Route index element = {<Welcome/>} />
               <Route path='controls' element = {<Controls />} />
