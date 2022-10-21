@@ -1,0 +1,43 @@
+.leaderboard{
+  display:flex;
+  flex-flow:column;
+  justify-content: flex;
+  align-items: center;
+}
+
+.leaderboard > table{
+  border-spacing: 0em;
+  font-size:1.25rem;
+}
+
+.leaderboard > table > tr{
+  border-spacing: 0em;
+  font-size:1.25rem;
+
+  height:2em;
+
+  background:#222;
+}
+
+.leaderboard > table > tr > td:nth-child(1){
+  text-align: center;
+
+  min-width: 2em;
+  background:#151515;
+}
+
+.leaderboard > table > tr > td:nth-child(2){
+  min-width: 5em;
+  text-align: center;
+}
+
+
+.leaderboard > table > tr > td:nth-child(3){
+  min-width: 20em;
+  padding-left:0.5em;
+}
+
+.leaderboard > table > tr > td:nth-child(4){
+  min-width: 0em;
+  padding-right:0.5em;
+}
