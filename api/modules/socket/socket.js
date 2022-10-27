@@ -39,6 +39,14 @@ function bind(io){
 
   function resetBinds(socket){
     console.log('reset');
+
+    if (socket.request.session.initalized){
+      socket.username = socket.request.session.user.username;
+      socket.uuid = socket.request.session.user.uuid;
+    }
+
+    console.log('found uuid of ' + socket.uuid);
+
     socket.removeAllListeners();
   
     socket.on('join room',handle(function(roomcode,callback){
@@ -120,7 +128,10 @@ function bind(io){
             if (totalLinesCleared >= 40){
               let timePassed = Date.now() - startDate;
               let seconds = timePassed / 1000;
-              let formatted = `${Math.floor(seconds / 60)}:${(seconds % 60).toFixed(3)}`
+              let formattedMinutes = (Math.floor(seconds / 60));
+              let formattedSeconds = (Math.floor(seconds % 60)).toLocaleString('en-US',{minimumIntegerDigits:2,useGrouping:false});
+              let formattedMilliseconds = (timePassed % 1000);
+              let formatted = `${formattedMinutes}:${formattedSeconds}.${formattedMilliseconds}`
 
               socket.emit('end');
               socket.emit('overwritePrimaryStat', formatted);

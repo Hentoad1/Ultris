@@ -118,6 +118,7 @@ html button:disabled::after{
 ::-webkit-scrollbar{
   width:5px;
 	background:transparent;
+  appearance: none;
 }
 
 ::-webkit-scrollbar-thumb{

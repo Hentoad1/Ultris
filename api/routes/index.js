@@ -44,6 +44,7 @@ router.get('*', async function(req, res, next) {
 //SEND POST REQUESTS TO SECONDARY ROUTES
 router.use('/user', require('./user/user'));
 router.use('/account', require('./account/account'));
+router.use('/leaderboard', require('./leaderboard/leaderboard'));
 
 
 

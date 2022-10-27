@@ -3,30 +3,41 @@ var router = express.Router();
 
 var {queryDB} = require('../../modules/database.js');
 
-router.get('/', function(req, res, next) {
+router.post('/', function(req, res, next) {
   
   let valid = ['blitz', 'sprint'].includes(req.body.type);
   if (!valid){
     return res.send({error: 'Invalid Request Type'});
   }
 
-  //use index (type and index needs to be replaced)
-  queryDB('SELECT 50 FROM type USE INDEX (index) order by score').then(function(result){
+  let page = new Number(req.body.page); //make sure index is a number, stop sql injection
 
-  });
-  
-  //use search term
-  queryDB('SELECT 50 FROM type USE INDEX (index) WHERE username LIKE ? order by score').then(function(result){
-
-  });
-});
-
-router.use(function(err, req, res, next){
-  if (res.headersSent){
-    return
+  if (isNaN(page)){
+    return res.send({error: 'Invalid Page'});
   }
 
-  res.redirect('../verify-failure');
+
+
+  //use index (type and index needs to be replaced)
+  queryDB(`SELECT * FROM ${req.body.type} ORDER BY score DESC LIMIT 50 OFFSET ${page * 50}`).then(function(result){
+    let formattedResult = result.map((value, index) => {
+      return {
+        place:1 + (page * 50) + index,
+        name:value.username,
+        score:value.score,
+        date:'string'
+      }
+    })
+    
+    
+    
+    res.send({result:formattedResult})
+  }).catch(next);
+  
+  //use search term
+  /*queryDB('SELECT 50 FROM type USE INDEX (index) WHERE username LIKE ? order by score').then(function(result){
+
+  });*/
 });
 
 module.exports = router;
