@@ -1,4 +1,4 @@
-let {QueryDB, queryDB} = require('../database');
+let {queryDB} = require('../database');
 
 const catchf = (err => console.log(err));
 
@@ -18,10 +18,15 @@ function addLeaderboardScore(type, uuid, score){
 
     let date = (new Date).toLocaleDateString('en-US');
 
-    if (score > highscore || highscore === null){
+
+
+    if (highscore === null || (type === 'sprint' && score < highscore) || (type !== 'sprint' && score > highscore)){
       queryDB(`UPDATE ${type} SET ? WHERE uuid = ?`, [{score,date}, uuid]).then(() => {
         queryDB(`ALTER TABLE ${type} ORDER BY score DESC`).catch(catchf);
+        console.log('updated');
       }).catch(catchf);
+    }else{
+      console.log(`score [${score}] < highscore [${highscore}]`);
     }
   }).catch(catchf);
 }

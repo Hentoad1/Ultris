@@ -60,7 +60,7 @@ router.post('/register', function(req, res, next) {
                     verified: false //always will be false
                   }
                   
-                  res.send({redirect:{path:'/play',refresh:true}});
+                  res.send({redirect:{path:'/play',refresh:true,reload:true}});
                 }).catch(next);
               }).catch(next);
             }).catch(next);
@@ -99,7 +99,7 @@ router.post('/login', function(req, res, next) {
           guest:false,
           verified: user.verified === 1
         }
-        res.send({redirect:{path:'/play',refresh:true}});
+        res.send({redirect:{path:'/play',refresh:true,reload:true}});
       }else{
         res.send({error:'Incorrect Login Information.'});
       }

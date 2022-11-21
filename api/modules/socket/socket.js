@@ -125,7 +125,7 @@ function bind(io){
         if (synced){
           if (valid){
             totalLinesCleared += pointInfo.lines;
-            if (totalLinesCleared >= 40){
+            if (totalLinesCleared >= 1){
               let timePassed = Date.now() - startDate;
               let seconds = timePassed / 1000;
               let formattedMinutes = (Math.floor(seconds / 60));

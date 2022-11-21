@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router';
+import { redirect } from 'react-router-dom';
 
 import useAlerts from './useAlerts';
 import useSession from './useSession';
@@ -27,6 +28,9 @@ function useAPI(){
           await new Promise(r => refresh(r));
         }
         navigate(response.redirect.path,{replace: true});
+        if (response.redirect.reload){
+          navigate(0); //reloads the page
+        }
         callback(null);
       }else{
         if (response.error){

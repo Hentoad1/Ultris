@@ -18,8 +18,8 @@ router.post('/', function(req, res, next) {
 
 
 
-  //use index (type and index needs to be replaced)
-  queryDB(`SELECT * FROM ${req.body.type} ORDER BY score DESC LIMIT 50 OFFSET ${page * 50}`).then(function(result){
+  //most likely desc needs to not be used if sprint is the type
+  queryDB(`SELECT * FROM ${req.body.type} ORDER BY score ${req.body.type === 'sprint' ? '' : 'DESC '}LIMIT 50 OFFSET ${page * 50}`).then(function(result){
     let formattedResult = result.map((value, index) => {
       return {
         place:1 + (page * 50) + index,
@@ -33,11 +33,6 @@ router.post('/', function(req, res, next) {
     
     res.send({result:formattedResult})
   }).catch(next);
-  
-  //use search term
-  /*queryDB('SELECT 50 FROM type USE INDEX (index) WHERE username LIKE ? order by score').then(function(result){
-
-  });*/
 });
 
 module.exports = router;
