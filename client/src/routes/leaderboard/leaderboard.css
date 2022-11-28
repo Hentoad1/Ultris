@@ -10,7 +10,7 @@
   border-spacing: 0em;
 }
 
-.leaderboard > table > tr{
+.leaderboard > table > tbody > tr{
   border-spacing: 0em;
   font-size:1.25rem;
 
@@ -19,25 +19,25 @@
   background:#222;
 }
 
-.leaderboard > table > tr > td:nth-child(1){
+.leaderboard > table > tbody > tr > td:nth-child(1){
   text-align: center;
 
   min-width: 2em;
   background:#151515;
 }
 
-.leaderboard > table > tr > td:nth-child(2){
+.leaderboard > table > tbody > tr > td:nth-child(2){
   min-width: 5em;
   text-align: center;
 }
 
 
-.leaderboard > table > tr > td:nth-child(3){
+.leaderboard > table > tbody > tr > td:nth-child(3){
   min-width: 19.5em;
   padding-left:0.5em;
 }
 
-.leaderboard > table > tr > td:nth-child(4){
+.leaderboard > table > tbody > tr > td:nth-child(4){
   min-width: 5.5em;
   padding-right:0.5em;
   text-align:right;
@@ -68,9 +68,36 @@
   background:#4442;
 }
 
-.leaderboard > .categoryButtons{
+.leaderboard > .pageButtons{
+  margin-top:0.5em;
+
   width: calc(33em + 6px);
 
   display:flex;
   flex-direction: row;
+  align-items:center;
+  justify-content:center;
+
+  text-align:center;
+}
+
+.leaderboard > .pageButtons > a{
+  width:1.5em;
+  height:1.5em;
+  margin-left:0.1em;
+  margin-right:0.1em;
+
+  position:relative;
+}
+
+.leaderboard > .pageButtons > a.active::after{
+  content:'';
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  border-radius:50%;
+
+  background:#fff4;
 }

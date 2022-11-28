@@ -1,5 +1,4 @@
 import { useNavigate, useLocation } from 'react-router';
-import { redirect } from 'react-router-dom';
 
 import useAlerts from './useAlerts';
 import useSession from './useSession';

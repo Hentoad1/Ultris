@@ -1,26 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink, Link, useSearchParams } from 'react-router-dom';
 
-import {AnimatedInput,AnimatedPasswordInput} from '../../assets/components/animatedInput.js';
-import CustomCheckbox from '../../assets/components/customCheckbox.js';
 import useAPI from '../../assets/hooks/useAPI.js';
-import LoadingOverlay from '../../assets/components/loadingOverlay.js';
+
+import {ReactComponent as SingleLeft} from '../../assets/svgs/Single_Arrow_Left.svg';
+import {ReactComponent as DoubleLeft} from '../../assets/svgs/Double_Arrow_Left.svg';
+import {ReactComponent as SingleRight} from '../../assets/svgs/Single_Arrow_Right.svg';
+import {ReactComponent as DoubleRight} from '../../assets/svgs/Double_Arrow_Right.svg';
 
 import './leaderboard.css';
 
-/* add dates to database */
-
 function Leaderboard(props){
+  let [params] = useSearchParams();
   let [pageData, setPageData] = useState(null);
+  let [maxPage, setMaxPage] = useState(null);
   let QueryAPI = useAPI();
 
+  let page = params.get('page') ?? 1;
+  page = parseInt(page);
+
   useEffect(() => {
-    QueryAPI('/leaderboard', {type:props.type, page:0},(result) => {
+    QueryAPI('/leaderboard', {type:props.type, page:page-1},(result) => {
       if (result){
-        setPageData(result);
+        setPageData(result.rows);
+        setMaxPage(result.totalPages);
       }
     });
-  },[props.type])
+  },[props.type, page, QueryAPI])
 
   var table = null;
   if (pageData === null){
@@ -38,16 +44,61 @@ function Leaderboard(props){
   }else{
     table = (
       <table>
-        {pageData.map(stat => 
-          <tr>
-            <td>{stat.place}</td>
-            <td>{stat.score}</td>
-            <td>{stat.name}</td>
-            <td>{stat.date}</td>
-          </tr>
-        )}
+        <tbody>
+          {pageData.map((stat, i) => 
+            <tr key = {i}>
+              <td>{stat.place}</td>
+              <td>{stat.score}</td>
+              <td>{stat.name}</td>
+              <td>{stat.date}</td>
+            </tr>
+          )}
+        </tbody>
       </table>
     )
+  }
+
+  const pagesToRender = 7;
+
+
+  let minPage = Math.max(1, page - Math.floor(pagesToRender / 2));
+  let numberedPages = [];
+
+  for (let i = 0; i < pagesToRender; i++){
+    if (i + minPage > maxPage){
+      break;
+    }
+    numberedPages.push(i + minPage);
+  }
+
+  let backArrowContent = null;
+
+  if (page > 1){
+    backArrowContent = (
+      <React.Fragment>
+        <Link to = '.?page=1'>
+          <DoubleLeft/>
+        </Link>
+        <Link to = {'.?page=' + (page - 1)}>
+          <SingleLeft/>
+        </Link>
+      </React.Fragment>
+    );
+  }
+
+  let forwardArrowContent = null;
+
+  if (page < maxPage){
+    forwardArrowContent = (
+      <React.Fragment>
+        <Link to = {'.?page=' + (page + 1)}>
+          <SingleRight/>
+        </Link>
+        <Link to = {'.?page=' + maxPage}>
+          <DoubleRight/>
+        </Link>
+      </React.Fragment>
+    );
   }
 
   return (
@@ -58,7 +109,13 @@ function Leaderboard(props){
       </div>
       {table}
       <div className = 'pageButtons'>
-        svgma
+        {backArrowContent}
+        {numberedPages.map(pageNumber => {
+          return (
+            <Link to = {'.?page=' + pageNumber} key = {pageNumber} className = {pageNumber === parseInt(page) ? 'active' : ''}>{pageNumber}</Link>
+          );
+        })}
+        {forwardArrowContent}
       </div>
     </div> 
   )

@@ -27,7 +27,6 @@ function Game(props){
   let wrapperRef = useRef();
 
   
-
   useEffect(() => {
     let globals = props.globals;
     let socket = globals.socket;
@@ -72,6 +71,8 @@ function Game(props){
       removeListeners();
       socket.emit('reset');
     }
+    //the globals object shouldnt be used in this manner but whatever im too deep in my past mistakes of not knowing how react works
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
 
   return (

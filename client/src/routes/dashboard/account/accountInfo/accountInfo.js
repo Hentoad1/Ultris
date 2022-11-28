@@ -14,7 +14,6 @@ function AccountInfo(){
   let [info, setInfo] = useState({});
   let QueryAPI = useAPI();
 
-  //This warning is fine because data should only be fetched once.
   useEffect(() => {
     QueryAPI('/account/getInfo', null, function(result){
       setLoading(false);
@@ -23,6 +22,9 @@ function AccountInfo(){
         setInfo(result);
       }
     });
+
+    //This warning can be ignored because data should only be fetched once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   let loadingContent = loading ? <LoadingOverlay /> : null;

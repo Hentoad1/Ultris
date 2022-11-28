@@ -3,6 +3,8 @@ var router = express.Router();
 
 var {queryDB} = require('../../modules/database.js');
 
+const rowsPerPage = 50;
+
 router.post('/', function(req, res, next) {
   
   let valid = ['blitz', 'sprint'].includes(req.body.type);
@@ -16,25 +18,39 @@ router.post('/', function(req, res, next) {
     return res.send({error: 'Invalid Page'});
   }
 
-  const sprintQuery = `SELECT * FROM sprint WHERE score IS NOT NULL ORDER BY score LIMIT 50 OFFSET ${page * 50}`;
-  const blitzQuery = `SELECT * FROM WHERE score != 0 ORDER BY score DESC LIMIT 50 OFFSET ${page * 50}`;
+  const sprintQuery = `SELECT * FROM sprint WHERE score IS NOT NULL ORDER BY score LIMIT ${rowsPerPage} OFFSET ${page * rowsPerPage}`;
+  const blitzQuery = `SELECT * FROM blitz WHERE score != 0 ORDER BY score DESC LIMIT ${rowsPerPage} OFFSET ${page * rowsPerPage}`;
 
-  let query = req.body.type === 'sprint' ? sprintQuery : blitzQuery;
+  const sprintCount = `SELECT COUNT(*) FROM sprint WHERE score IS NOT NULL`;
+  const blitzCount = `SELECT COUNT(*) FROM blitz WHERE score != 0`;
 
-  //most likely desc needs to not be used if sprint is the type
-  queryDB(query).then(function(result){
-    let formattedResult = result.map((value, index) => {
+  let rowsQuery = req.body.type === 'sprint' ? sprintQuery : blitzQuery;
+  let countQuery = req.body.type === 'sprint' ? sprintCount : blitzCount;
+
+
+
+  queryDB(rowsQuery).then(function(result){
+    let formattedRows = result.map((value, index) => {
       return {
-        place:1 + (page * 50) + index,
+        place:1 + (page * rowsPerPage) + index,
         name:value.username,
         score:value.score,
         date:value.date
       }
     })
     
-    
-    
-    res.send({result:formattedResult})
+    queryDB(countQuery).then(function(output){
+      //example output: [ { 'COUNT(*)': 3 } ]
+
+      let totalRows = Object.values(output[0])[0]
+
+      let formattedResult = {
+        rows:formattedRows,
+        totalPages:Math.ceil(totalRows / rowsPerPage)
+      };
+
+      res.send({result:formattedResult})
+    }).catch(next);
   }).catch(next);
 });
 
