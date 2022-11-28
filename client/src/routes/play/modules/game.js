@@ -68,7 +68,7 @@ function Game(props){
 
     addListeners();
 
-    return function(){
+    return () => {
       removeListeners();
       socket.emit('reset');
     }

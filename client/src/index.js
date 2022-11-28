@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Navigate } from "react-router";
 
 import Globals from './routes/globals/global.js';
 import Register from './routes/register/register.js';
@@ -27,7 +28,11 @@ root.render(
             <Route index element = {<h1>default</h1>} />
             <Route path='register' element = {<Register />} />
             <Route path='login' element = {<Login />} />
-            <Route path = 'leaderboard' element = {<Leaderboard/>} />
+            <Route path = 'leaderboard'>
+              <Route index element = {<Navigate to = 'sprint'/>}/>
+              <Route path = 'sprint' element = {<Leaderboard type = 'sprint'/>} />
+              <Route path = 'blitz' element = {<Leaderboard type = 'blitz'/>} />
+            </Route>
             <Route path='dashboard' element = {<Dashboard />}>
               <Route index element = {<Welcome/>} />
               <Route path='controls' element = {<Controls />} />

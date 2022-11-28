@@ -16,16 +16,19 @@ router.post('/', function(req, res, next) {
     return res.send({error: 'Invalid Page'});
   }
 
+  const sprintQuery = `SELECT * FROM sprint WHERE score IS NOT NULL ORDER BY score LIMIT 50 OFFSET ${page * 50}`;
+  const blitzQuery = `SELECT * FROM WHERE score != 0 ORDER BY score DESC LIMIT 50 OFFSET ${page * 50}`;
 
+  let query = req.body.type === 'sprint' ? sprintQuery : blitzQuery;
 
   //most likely desc needs to not be used if sprint is the type
-  queryDB(`SELECT * FROM ${req.body.type} ORDER BY score ${req.body.type === 'sprint' ? '' : 'DESC '}LIMIT 50 OFFSET ${page * 50}`).then(function(result){
+  queryDB(query).then(function(result){
     let formattedResult = result.map((value, index) => {
       return {
         place:1 + (page * 50) + index,
         name:value.username,
         score:value.score,
-        date:'string'
+        date:value.date
       }
     })
     

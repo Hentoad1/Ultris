@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 import {AnimatedInput,AnimatedPasswordInput} from '../../assets/components/animatedInput.js';
 import CustomCheckbox from '../../assets/components/customCheckbox.js';
@@ -10,17 +10,17 @@ import './leaderboard.css';
 
 /* add dates to database */
 
-function Leaderboard(){
+function Leaderboard(props){
   let [pageData, setPageData] = useState(null);
   let QueryAPI = useAPI();
 
   useEffect(() => {
-    QueryAPI('/leaderboard', {type:'sprint', page:0},(result) => {
+    QueryAPI('/leaderboard', {type:props.type, page:0},(result) => {
       if (result){
         setPageData(result);
       }
     });
-  },[])
+  },[props.type])
 
   var table = null;
   if (pageData === null){
@@ -52,7 +52,14 @@ function Leaderboard(){
 
   return (
     <div className = 'page_content leaderboard'>
+      <div className = 'categoryButtons'>
+        <NavLink to = '/leaderboard/sprint'>Sprint</NavLink>
+        <NavLink to = '/leaderboard/blitz'>Blitz</NavLink>
+      </div>
       {table}
+      <div className = 'pageButtons'>
+        svgma
+      </div>
     </div> 
   )
 }

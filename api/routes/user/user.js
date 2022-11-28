@@ -49,20 +49,22 @@ router.post('/register', function(req, res, next) {
             queryDB("INSERT INTO account SET ?", [userData]).then(function(){
               let defaultScoreData = {
                 uuid: userData.uuid,
-                username: userData.username
+                username: userData.username,
+                date:(new Date).toLocaleDateString('en-US')
               }	
-              queryDB("INSERT INTO sprint SET ?", [defaultScoreData]).then(function(){
-                queryDB("INSERT INTO blitz SET ?", [defaultScoreData]).then(function(){
-                  req.session.user = {
-                    username: result.username,
-                    uuid: result.uuid,
-                    guest: false,
-                    verified: false //always will be false
-                  }
-                  
-                  res.send({redirect:{path:'/play',refresh:true,reload:true}});
-                }).catch(next);
-              }).catch(next);
+
+              queryDB("INSERT INTO sprint SET ?", [defaultScoreData]).catch(next);
+
+              queryDB("INSERT INTO blitz SET ?", [defaultScoreData]).catch(next);
+
+              req.session.user = {
+                username: userData.username,
+                uuid: userData.uuid,
+                guest: false,
+                verified: false //always will be false
+              }
+              
+              res.send({redirect:{path:'/play',refresh:true,reload:true}});
             }).catch(next);
           }).catch(next);
         }).catch(next);

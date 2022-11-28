@@ -68,6 +68,8 @@ var timer;
 var currentFrame = Date.now();
 var previousFrame = Date.now();
 
+var animationFrameID = null;
+
 //GAME STATE
 var gameRunning = false;
 
@@ -301,7 +303,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
     reset();
   }
 
-  window.requestAnimationFrame(fullLoop);
+  animationFrameID = window.requestAnimationFrame(fullLoop);
   setInterval(backupLoop,100);
 
   //CONTROLS
@@ -428,46 +430,44 @@ function initalize(DOM, callbacks, gameMode, socket) {
     DOM.full.current.style = null;
     DOM.full.current.onanimationend = null;
 
-    countdown().then((passed) => {
-      if (passed){
-        socket.emit(gameMode, salt);
-        gameRunning = true;
-        currentFrame = Date.now();
-        clearInterval(timer);
-        createTimer();
-      }
-    }).catch(err => console.log(err));
+    countdown().then(() => {
+      socket.emit(gameMode, salt);
+      gameRunning = true;
+      currentFrame = Date.now();
+      clearInterval(timer);
+      createTimer();
+    }).catch(() => {});
   }
 
-  async function countdown() {
-    let elem = DOM.title.current;
+  function countdown() {
+    return new Promise(async (resolve, reject) => {
+      let killed = false;
+      let rejectFunc = () => killed = true;
+      window.addEventListener("killCountdown", rejectFunc);
 
-    elem.style.animation = "";
-    refreshDOM(elem); //refresh;
-    elem.style.fontSize = "60px";
-    elem.style.opacity = 1;
-    for (let i = 3; i > 0; i--) {
-      elem.innerHTML = i;
+      let elem = DOM.title.current;
+
+      elem.style.animation = "";
       refreshDOM(elem); //refresh;
+      elem.style.fontSize = "60px";
+      elem.style.opacity = 1;
+      for (let i = 3; i > 0; i--) {
+        elem.innerHTML = i;
+        refreshDOM(elem); //refresh;
 
-      var resolveFunc;
-
-      var killed = await new Promise(resolve => {
-        setTimeout(() => resolve(false), 1000);
-        resolveFunc = () => resolve(true);
-
-        window.addEventListener("killCountdown", resolveFunc);
-      }).then(() => {
-        window.removeEventListener("killCountdown", resolveFunc);
-      });
-      if (killed) {
-        return false;
+        await new Promise(r => setTimeout(r, 1000));
+        
+        if (killed){
+          return reject();
+        }
       }
-    }
-    elem.innerHTML = "GO!";
-    elem.style.animation = "fadeOut 1s linear";
-    elem.style.opacity = 0;
-    return true;
+      elem.innerHTML = "GO!";
+      elem.style.animation = "fadeOut 1s linear";
+      elem.style.opacity = 0;
+      
+      window.removeEventListener("killCountdown", rejectFunc);
+      resolve();
+    })
   }
 
   //DISPLAY CANVAS
@@ -748,7 +748,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
       physics();
     }
 
-    window.requestAnimationFrame(fullLoop);
+    animationFrameID = window.requestAnimationFrame(fullLoop);
   }
 
   function backupLoop() { //this shit needs to run on setInterval because animation frames are not called when a user is alt tabbed because no repaints occur, just stops player from donowalling gravity by alt tabbing
@@ -1036,14 +1036,13 @@ function initalize(DOM, callbacks, gameMode, socket) {
   }
 
   function removeListeners() {
-    console.log('called');
     document.removeEventListener('keydown', keyDownHandler, false);
     document.removeEventListener('keyup', keyUpHandler, false);
     gameRunning = false;
     current = null;
     clearInterval(timer);
     clearInterval(backupLoop);
-    window.cancelAnimationFrame(fullLoop);
+    window.cancelAnimationFrame(animationFrameID);
   }
 
   function addListeners() {

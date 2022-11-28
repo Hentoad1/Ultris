@@ -3,11 +3,11 @@
   flex-flow:column;
   justify-content: flex;
   align-items: center;
+  font-size:1.25rem;
 }
 
 .leaderboard > table{
   border-spacing: 0em;
-  font-size:1.25rem;
 }
 
 .leaderboard > table > tr{
@@ -33,11 +33,44 @@
 
 
 .leaderboard > table > tr > td:nth-child(3){
-  min-width: 20em;
+  min-width: 19.5em;
   padding-left:0.5em;
 }
 
 .leaderboard > table > tr > td:nth-child(4){
-  min-width: 0em;
+  min-width: 5.5em;
   padding-right:0.5em;
+  text-align:right;
+}
+
+.leaderboard > .categoryButtons{
+  width: calc(33em + 6px);
+
+  display:flex;
+  flex-direction: row;
+}
+
+.leaderboard > .categoryButtons > a{
+  border-radius:0;
+  background:#4446;
+
+  flex-grow:1;
+  text-align:center;
+
+  padding:0.5em;
+}
+
+.leaderboard > .categoryButtons > a.active{
+  background:#4444;
+}
+
+.leaderboard > .categoryButtons > a:hover{
+  background:#4442;
+}
+
+.leaderboard > .categoryButtons{
+  width: calc(33em + 6px);
+
+  display:flex;
+  flex-direction: row;
 }
