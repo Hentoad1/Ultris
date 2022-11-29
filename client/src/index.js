@@ -9,7 +9,7 @@ import Login from './routes/login/login.js';
 import Leaderboard from './routes/leaderboard/leaderboard.js';
 //dashboard
 import Dashboard from './routes/dashboard/dashboard.js';
-import Welcome from './routes/dashboard/welcome/welcome.js';
+import Settings from './routes/dashboard/settings/settings.js';
 import Controls from './routes/dashboard/controls/controls.js';
 import Handling from './routes/dashboard/handling/handling.js';
 import AccountInfo from './routes/dashboard/account/accountInfo/accountInfo.js';
@@ -34,7 +34,8 @@ root.render(
               <Route path = 'blitz' element = {<Leaderboard type = 'blitz'/>} />
             </Route>
             <Route path='dashboard' element = {<Dashboard />}>
-              <Route index element = {<Welcome/>} />
+              <Route index element = {<Navigate to = 'settings'/>} />
+              <Route path='settings' element = {<Settings />} />
               <Route path='controls' element = {<Controls />} />
               <Route path='handling' element = {<Handling />} />
               <Route path='account'>

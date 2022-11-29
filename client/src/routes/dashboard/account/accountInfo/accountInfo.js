@@ -7,7 +7,7 @@ import { AnimatedInput, AnimatedPasswordInput } from '../../../../assets/compone
 import LoadingOverlay from '../../../../assets/components/loadingOverlay';
 import useAPI from '../../../../assets/hooks/useAPI';
 
-import './accountInfo.css';
+import '../../../../assets/styles/splitMenu.css';
 
 function AccountInfo(){
   let [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ function AccountInfo(){
   let loadingContent = loading ? <LoadingOverlay /> : null;
   
   return (
-    <div className = 'splitmenu'>
+    <div className = 'splitMenu'>
       <UsernameSection username = {info.username}/>
       <PasswordSection/>
       <EmailSection email = {info.email} verified = {info.verified}/>
@@ -66,7 +66,7 @@ function UsernameSection(props){
   }
 
   return (
-    <div className = 'section'>
+    <div className = 'sideMenu'>
       <div className = 'header'>
         <div className = 'title'>Display Name</div>
         <div className = 'description'>The Display Name is what other players will see when battling against you in online matches. It will also display when you get a high score on leaderboards.</div>
@@ -120,7 +120,7 @@ function PasswordSection(props){
   }
 
   return (
-    <div className = 'section'>
+    <div className = 'sideMenu'>
       <div className = 'header'>
         <div className = 'title'>Password</div>  
         <div className = 'description'>Your password is used only to log into your account. Do not share this with anyone.</div>
@@ -195,7 +195,7 @@ function EmailSection(props){
     };
   }
   return (
-    <div className = 'section'>
+    <div className = 'sideMenu'>
       <div className = 'header'>
         <div className = 'title'>Email</div>
         <div className = 'description'>Your Email address is where all information involving your account and its security be sent to.</div>

@@ -23,6 +23,7 @@ function Dashboard(){
       <div className = 'dashboard-navbar'>
         <div className = 'section'>
           <h1>Game Settings</h1>
+          <NavLink to = '/dashboard/settings'>Settings</NavLink>
           <NavLink to = '/dashboard/controls'>Controls</NavLink>
           <NavLink to = '/dashboard/handling'>Handling</NavLink>
           <NavLink to = '/dashboard/skin'>Skin</NavLink>

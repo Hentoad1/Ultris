@@ -1,0 +1,141 @@
+.splitMenu{
+  display:flex;
+  flex-direction:column;
+  gap:0.5em;
+
+  background:transparent;
+}
+
+/* side menu */
+
+.splitMenu > .sideMenu{
+  background:transparent;
+
+  flex-grow:1;
+
+  display:flex;
+  flex-direction:row;
+
+  width:100%;
+}
+
+.splitMenu > .sideMenu > div{
+  flex-grow:1;
+
+  padding:2rem;
+}
+
+.splitMenu > .sideMenu > .header{
+  background:#0009;
+  width: 30%;
+
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.splitMenu > .sideMenu > .header > .title{
+  font-size:1.5rem;
+  font-weight:bold;
+}
+
+.splitMenu > .sideMenu > .header > .description{
+  font-size:0.9rem;
+  margin-top:1rem;
+}
+
+.splitMenu > .sideMenu > .content{
+  background:#0004;
+  width: 70%;
+
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+
+  display:flex;
+  flex-flow:column;
+  gap:1em;
+}
+
+.splitMenu > .sideMenu > .content > .buttons{
+  display:flex;
+  justify-content:flex-end;
+
+  gap:1em;
+}
+
+.splitMenu > .sideMenu > .content > .buttons > .save{
+  width:fit-content;
+  padding:0.5em 3em;
+  margin-top:1em;
+
+  background:white;
+  color:black;
+}
+
+.splitMenu > .sideMenu > .content > .buttons > .save:disabled{
+  background:transparent;
+  color:#555;
+  box-shadow:0 0 0 2px #555;
+}
+
+.splitMenu > .sideMenu > .content > .buttons > .save:disabled::after{
+  display:none;
+}
+
+.splitMenu > .sideMenu > .content > .error{
+  color:#935AD8;
+
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  
+  gap:0.5em;
+
+  padding:0 1em;
+}
+
+.splitMenu > .sideMenu > .content > .error > svg{
+  height:1.5em;
+}
+
+/* header menu */
+
+.splitMenu > .headerMenu{
+  background:transparent;
+
+  flex-grow:1;
+
+  display:flex;
+  flex-direction:column;
+
+  width:100%;
+}
+
+.splitMenu > .headerMenu > div{
+  flex-grow:1;
+
+  padding:2rem;
+}
+
+.splitMenu > .headerMenu > .header{
+  background:#0009;
+
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.splitMenu > .headerMenu > .header > .title{
+  font-size:1.5rem;
+  font-weight:bold;
+}
+
+.splitMenu > .headerMenu > .header > .description{
+  font-size:0.9rem;
+  margin-top:1rem;
+}
+
+.splitMenu > .headerMenu > .content{
+  background:#0004;
+  
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}

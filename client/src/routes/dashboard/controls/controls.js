@@ -15,12 +15,13 @@ const defaultControls = {
     hard:' ',
 }
 const joinedDefault = Object.values(defaultControls).join();
+const stringifyedDefault = JSON.stringify(defaultControls); 
 
 class Controls extends React.Component {
     constructor(props){
         super(props);
 
-        let controls = JSON.parse(localStorage.getItem('controls') ?? JSON.stringify(defaultControls));
+        let controls = JSON.parse(localStorage.getItem('controls') ?? stringifyedDefault);
 
         this.state = {
             controls,
@@ -111,7 +112,7 @@ const keyNames = {
 }
 
 function format(object){
-    return Object.entries(object).map(function([name, control],i){
+    return Object.entries(object).map(function([name, control]){
         if (control === null){ //format control
             control = '';
         }else if (keyNames[control] !== undefined){

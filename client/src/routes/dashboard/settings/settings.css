@@ -1,0 +1,80 @@
+.settings{
+  padding-top:5em;
+  padding-bottom:5em;
+}
+
+.controlTable{
+  width:100%;
+  border-spacing:0.5em;
+
+  font-size:1.1rem;
+}
+
+
+
+.controlTable > tbody > tr > td{
+  margin-top:1em;
+}
+
+
+.controlTable > thead > tr > th:nth-child(1){
+  text-align: left;
+}
+
+.controlTable > tbody > tr > td:nth-child(1){
+  width:100%;
+}
+
+
+.controlTable > tbody > tr > td:nth-child(2){
+  min-width:max-content;
+
+  padding:0.25em 0.5em;
+
+  border:1px solid #fffa;
+  text-align: center;
+
+  cursor: pointer;
+}
+
+.controlTable > tbody > tr > td:nth-child(2):hover{
+  background:#fff1;
+}
+
+.controlTable > tbody > tr > td:nth-child(2):active{
+  background:#fff2;
+}
+
+.controlButtons{
+  margin-top:1em;
+
+  display:flex;
+  flex-direction:row;
+}
+
+.controlButtons > button{
+  margin: 0 1em;
+}
+
+.controlPopup{
+  position:fixed;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  background:#0009;
+}
+
+.controlPopup > h1{
+  font-size:3rem;
+}
+
+.controlPopup > span{
+  font-size:1.5rem;
+}

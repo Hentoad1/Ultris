@@ -1,7 +1,6 @@
 .dashboard{
   display:grid;
   grid-template-columns:15% 1fr;
-  height:100%;
 }
 
 .dashboard-navbar{
@@ -63,12 +62,12 @@
 
   display:flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: column;
 
   position:relative;
 
-  overflow:auto;
+  overflow-y:scroll;
   height:100%;
 }
 

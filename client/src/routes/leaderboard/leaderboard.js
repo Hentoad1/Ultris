@@ -31,6 +31,8 @@ function Leaderboard(props){
         setPageData('error');
       }
     });
+    // adding queryAPI here causes multiple API calls over and over again
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[props.type, page])
 
   let hideTable = false;

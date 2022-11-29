@@ -37,7 +37,7 @@ function AnimatedInput(props){
 
   let minimized = focused || (value !== '' || props.placeholder);
   return (
-    <div className = 'AnimatedInput' style = {props.parentStyle} onBlur = {() => setFocused(false)} onFocus = {() => setFocused(true)}>
+    <div className = {'AnimatedInput ' + (props.className ?? '')} style = {props.parentStyle} onBlur = {() => setFocused(false)} onFocus = {() => setFocused(true)}>
         <input ref = {ref} type = {props.type ?? 'text'} style = {props.inputStyle} onKeyUp = {props.onKeyUp} defaultValue = {props.value} onInput = {e => inputHandler(e)} placeholder = {props.placeholder}/>
         <span className = {minimized ? 'minimized' : ''}>{props.title}</span>
         <div className = 'iconWrapper'>
