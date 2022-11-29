@@ -1,16 +1,41 @@
-.leaderboard{
+.leaderboardWrapper{
   display:flex;
-  flex-flow:column;
-  justify-content: flex;
-  align-items: center;
-  font-size:1.25rem;
+  flex-direction: column;
+  overflow-y: scroll;
 }
 
-.leaderboard > table{
+.leaderboard > svg{
+  width:100px;
+  height:100px;
+}
+
+.leaderboard{
+  padding-top:3em;
+  padding-bottom:3em;
+
+  display:flex;
+  flex-flow:column;
+  justify-content: flex-start;
+  align-items: center;
+
+  flex-grow:1;
+}
+
+.statTable{
   border-spacing: 0em;
 }
 
-.leaderboard > table > tbody > tr{
+.statTable > thead > tr{
+  text-align:center;
+
+  color:#aaa;
+}
+
+.statTable > thead > tr > th{
+  font-weight:500;
+}
+
+.statTable > tbody > tr{
   border-spacing: 0em;
   font-size:1.25rem;
 
@@ -19,56 +44,68 @@
   background:#222;
 }
 
-.leaderboard > table > tbody > tr > td:nth-child(1){
+.statTable > tbody > tr > td:nth-child(1){
   text-align: center;
 
   min-width: 2em;
   background:#151515;
 }
 
-.leaderboard > table > tbody > tr > td:nth-child(2){
+.statTable > tbody > tr > td:nth-child(2){
+  min-width: 19.5em;
+  padding-left:0.5em;
+}
+
+.statTable > tbody > tr > td:nth-child(3){
   min-width: 5em;
   text-align: center;
 }
 
 
-.leaderboard > table > tbody > tr > td:nth-child(3){
-  min-width: 19.5em;
-  padding-left:0.5em;
-}
-
-.leaderboard > table > tbody > tr > td:nth-child(4){
+.statTable > tbody > tr > td:nth-child(4){
   min-width: 5.5em;
   padding-right:0.5em;
   text-align:right;
 }
 
-.leaderboard > .categoryButtons{
-  width: calc(33em + 6px);
-
+.categoryButtons{
   display:flex;
   flex-direction: row;
+  justify-content: center;
+
+
+  width:100%;
+
+  gap:0.2em;
+
+  box-shadow:inset 0px -2px #fff2;
 }
 
-.leaderboard > .categoryButtons > a{
+.categoryButtons > a{
   border-radius:0;
-  background:#4446;
 
-  flex-grow:1;
   text-align:center;
 
   padding:0.5em;
+
+  transition: border-bottom 0.25s ease-in-out;
+  border-bottom:2px solid transparent;
+
+  font-size:1.25rem;
 }
 
-.leaderboard > .categoryButtons > a.active{
-  background:#4444;
+.categoryButtons > a:hover{
+  border-bottom:2px solid #fff4;
 }
 
-.leaderboard > .categoryButtons > a:hover{
-  background:#4442;
+.categoryButtons > a.active{
+  border-bottom:2px solid #fff8;
+  
 }
 
 .leaderboard > .pageButtons{
+  font-size:1.25rem;
+
   margin-top:0.5em;
 
   width: calc(33em + 6px);

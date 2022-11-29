@@ -3,7 +3,7 @@ var router = express.Router();
 
 var {queryDB} = require('../../modules/database.js');
 
-const rowsPerPage = 50;
+const rowsPerPage = 100;
 
 router.post('/', function(req, res, next) {
   

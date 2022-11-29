@@ -8,6 +8,8 @@ import {ReactComponent as DoubleLeft} from '../../assets/svgs/Double_Arrow_Left.
 import {ReactComponent as SingleRight} from '../../assets/svgs/Single_Arrow_Right.svg';
 import {ReactComponent as DoubleRight} from '../../assets/svgs/Double_Arrow_Right.svg';
 
+import {ReactComponent as Loading} from '../../assets/svgs/Loading.svg';
+
 import './leaderboard.css';
 
 function Leaderboard(props){
@@ -20,36 +22,43 @@ function Leaderboard(props){
   page = parseInt(page);
 
   useEffect(() => {
+    setPageData(null);
     QueryAPI('/leaderboard', {type:props.type, page:page-1},(result) => {
       if (result){
         setPageData(result.rows);
         setMaxPage(result.totalPages);
+      }else{
+        setPageData('error');
       }
     });
-  },[props.type, page, QueryAPI])
+  },[props.type, page])
 
-  var table = null;
+  let hideTable = false;
+
+  let table = null;
   if (pageData === null){
-    table = (
-      <div>
-        failed to load leaderboard data
-      </div>
-    )
-  }else if (pageData.length === 0){
-    table = (
-      <div>
-        cannot find any match
-      </div>
-    )
+    hideTable = true;
+    table = <Loading/>;
+  }else if (typeof pageData !== 'object' || pageData.length === 0){
+    hideTable = true;
+    table = <div>An error occured loading the leaderboard.</div>;
   }else{
     table = (
-      <table>
+      <table className = 'statTable'>
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            <th>{props.type === 'sprint' ? 'Time' : 'Score'}</th>
+            <th>Date</th>
+          </tr>
+        </thead>
         <tbody>
           {pageData.map((stat, i) => 
             <tr key = {i}>
               <td>{stat.place}</td>
-              <td>{stat.score}</td>
               <td>{stat.name}</td>
+              <td>{stat.score}</td>
               <td>{stat.date}</td>
             </tr>
           )}
@@ -101,13 +110,10 @@ function Leaderboard(props){
     );
   }
 
-  return (
-    <div className = 'page_content leaderboard'>
-      <div className = 'categoryButtons'>
-        <NavLink to = '/leaderboard/sprint'>Sprint</NavLink>
-        <NavLink to = '/leaderboard/blitz'>Blitz</NavLink>
-      </div>
-      {table}
+  let navigatorContent = null;
+
+  if (!hideTable){
+    navigatorContent = (
       <div className = 'pageButtons'>
         {backArrowContent}
         {numberedPages.map(pageNumber => {
@@ -116,6 +122,19 @@ function Leaderboard(props){
           );
         })}
         {forwardArrowContent}
+      </div>
+    );
+  }
+
+  return (
+    <div className = 'page_content leaderboardWrapper'>
+      <div className = 'categoryButtons'>
+        <NavLink to = '/leaderboard/sprint'>Sprint</NavLink>
+        <NavLink to = '/leaderboard/blitz'>Blitz</NavLink>
+      </div>
+      <div className = 'leaderboard'>
+        {table}
+        {navigatorContent}
       </div>
     </div> 
   )
