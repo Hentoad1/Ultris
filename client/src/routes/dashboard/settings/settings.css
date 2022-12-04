@@ -1,16 +1,9 @@
-.settings{
-  padding-top:5em;
-  padding-bottom:5em;
-}
-
 .controlTable{
   width:100%;
   border-spacing:0.5em;
 
   font-size:1.1rem;
 }
-
-
 
 .controlTable > tbody > tr > td{
   margin-top:1em;
@@ -25,9 +18,8 @@
   width:100%;
 }
 
-
 .controlTable > tbody > tr > td:nth-child(2){
-  min-width:max-content;
+  white-space: nowrap;
 
   padding:0.25em 0.5em;
 

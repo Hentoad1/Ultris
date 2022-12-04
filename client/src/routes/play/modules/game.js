@@ -1,10 +1,14 @@
-import {useRef,useEffect} from 'react';
+import { useRef, useEffect, useContext } from 'react';
 
+import { SocketContext, GameModeContext } from '../wrapper.js';
 
 import initalize from './logic.js'
 import './game.css';
 
 function Game(props){
+  let socket = useContext(SocketContext);
+  let gameMode = useContext(GameModeContext);
+
   //CANVASES
   let holdRef = useRef();
   let meterRef = useRef();
@@ -28,10 +32,11 @@ function Game(props){
 
   
   useEffect(() => {
-    let globals = props.globals;
-    let socket = globals.socket;
+    if (gameMode === undefined){
+      return;
+    }
 
-    let DOM = {
+    let DOM = { //this is probabbly horrible for optimaztion but it works...
       hold: holdRef,
       meter: meterRef,
       main: mainRef,
@@ -47,19 +52,9 @@ function Game(props){
       full: wrapperRef
     }
 
-    let callbacks = {
-      end:globals.statmenu.gameEnd
-    }
+    let {addListeners, removeListeners, cleanup} = initalize(DOM, socket, gameMode);
 
-    let {addListeners, removeListeners} = initalize(DOM,callbacks,globals.gameMode,socket);
-
-    let reset = function(){
-      //addListeners();
-      //initalize();
-    }
-
-    globals.game = {
-      reset,
+    socket.game = {
       addListeners,
       removeListeners,
       clientRef: wrapperRef
@@ -68,18 +63,17 @@ function Game(props){
     addListeners();
 
     return () => {
-      removeListeners();
+      cleanup();
       socket.emit('reset');
     }
-    //the globals object shouldnt be used in this manner but whatever im too deep in my past mistakes of not knowing how react works
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[]);
+  },[gameMode]);
 
   return (
     <div className = 'clientWrapper' ref = {wrapperRef}>
       <div className = "inner_left_wrapper">
         <canvas width = '100' height = '100' ref={holdRef} className = "box"></canvas>
-        <div className = "broadcast_wrapper" > {/*this is for lines being cleared, the css is not yet implemented / transfered; should be re-named to minor broadcast wrapper */}
+        <div className = "broadcast_wrapper" >
           <span className = "minor_broadcast" ref={b2bref}/>
           <span className = "broadcast" ref={broadcastRef}/>
           <span className = "minor_broadcast" ref={comboRef}/>

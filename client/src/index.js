@@ -10,13 +10,11 @@ import Leaderboard from './routes/leaderboard/leaderboard.js';
 //dashboard
 import Dashboard from './routes/dashboard/dashboard.js';
 import Settings from './routes/dashboard/settings/settings.js';
-import Controls from './routes/dashboard/controls/controls.js';
-import Handling from './routes/dashboard/handling/handling.js';
 import AccountInfo from './routes/dashboard/account/accountInfo/accountInfo.js';
 import Relog from './routes/dashboard/account/relog/relog.js'
 //play
 import PlayMenu from './routes/play/playMenu.js';
-import {Wrapper as Game} from './routes/play/wrapper.js';
+import Wrapper from './routes/play/wrapper.js';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -36,8 +34,6 @@ root.render(
             <Route path='dashboard' element = {<Dashboard />}>
               <Route index element = {<Navigate to = 'settings'/>} />
               <Route path='settings' element = {<Settings />} />
-              <Route path='controls' element = {<Controls />} />
-              <Route path='handling' element = {<Handling />} />
               <Route path='account'>
                 <Route index element = {<AccountInfo />} />
                 <Route path='information' element = {<AccountInfo />} />
@@ -46,7 +42,7 @@ root.render(
             </Route>
             <Route path='play'>
               <Route index element = {<PlayMenu />} />
-              <Route path='*' element = {<Game />} />
+              <Route path=':gameMode' element = {<Wrapper />} />
             </Route>
             <Route path='*' element = {<h1>404 Error</h1>} />
           </Route>

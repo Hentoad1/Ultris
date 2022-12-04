@@ -78,8 +78,18 @@ var garbageQueue = [];
 var garbageMeter = [];
 var dropBonusCounter = 0;
 
+var syncedFallMultiplier = 1;
+
+//SOCKET FUNCTIONS
+
+var receiveGarbageFunction;
+var cancelGarbageFunction;
+var endFunction;
+var startFunction;
+
 //EXPORTS
-function initalize(DOM, callbacks, gameMode, socket) {
+function initalize(DOM, socket, gameMode) {
+
   class Tetrimino {
     constructor(p) {
       this.pType = pTypes[p];
@@ -253,8 +263,6 @@ function initalize(DOM, callbacks, gameMode, socket) {
     }
   }
 
-  console.log(DOM);
-
   new Promise(r => setTimeout(r, 1000)).then(() => {
     console.log(DOM);
   }) 
@@ -263,7 +271,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
   refreshDOM(DOM.full);
   DOM.full.current.style = null;
 
-  socket.on('recieve garbage', function(lines,x){
+  receiveGarbageFunction = function(lines,x){
     let fullGarbage = new Array(10).fill(9);
     fullGarbage[x] = 0;
 
@@ -274,9 +282,9 @@ function initalize(DOM, callbacks, gameMode, socket) {
     garbageMeter.push(lines);
     
     displayGarbage();
-  });
-  
-  socket.on('cancel garbage', function(lines){
+  }
+
+  cancelGarbageFunction = function(lines){
     for (let i = 0; i < lines; i++){
       garbageQueue.pop();
       if (garbageMeter.length !== 0 && garbageMeter[0] <= 1){
@@ -287,18 +295,26 @@ function initalize(DOM, callbacks, gameMode, socket) {
     }
     
     displayGarbage();
-  });
+  }
 
-  socket.on('end',function(){
+  endFunction = function(){
     gameRunning = false;
     current = null;
     clearInterval(timer);
-  });
+  };
+
+  startFunction = function(startDate,salt){
+      reset(salt);
+  }
+
+  socket.on('recieve garbage', receiveGarbageFunction);
+  
+  socket.on('cancel garbage', cancelGarbageFunction);
+
+  socket.on('end',endFunction);
 
   if (gameMode === 'online'){ //if online wait for the start from the server
-    socket.on('start',function(startDate,salt){
-      reset(salt);
-    });
+    socket.on('start',startFunction);
   }else{ // if not online then juts initialize the game immidiately.
     reset();
   }
@@ -494,7 +510,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
     }
     if (current !== null) { //draw piece
       current.display();
-      if (gameMode === 'online' && socket.constants.displayLines) {
+      if (gameMode === 'online') {
         socket.emit('send peice', current.export(), current.exportShadow(), current.colorIndex);
       }
     }
@@ -686,7 +702,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
     var leftDown = controls.left.held;
     var rightDown = controls.right.held;
     var downDown = controls.soft.held;
-    let fallMultiplier = (gameMode === 'online') ? socket.constants.fallMultiplier : Math.pow(0.8, DOM.level.current.innerHTML);
+    let fallMultiplier = (gameMode === 'online') ? syncedFallMultiplier : Math.pow(0.8, DOM.level.current.innerHTML);
 
     if (gameRunning) {
       if (leftDown || rightDown) {
@@ -994,8 +1010,8 @@ function initalize(DOM, callbacks, gameMode, socket) {
         full.style.display = 'none';
       }
     } else {
-      console.log(callbacks);
-      callbacks.end(stats);
+      console.log('mode', socket);
+      socket.openStatMenu(stats);
 
       full.style = null;
       refreshDOM(full);
@@ -1035,9 +1051,25 @@ function initalize(DOM, callbacks, gameMode, socket) {
     }
   }
 
+  
+
+  function addListeners() {
+    document.addEventListener('keydown', keyDownHandler, false);
+    document.addEventListener('keyup', keyUpHandler, false);
+  }
+
   function removeListeners() {
     document.removeEventListener('keydown', keyDownHandler, false);
     document.removeEventListener('keyup', keyUpHandler, false);
+  }
+
+  function cleanup(){
+    document.removeEventListener('keydown', keyDownHandler, false);
+    document.removeEventListener('keyup', keyUpHandler, false);
+    socket.off('recieve garbage', receiveGarbageFunction);
+    socket.off('cancel garbage', cancelGarbageFunction);
+    socket.off('end',endFunction);
+    socket.off('start',startFunction);
     gameRunning = false;
     current = null;
     clearInterval(timer);
@@ -1045,12 +1077,7 @@ function initalize(DOM, callbacks, gameMode, socket) {
     window.cancelAnimationFrame(animationFrameID);
   }
 
-  function addListeners() {
-    document.addEventListener('keydown', keyDownHandler, false);
-    document.addEventListener('keyup', keyUpHandler, false);
-  }
-
-  return { addListeners, removeListeners }
+  return { addListeners, removeListeners, cleanup }
 }
 
 //GENERATORS

@@ -34,11 +34,17 @@ li{
 }
 
 .page_content{
+  overflow-y:scroll;
+
   position:relative;
   height:calc(100% - var(--navbar-height));
 
   background:var(--background-color);
   color:var(--color);
+}
+
+.page_content.noscroll{
+  overflow-y:hidden;
 }
 
 .centered{
@@ -70,14 +76,23 @@ html *{
 }
 
 html button{
-  border:none;
-  background:#4444FF;
+  --background:#4444FF;
+  --color:white;
+  --border:transparent;
+  --outline:white;
 
-  color:white;
+  outline:none;
+  border:none;
+
+  background:var(--background);
+
+  color:var(--color);
 
   width:100%;
   padding:1.25em;
   border-radius:3px;
+
+  box-sizing: border-box;
 
   position:relative;
   user-select: none;
@@ -97,17 +112,24 @@ html button::after{
   border-radius:inherit;
 }
 
+html button.AlternateColor{
+  --background:white;
+  --color:black;
+  --border:black;
+  --outline:white;
+}
+
+html button:focus-visible{
+  box-shadow:inset 0 0 0 1px var(--border);
+  outline:2px solid var(--outline);
+}
+
 html button:hover::after{
   background:#fff1;
 }
 
 html button:active::after{
   background:#fff2;
-}
-
-html button.AlternateColor{
-  background:white;
-  color:black;
 }
 
 html button:disabled{

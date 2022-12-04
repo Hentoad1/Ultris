@@ -1,4 +1,5 @@
-import React from 'react';
+import { useContext, useState, useEffect } from 'react';
+import { SocketContext } from '../wrapper';
 import './statmenu.css';
 
 const minorStatTitles = [
@@ -14,37 +15,26 @@ const minorStatTitles = [
   'ALL CLEARS',
   'LARGEST B2B STREAK'
 ];
-const defaultState = {
-  display: false,
+
+const defaultStats = {
   displayMinors: true,
   primaryStat: '',
   primaryStatValue: '',
   secondaryStats: [],
   minorStats: []
-};
+}
 
-class StatMenu extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = defaultState;
+function StatMenu(){
+  let socket = useContext(SocketContext);
+  let [display, setDisplay] = useState(false);
+  let [stats, setStats] = useState(defaultStats);
 
-    this.KeyHandler = this.KeyHandler.bind(this);
-    this.gameEnd = this.gameEnd.bind(this);
-
-    props.globals.statmenu = {
-      setState: this.setState.bind(this),
-      gameEnd: this.gameEnd
-    }
-  }
-
-  gameEnd(stats) {
-    let socket = this.props.globals.socket;
-
+  let gameEnd = (stats) => {
     socket.on('overwritePrimaryStat', function (value) {
       stats.primaryStatValue = value;
     })
 
-    document.addEventListener('keyup', this.KeyHandler, false);
+    document.addEventListener('keyup', KeyHandler, false);
     var listenFunc;
     
     new Promise(function (resolve) {
@@ -55,20 +45,25 @@ class StatMenu extends React.Component {
         }
       };
       document.addEventListener('keyup', listenFunc, false);
-    }).then(function (displayValue) {
-      stats.display = displayValue;
-      this.setState(stats);
+    }).then((displayValue) => {
+      setDisplay(displayValue);
+      setStats(stats);
 
       document.removeEventListener('keyup', listenFunc, false);
       socket.off('overwritePrimaryStat');
-    }.bind(this));
+    });
   }
 
-  KeyHandler(e) {
-    const dropMenu = function () {
-      this.setState({ display: false });
+  useEffect(() => {
+    socket.openStatMenu = gameEnd;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[socket]);
+
+  let KeyHandler = (e) => {
+    const dropMenu = () => {
+      setDisplay(false);
       document.removeEventListener('keyup', this.KeyHandler, false);
-    }.bind(this);
+    };
 
     if (e.key === 'Escape') {
       //dropMenu();
@@ -76,30 +71,29 @@ class StatMenu extends React.Component {
     }
     if (e.key === 'r') {
       dropMenu();
-      this.props.globals.game.reset();
     }
   }
 
-  render() {
-    let minors = '';
-    if (this.state.displayMinors) {
-      minors = this.state.minorStats.map((e, i) => <li key={i + this.state.secondaryStats.length}>{minorStatTitles[i]}: {e}</li>);
-    }
-
-    return (
-      <div className={'statMenu ' + (this.state.display ? 'visible' : 'hidden')}>
-        <span className='primaryStat'>{this.state.primaryStat}</span>
-        <span className='primaryStatValue'>{this.state.primaryStatValue}</span>
-        <ul className="minorStats">
-          {this.state.secondaryStats.map((x, i) => <li key={i}>{x.title}: {x.value}</li>)}
-          {minors}
-        </ul>
-        <span>
-          PRESS R TO RESTART
-        </span>
-      </div>
-    )
+  let minors = null;
+  if (stats.displayMinors) {
+    minors = stats.minorStats.map((e, i) => <li key={i + stats.secondaryStats.length}>{minorStatTitles[i]}: {e}</li>);
   }
+
+  console.log(stats);
+
+  return (
+    <div className={'statMenu ' + (display ? 'visible' : 'hidden')}>
+      <span className='primaryStat'>{stats.primaryStat}</span>
+      <span className='primaryStatValue'>{stats.primaryStatValue}</span>
+      <ul className="minorStats">
+        {stats.secondaryStats.map((x, i) => <li key={i}>{x.title}: {x.value}</li>)}
+        {minors}
+      </ul>
+      <span>
+        PRESS R TO RESTART
+      </span>
+    </div>
+  )
 }
 
 export default StatMenu;

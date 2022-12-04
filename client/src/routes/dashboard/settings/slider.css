@@ -12,26 +12,49 @@
 
 .customSlider{
   appearance: none;
-
   width:100%;
-
   height:5px;
+  border:none;
+  outline:none;
+
+  border-radius:2px;
+}
+
+.customSlider:focus{
+  box-shadow: 0 0 0 2px #aaa;
 }
 
 .customSlider::-moz-range-thumb{
-  background:white;
+  background:#ddd;
   width:15px;
   height:15px;
   border-radius:50%;
   border:none;
+  cursor: pointer;
+}
+
+.customSlider::-moz-range-thumb:hover{
+  background:#fff;
+}
+
+.customSlider::-moz-range-thumb:active{
+  background:#fff;
 }
 
 .customSlider::-webkit-slider-thumb{
   appearance: none;
-  background:white;
+  background:#ddd;
   width:15px;
   height:15px;
   border-radius:50%;
+}
+
+.customSlider::-webkit-slider-thumb:hover{
+  background:#fff;
+}
+
+.customSlider::-webkit-slider-thumb:active{
+  background:#fff;
 }
 
 .handlingInput{

@@ -1,7 +1,7 @@
 .chat{
 	--userMsg:white;
 	--serverMsg:#AAAAAA;
-	--messageHeight:20%;
+	--restingHeight:20%;
 
 	display:flex;
 	flex-flow:column;
@@ -12,7 +12,7 @@
 	overflow:none;
 
 	top:50px;
-	bottom:75px;
+	bottom:50px;
 	left:50px;
 	right:auto;
 	font-size:1rem;
@@ -25,20 +25,18 @@
 	left:auto;
 	right:50px;
 	bottom:50px;
-	--messageHeight:100%;
-}
-
-.chat:focus-within{
-	--messageHeight:100%;
+	--restingHeight:100%;
 }
 
 .chatMessages{
-	height:var(--messageHeight);
+	min-height:var(--restingHeight);
+  height:20%;
 
 	overflow:hidden;
 	display:flex;
 	flex-flow:column;
 	justify-content:flex-end;
+
 	transition:height 1s ease-in-out;
 
 	flex-grow:0;
@@ -49,12 +47,16 @@
 	background:#29292930;
 }
 
-.chatMessages .serverMessage{
+.chat:focus-within > .chatMessages{
+  height:100%;
+}
+
+.chatMessages > .serverMessage{
 	color:var(--serverMsg);
 	list-style-type: none;
 }
 
-.chatMessages .userMessage{
+.chatMessages > .userMessage{
 	color:var(--userMsg);
 	list-style-type: none;
 }

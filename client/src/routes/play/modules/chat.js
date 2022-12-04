@@ -1,93 +1,53 @@
-import React from 'react';
+import { useContext, useState, useRef, useEffect } from 'react';
+import { SocketContext } from '../wrapper';
 
 import './chat.css';
 
+function Chat(){
+  let socket = useContext(SocketContext);
+  let [messages, setMessages] = useState([]);
+  let [inLobby, setInLobby] = useState(true);
 
-const defaultState = {
-  display: true,
-  socket: undefined,
-  inLobby: true,
-  messages: []
-}
-class Chat extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = defaultState;
+  useEffect(() => {
+    const messageFunction = (type, name, msg) => {
+      setMessages(messages => [...messages, { type, name, msg }]);
+    };
 
-    this.KeyHandler = this.KeyHandler.bind(this);
+    const startFunction = () => setInLobby(false);
 
-    this.msgRef = React.createRef();
+    const endFunction = () => setInLobby(true);
+    
+    socket.on('message', messageFunction);
+    socket.on('start', startFunction);
+    socket.on('end', endFunction);
 
-    props.globals.chat = {
-      setState: this.setState.bind(this),
-      state: this.state
+    return function(){
+      socket.off('message', messageFunction);
+      socket.off('start', startFunction);
+      socket.off('end', endFunction);
     }
-  }
 
-  componentDidMount() {
-    let socket = this.props.globals.socket;
+  },[])
 
-    socket.on('message', function (type, name, msg) {
-      let messages = this.state.messages;
-      messages.push({ type, name, msg });
-      this.setState({ messages });
-    }.bind(this));
-
-    socket.on('start', function () {
-      let elem = this.msgRef.current;
-      if (elem !== null) {
-        elem.style.transition = 'none';
-        this.setState({ inLobby: false }, function () {
-          reflow(elem);
-          elem.style = null;
-        });
-      }
-    }.bind(this));
-
-    socket.on('end', function () {
-      let elem = this.msgRef.current;
-      new Promise(resolve => setTimeout(resolve, 1000))
-        .then(function () {
-          if (elem !== null) {
-            elem.style.transition = 'none';
-            this.setState({ inLobby: true }, function () {
-              reflow(elem);
-              elem.style = null;
-            });
-          }
-        }.bind(this));
-    }.bind(this));
-
-    function reflow(elem) {
-      return elem.offsetWidth;
-    }
-  }
-
-  KeyHandler(e) {
+  let KeyHandler = (e) => {
     if (e.key === 'Enter') {
       let value = e.target.value;
       if (!(/^\s*$/).test(value)) { //makes sure its not blank
-        if (this.props.globals.socket !== undefined) {
-          this.props.globals.socket.emit('send message', value);
-        }
-
-
-        e.target.value = '';
+        console.log('message sent');
+        socket.emit('send message', value);
       }
+      e.target.value = '';
     }
-  }
+  };
 
-  render() {
-    let game = this.props.globals.game ?? {};//really bad fix
-    return (
-      <div className={'chat' + (this.state.inLobby ? ' inLobby' : '')}>
-        <ul className='chatMessages' ref={this.msgRef}>
-          {this.state.messages.map((e, i) => <li className={e.type} key={i}>{e.name}: {e.msg}</li>)}
-        </ul>
-        <input className='chatInput' onKeyUp={this.KeyHandler} onFocus={game.removeListeners} onBlur={game.addListeners} placeholder='Type here to send a message...' />
-      </div>
-    )
-  }
+  return (
+    <div className={'chat' + (inLobby ? ' inLobby' : '')}>
+      <ul className='chatMessages'>
+        {messages.map((e, i) => <li className={e.type} key={i}>{e.name}: {e.msg}</li>)}
+      </ul>
+      <input className='chatInput' onKeyUp={KeyHandler} onFocus={() => socket.game.removeListeners()} onBlur={() => socket.game.addListeners()} placeholder='Type here to send a message...' />
+    </div>
+  )
 }
 
 export default Chat;

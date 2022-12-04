@@ -1,5 +1,7 @@
-import React from 'react';
+import { Fragment, useState, useEffect, createContext } from 'react';
 import { io } from 'socket.io-client';
+
+import { useParams } from 'react-router';
 
 import Game from './modules/game.js';
 import Chat from './modules/chat';
@@ -10,69 +12,62 @@ import LobbyMenu from './modules/lobbymenu.js';
 import './wrapper.css';
 
 const socket = io('localhost:9000');
-socket.constants = {
-    cellSize:20,
-	displayLines:true,
-	fallMultiplier:1
-};
-let globals = {socket};
+const SocketContext = createContext();
+const GameModeContext = createContext();
 
-const testContext = React.createContext('test');
+const singlePlayerModes = new Set(['sprint','blitz','endless']);
 
-class Wrapper extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            online:true,
-            opponents:[]
-        };
-        
-        let path = window.location.pathname;
-        let parsed = path.slice(path.lastIndexOf('/') + 1);
-        if (['sprint','blitz','endless'].includes(parsed)){
-            globals.gameMode = parsed;
+function Wrapper(){
+  let [mode, setMode] = useState();
+  let params = useParams();
+
+  useEffect(() => {
+    let gameMode = params.gameMode;
+    if (singlePlayerModes.has(gameMode)){
+      setMode(gameMode);
+    }else{
+      setMode('online');
+      socket.emit('join room',gameMode,function(data,err){
+        if (err){
+          alert(err);
         }else{
-            globals.gameMode = 'online';
-            socket.emit('join room',parsed,function(data,err){
-                if (err){
-                    alert(err);
-                }else{
-                    globals.lobbymenu.setState({lobbyinfo:data});
-                }
-            });
-        }        
+          socket.setLobbyInfo(data);
+        }
+      });
     }
+  },[params.gameMode])
 
-    componentDidMount(){
-        window.onbeforeunload = function(){
-            socket.removeAllListeners();
-            socket.disconnect();
-        }
+  useEffect(() => {
+    window.onbeforeunload = () => {
+      socket.removeAllListeners();
+      socket.disconnect();
     }
-    
-    render() {
-        let onlineContent = '';
-        if (globals.gameMode === 'online'){
-            onlineContent = (
-                <React.Fragment>
-                    <Chat globals = {globals}/>
-                    <Opponents globals = {globals}/>
-                    <LobbyMenu globals = {globals}/>
-                    <WinMenu globals = {globals}/>
-                </React.Fragment>
-            );
-        }
-        
-        return (
-            <testContext.Provider value={globals}>
-                <div className = 'main_wrapper page_content' ref = {this.wrapperRef}>
-                    <Game globals = {globals}/>
-                    <StatMenu globals = {globals}/>
-                    {onlineContent}
-                </div>
-            </testContext.Provider>
-        )
-    }
+  },[])
+
+  let onlineContent = null;
+  if (mode === 'online'){
+    onlineContent = (
+      <Fragment>
+        <Chat/>
+        <Opponents/>
+        <LobbyMenu/>
+        <WinMenu/>
+      </Fragment>
+    );
+  }
+
+  return (
+    <SocketContext.Provider value = {socket}>
+      <GameModeContext.Provider value = {mode}>
+        <div className = 'main_wrapper page_content noscroll'>
+          <Game/>
+          <StatMenu/>
+          {onlineContent}
+        </div>
+      </GameModeContext.Provider>
+    </SocketContext.Provider>
+  )
 }
-  
-export {Wrapper};
+
+export {SocketContext, GameModeContext};
+export default Wrapper;

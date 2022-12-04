@@ -9,7 +9,7 @@ import { AnimatedInput } from '../../../assets/components/animatedInput.js';
 
 function Settings(){
   return (
-    <div className = 'splitMenu settings'>
+    <div className = 'splitMenu'>
       <div className = 'headerMenu'>
         <div className = 'header'>
           <div className = 'title'>Controls</div>
@@ -43,7 +43,7 @@ function Settings(){
       <div className = 'sideMenu'>
         <div className = 'header'>
           <div className = 'title'>Soft Drop Factor</div>
-          <div className = 'description'>How fast the soft drop will move the piece downward when the key is being held. </div>
+          <div className = 'description'>The factor that is applied to the soft drop speed. Increasing this will make soft drops faster, but will make it harder to tuck pieces under an overhang.</div>
         </div>
         <div className = 'content'>
           <HandlingSection min = {1} max = {40} default = {1} step = {1} dir = 'ltr' name = 'SDF'/>
@@ -57,9 +57,11 @@ function Settings(){
 }
 
 function HandlingSection(props){
-  const startingValue = localStorage.getItem(props.name) ?? props.default;
+  const startingString = localStorage.getItem(props.name) ?? props.default;
+  const startingValue = startingString === 'Instant' ? 40 : startingString;
+
   let [filled, setFilled] = useState(calculateFilled(startingValue));
-  let [inital, setInital] = useState(startingValue);
+  let [inital, setInital] = useState(startingString);
   let [input, setInput] = useState();
   let slider = useRef();
 
@@ -111,6 +113,10 @@ function HandlingSection(props){
     sliderValue = startingValue;
   }
 
+  if (props.name === 'SDF' && sliderValue === 40){
+    sliderValue = 'Instant';
+  }
+
   let reset = function(){
     input.current.value = '';
     input.current.placeholder = props.default;
@@ -131,12 +137,12 @@ function HandlingSection(props){
         <span>FAST</span>
       </div>
       <div className = 'sliderWrapper'>
-        <input type = 'range' onInput = {sliderFunc} className = 'customSlider' ref = {slider} max = {props.max} min = {props.min} step = {props.step} dir = {props.dir} defaultValue = {startingValue} style = {{background:`linear-gradient(90deg,white ${filled * 100}%,0,#FFFFFF44)`}}></input>
+        <input type = 'range' onInput = {sliderFunc} className = 'customSlider' ref = {slider} max = {props.max} min = {props.min} step = {props.step} dir = {props.dir} defaultValue = {startingValue} style = {{background:`linear-gradient(90deg,#ccc ${filled * 100}%,0,#fff2)`}}></input>
       </div>
       <AnimatedInput title = {props.name} placeholder = {sliderValue} onKeyUp = {inputFunc} onRef = {ref => setInput(ref)} className = 'handlingInput'/>
       <div className = 'handlingButtons'>
         <button onClick = {reset} className = 'AlternateColor' disabled = {parseInt(props.default) === parseInt(sliderValue)}>Reset</button>
-        <button onClick = {save} disabled = {parseInt(inital) === parseInt(sliderValue)}>Save</button>
+        <button onClick = {save} disabled = {inital + '' === sliderValue + ''}>Save</button>
       </div>
     </Fragment>
   )

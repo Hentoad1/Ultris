@@ -1,42 +1,26 @@
 import React from 'react';
-import { Link, Navigate  } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
 import './playMenu.css';
 
 const socket = io('localhost:9000');
 
-const defaultState = {
-    redirect:null,
-};
+function PlayMenu(){
+  let Navigate = useNavigate();
 
-class PlayMenu extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = defaultState;
+  let createRoom = function(){
+    socket.emit('create room',roomcode => {
+      Navigate('/play/' + roomcode);
+    });
+  }
 
-        this.createRoom = this.createRoom.bind(this);
-    }
-
-    createRoom(){
-        socket.emit('create room',function(code){
-            this.setState({redirect:<Navigate to = {'/play/' + code} />});
-        }.bind(this));
-    }
-
-    render() {
-        if (this.state.redirect){
-            return this.state.redirect;
-        }else{
-            return (
-                <div>
-                    <Link to = "sprint">sprint</Link>
-                    <button onClick = {this.createRoom}>create room</button>
-                </div>
-            )
-        }
-        
-    }
+  return (
+    <div>
+        <Link to = "sprint">sprint</Link>
+        <button onClick = {createRoom}>create room</button>
+    </div>
+  )
 }
 
 export default PlayMenu;

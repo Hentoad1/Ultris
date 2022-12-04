@@ -1,19 +1,16 @@
 import { useState, useEffect, useContext, createContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Cookies from 'universal-cookie';
-
-const cookies = new Cookies();
 
 const SessionContext = createContext();
 const Provider = (props) => {
-  const [session, setSession] = useState(cookies.get('session') ?? {username:'', guest:true});
+  const [session, setSession] = useState(JSON.parse(localStorage.getItem('session') ?? JSON.stringify({username:'', guest:true})));
   const location = useLocation();
 
   useEffect(() => {
     QueryAPI('/user', function(result){
       if (result){
         setSession(result);
-        cookies.set('session', result, {path:'/'});
+        localStorage.setItem('session', JSON.stringify(result));
       }
     });
   }, [location])

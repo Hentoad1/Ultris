@@ -41,7 +41,8 @@
 }
 
 .AnimatedInput > input::placeholder{
-  color:inherit;
+  color:var(--placeholder-color);
+  opacity:1;
 }
 
 .AnimatedInput > input:focus::placeholder{

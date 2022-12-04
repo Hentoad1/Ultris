@@ -1,58 +1,55 @@
-import React from 'react';
+import { useState, useContext, useEffect } from 'react';
+import { SocketContext } from '../wrapper';
 import './lobbymenu.css';
 
-const defaultState = {
-    players:[],
-    countDownValue:'',
-    display:true,
-    lobbyinfo:{}
-};
+function LobbyMenu(){
+  let socket = useContext(SocketContext);
+  let [display, setDisplay] = useState(true);
+  let [players, setPlayers] = useState([]);
+  let [lobbyInfo, setLobbyInfo] = useState({});
+  let [countdown, setCountdown] = useState('');
 
-class LobbyMenu extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = defaultState;
+  useEffect(() => {
+    socket.setLobbyInfo = setLobbyInfo;
 
-        props.globals.lobbymenu = {
-            setState:this.setState.bind(this)
-        }
+    const updateFunction = function(users){
+      setPlayers(users);
+    };
+
+    const countdownFunction = function(secondsLeft){
+      setCountdown(`Game Begins in ${secondsLeft} seconds.`);
     }
 
-    componentDidMount(){
-        let globals = this.props.globals;
-        let socket = globals.socket;
-        let setState = this.setState.bind(this);
-
-        socket.on('update lobby',function(users){
-            setState({players:users});
-        });
-
-        socket.on('countdown',function(secondsLeft){
-            setState({countDownValue:`Game Begins in ${secondsLeft} seconds.`});
-        });
-
-        socket.on('start',function(){
-            setState({countDownValue:'',display:false});
-            globals.winmenu.setState({display:false});
-        });
+    const startFunction = function(){
+      setCountdown('');
+      setDisplay(false);
     }
 
-    render() {
-        let title = <h1 className = 'title'>{this.state.lobbyinfo.name}</h1>
-        if (this.state.display){
-            return (
-                <div className = 'lobbymenu'>
-                    {title}
-                    <h1 className = 'countdown'>{this.state.countDownValue}</h1>
-                    <ul className = 'userlist'>
-                        {this.state.players.map((username,i) => <li key = {i}>{username}</li>)}
-                    </ul>
-                </div>
-            )
-        }else{
-            return;
-        }
+    socket.on('update lobby',updateFunction);
+    socket.on('countdown',countdownFunction);
+    socket.on('start',startFunction);
+
+    return function(){
+      socket.off('update lobby',updateFunction);
+      socket.off('countdown',countdownFunction);
+      socket.off('start',startFunction);
     }
+  }, [socket]);
+
+  let content = null;
+  if (display || true){
+    content = (
+      <div className = 'lobbymenu'>
+        <h1 className = 'title'>{lobbyInfo.name}</h1>
+        <h1 className = 'countdown'>{countdown}</h1>
+        <ul className = 'userlist'>
+          {players.map((username,i) => <li key = {i}>{username}</li>)}
+        </ul>
+      </div>
+    );
+  }
+  
+  return content
 }
   
 export default LobbyMenu;

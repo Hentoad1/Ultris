@@ -1,15 +1,14 @@
-.main_wrapper{
-    position:relative;
+.main_wrapper {
+  position: relative;
 
-    display:flex;
-    align-items:center;
-    justify-content: center;
-    flex-direction:row;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
 
-    user-select:none;
-    overflow:hidden;
+  user-select: none;
 }
 
-.main_wrapper *{
-    outline:0px solid white;
+.main_wrapper * {
+  outline: 0px solid white;
 }

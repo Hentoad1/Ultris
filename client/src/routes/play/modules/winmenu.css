@@ -1,129 +1,137 @@
-.winMenu{
-    position:absolute;
+.winMenu {
+  position: absolute;
 
-    left:0;
-    right:0;
+  left: 0;
+  right: 0;
 
-    height:100%;
+  height: 100%;
 
-	background:#191919;
+  background: #191919;
 
-    transition-property:top,opacity;
-	transition-timing-function:ease-in;
-    transition-duration: 1s,0.5s;
+  transition-property: top, opacity;
+  transition-timing-function: ease-in;
+  transition-duration: 1s, 0.5s;
 
-	color:white;
-	font-size:20px;
-	text-align:center;
-	z-index:100;
+  color: white;
+  font-size: 20px;
+  text-align: center;
+  z-index: 100;
 
-    display:flex;
-    align-items: center;
-	flex-flow:column;
-    flex-shrink:0;
-    flex-shrink:0;
+  flex-shrink: 0;
 
-    padding:10%;
-    overflow-y: scroll;
+  overflow-y: scroll;
 }
 
-.winMenu.visible{
-    top:0%;
+.winMenu.visible {
+  top: 0%;
 }
 
-.winMenu.hidden{
-    top:100%;
-	opacity:0;
+.winMenu.hidden {
+  top: 100%;
+  opacity: 0;
 }
 
-.winnerWrapper{
-    background:#00000044;
-    padding:2em;
-    
-    width:24.5em;
+.listWrapper{
+  width:100%;
 
-    display:grid;
-    grid-template-rows:4em 1fr;
-    grid-template-columns:1fr 1fr;
+  padding-top: 5em;
+  padding-bottom: 5em;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-flow: column;
+
 }
 
-.winnerWrapper .username{
-    grid-row:1;
-    grid-column:1 / 3;
-    font-size:1.5em;
+.winnerWrapper {
+  background: #00000044;
+  padding: 2em;
+
+  width: 24.5em;
+
+  display: grid;
+  grid-template-rows: 4em 1fr;
+  grid-template-columns: 1fr 1fr;
 }
 
-.winnerWrapper .stat{
-    grid-row:2;
-    font-size:0.75em;
+.winnerWrapper .username {
+  grid-row: 1;
+  grid-column: 1 / 3;
+  font-size: 1.5em;
 }
 
-.userList{
-    list-style:none;
-    padding:0;
-    margin:0;
+.winnerWrapper .stat {
+  grid-row: 2;
+  font-size: 0.75em;
 }
 
-.userStat{
-    --height:3rem;
-    --accentColor:#000000AA;
-    --smallLineSize:0.5em;
-
-    display:flex;
-    flex-flow:row;
-    align-items:center;
-
-    height:var(--height);
-    margin:1em;
-    background:#00000044;
+.userList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.userStat .place{
-    height:100%;
-    line-height:var(--height);
-    width:4em;
-    padding-right: 0.25em;
-    text-align:right;
-    font-size:1.25em;
+.userStat {
+  --height: 3rem;
+  --accentColor: #000000AA;
+  --smallLineSize: 0.5em;
 
-    background:var(--accentColor);
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+
+  height: var(--height);
+  margin: 1em;
+  background: #00000044;
 }
 
-.userStat .username{
-    height:100%;
-    line-height:var(--height);
-    width:12em;
-    padding-left:0.25em;
-    text-align:left;
-    font-size:1.25em;
-    flex-grow:1;
+.userStat .place {
+  height: 100%;
+  line-height: var(--height);
+  width: 4em;
+  padding-right: 0.25em;
+  text-align: right;
+  font-size: 1.25em;
+
+  background: var(--accentColor);
 }
 
-.userStat .lines{
-    height:100%;
-    line-height:calc(var(--height) / 2);
-    padding-right:0.25em;
-    text-align:right;
-    font-size:var(--smallLineSize);
+.userStat .username {
+  height: 100%;
+  line-height: var(--height);
+  width: 12em;
+  padding-left: 0.25em;
+  text-align: left;
+  font-size: 1.25em;
+  flex-grow: 1;
 }
 
-.userStat:nth-child(1){
-    --height:3rem;
-    --accentColor:#C9B037;
-    --smallLineSize:0.75em;
-    --smallLineSize:0.5em;
+.userStat .lines {
+  height: 100%;
+  line-height: calc(var(--height) / 2);
+  padding-right: 0.25em;
+  text-align: right;
+  font-size: var(--smallLineSize);
 }
 
-.userStat:nth-child(2){
-    --height:3rem;
-    --accentColor:#C6C6C6;
-    --smallLineSize:0.6em;
-    --smallLineSize:0.5em;
+.userStat:nth-child(1) {
+  --height: 3rem;
+  --accentColor: #C9B037;
+  --smallLineSize: 0.75em;
+  --smallLineSize: 0.5em;
 }
 
-.userStat:nth-child(3){
-    --height:3rem;
-    --accentColor:#6A3805;
-    --smallLineSize:0.6em;
-    --smallLineSize:0.5em;
+.userStat:nth-child(2) {
+  --height: 3rem;
+  --accentColor: #C6C6C6;
+  --smallLineSize: 0.6em;
+  --smallLineSize: 0.5em;
+}
+
+.userStat:nth-child(3) {
+  --height: 3rem;
+  --accentColor: #6A3805;
+  --smallLineSize: 0.6em;
+  --smallLineSize: 0.5em;
 }
