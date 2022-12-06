@@ -64,10 +64,12 @@ var lockDelay = 500;
 var shiftsLeft = 10;
 
 //TIME
-var timer;
 var currentFrame = Date.now();
 var previousFrame = Date.now();
 
+//INTERVAL IDS
+var TimerID = null;
+var backupLoopID = null;
 var animationFrameID = null;
 
 //GAME STATE
@@ -263,10 +265,6 @@ function initalize(DOM, socket, gameMode) {
     }
   }
 
-  new Promise(r => setTimeout(r, 1000)).then(() => {
-    console.log(DOM);
-  }) 
-
   DOM.full.current.style = null; // makes it so it will cancel the animation if it is still running.
   refreshDOM(DOM.full);
   DOM.full.current.style = null;
@@ -300,7 +298,7 @@ function initalize(DOM, socket, gameMode) {
   endFunction = function(){
     gameRunning = false;
     current = null;
-    clearInterval(timer);
+    clearInterval(TimerID);
   };
 
   startFunction = function(startDate,salt){
@@ -320,7 +318,7 @@ function initalize(DOM, socket, gameMode) {
   }
 
   animationFrameID = window.requestAnimationFrame(fullLoop);
-  setInterval(backupLoop,100);
+  backupLoopID = setInterval(backupLoop,100);
 
   //CONTROLS
   const controls = {
@@ -433,7 +431,7 @@ function initalize(DOM, socket, gameMode) {
     displayHold();
     displayGarbage();
 
-    clearInterval(timer);
+    clearInterval(TimerID);
     DOM.time.current.innerHTML = "0:00.000";
     DOM.score.current.innerHTML = 0;
     DOM.level.current.innerHTML = 1;
@@ -450,7 +448,7 @@ function initalize(DOM, socket, gameMode) {
       socket.emit(gameMode, salt);
       gameRunning = true;
       currentFrame = Date.now();
-      clearInterval(timer);
+      clearInterval(TimerID);
       createTimer();
     }).catch(() => {});
   }
@@ -637,8 +635,6 @@ function initalize(DOM, socket, gameMode) {
       output.push(weighted);
     }
 
-    console.log(output);
-
     return output;
   }
 
@@ -671,31 +667,32 @@ function initalize(DOM, socket, gameMode) {
   //TIME BASED
   function createTimer() {
     const startDate = Date.now();
-    timer = setInterval(
-      function () {
-        var currentDate = Date.now();
+    TimerID = setInterval(timerFunc, 10);
 
-        var diff = currentDate - startDate;
+    function timerFunc(){
+      var currentDate = Date.now();
 
-        var minutes = Math.floor(diff / 60000);
-        var seconds = Math.floor(diff / 1000) % 60;
-        var ms = Math.floor(diff) % 1000;
+      var diff = currentDate - startDate;
 
-        minutes = Math.min(minutes, 99);
+      var minutes = Math.floor(diff / 60000);
+      var seconds = Math.floor(diff / 1000) % 60;
+      var ms = Math.floor(diff) % 1000;
 
-        var formattedSeconds = seconds.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+      minutes = Math.min(minutes, 99);
 
-        var time = minutes + ":" + formattedSeconds + "." + ms;
+      var formattedSeconds = seconds.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
 
-        if (gameMode === "blitz" && time > "2:00") {
-          DOM.time.current.innerHTML = "2:00";
-          end(true);
-          socket.emit('timeout', dropBonusCounter);
-        } else {
-          DOM.time.current.innerHTML = time;
-        }
+      var time = minutes + ":" + formattedSeconds + "." + ms;
 
-      }, 10);
+      if (gameMode === "blitz" && time > "2:00") {
+        DOM.time.current.innerHTML = "2:00";
+        end(true);
+        socket.emit('timeout', dropBonusCounter);
+      } else {
+        DOM.time.current.innerHTML = time;
+      }
+
+    }
   }
 
   function physics() {
@@ -947,7 +944,7 @@ function initalize(DOM, socket, gameMode) {
   function end(victory) {
     gameRunning = false;
     current = null;
-    clearInterval(timer);
+    clearInterval(TimerID);
 
     let stats = {
       display: true,
@@ -1010,7 +1007,6 @@ function initalize(DOM, socket, gameMode) {
         full.style.display = 'none';
       }
     } else {
-      console.log('mode', socket);
       socket.openStatMenu(stats);
 
       full.style = null;
@@ -1072,9 +1068,10 @@ function initalize(DOM, socket, gameMode) {
     socket.off('start',startFunction);
     gameRunning = false;
     current = null;
-    clearInterval(timer);
-    clearInterval(backupLoop);
+    clearInterval(TimerID);
+    clearInterval(backupLoopID);
     window.cancelAnimationFrame(animationFrameID);
+    window.dispatchEvent(killCountdown);
   }
 
   return { addListeners, removeListeners, cleanup }

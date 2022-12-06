@@ -9,7 +9,7 @@ function bind(socket, createRef, setUserData) {
   
   const endFunction = function () {
     userData = [];
-    setUserData(userData);
+    setUserData({users:userData});
   };
 
   const PIDFunction = function (id) {
@@ -38,14 +38,14 @@ function bind(socket, createRef, setUserData) {
     }
 
 
-    setUserData(userData, () => resize(true));
+    setUserData({users:userData, redraw:true});
   }
 
   const removeFunction = function (id) {
     let [userIndex] = getUser(id);
     if (userIndex !== -1) {
       userData.splice(userIndex, 1);
-      setUserData(userData, () => resize());
+      setUserData({users:userData, redraw:false});
     }
   };
 
@@ -80,42 +80,6 @@ function bind(socket, createRef, setUserData) {
       });
     }
   };
-
-  function resize(forceRedraw = false) {
-    const margin = 10;
-    const textHeight = 30;
-
-    let clientWidth = 0;
-    if (socket.game.clientRef.current !== null) {
-      clientWidth = socket.game.clientRef.current.offsetWidth;
-    }
-
-    let availibleWidth = (window.innerWidth - clientWidth - 200) / 2; // divied by 2 for 2 halves
-    let availibleHeight = window.innerHeight - 100;
-
-
-    let acceptableSizes = [5, 10, 15, 20];
-    let size = 5;
-    for (let i = acceptableSizes.length - 1; i >= 0; i--) {
-      let rows = Math.floor(availibleHeight / (acceptableSizes[i] * 20 + margin + textHeight)) * 2; // multiply by 2 for 2 halves
-      let columns = Math.floor(availibleWidth / (acceptableSizes[i] * 10 + margin));
-
-      if (rows * columns >= userData.length) {
-        size = acceptableSizes[i];
-        break;
-      }
-    }
-
-    let sizeChanged = size !== cellSize;
-    cellSize = size;
-    if (sizeChanged || forceRedraw) {
-      userData.forEach(display);
-    }
-
-    return sizeChanged;
-  }
-
-  window.addEventListener('resize', () => resize());
 
   function display(user, callback = function () { }) {
     if (user.ref.current === null) {
@@ -188,6 +152,44 @@ function bind(socket, createRef, setUserData) {
   }
 
   
+  let resize = function(forceRedraw = false) {
+    const margin = 10;
+    const textHeight = 30;
+
+    let clientWidth = 0;
+    if (socket.game.clientRef.current !== null) {
+      clientWidth = socket.game.clientRef.current.offsetWidth;
+    }
+
+    let availibleWidth = (window.innerWidth - clientWidth - 200) / 2; // divied by 2 for 2 halves
+    let availibleHeight = window.innerHeight - 100;
+
+
+    let acceptableSizes = [5, 10, 15, 20];
+    let size = 5;
+    for (let i = acceptableSizes.length - 1; i >= 0; i--) {
+      let rows = Math.floor(availibleHeight / (acceptableSizes[i] * 20 + margin + textHeight)) * 2; // multiply by 2 for 2 halves
+      let columns = Math.floor(availibleWidth / (acceptableSizes[i] * 10 + margin));
+
+      if (rows * columns >= userData.length) {
+        size = acceptableSizes[i];
+        break;
+      }
+    }
+
+    let sizeChanged = size !== cellSize;
+    cellSize = size;
+    if (sizeChanged || forceRedraw) {
+      userData.forEach(display);
+    }
+
+    return sizeChanged;
+  }
+
+  let resizeHandler = () => {
+    resize(false); //its important that the event element isnt passed here which would overwrite forceRewdraw variable.
+  }
+
   socket.on('end', endFunction);
   socket.on('sendPID', PIDFunction);
   socket.on('updateUsers', updateFunction);
@@ -195,8 +197,10 @@ function bind(socket, createRef, setUserData) {
   socket.on('recieve boards', boardsFunction);
   socket.on('recieve board', replaceBoard);
   socket.on('recieve peice', pieceFunction);
+  
+  window.addEventListener('resize', resizeHandler);
 
-  return function (){
+  let cleanup = function (){
     socket.off('end', endFunction);
     socket.off('sendPID', PIDFunction);
     socket.off('updateUsers', updateFunction);
@@ -204,7 +208,10 @@ function bind(socket, createRef, setUserData) {
     socket.off('recieve boards', boardsFunction);
     socket.off('recieve board', replaceBoard);
     socket.off('recieve peice', pieceFunction);
+    window.removeEventListener('resize', resizeHandler);
   }
+
+  return [resize, cleanup];
 }
 
 export { bind };

@@ -1,10 +1,11 @@
 var {queryDB} = require('./database.js');
 
+const AcceptableUsernameChars = new RegExp(/^[a-zA-Z0-9]+$/, 'g');
+
 function verifyUsername(input){
   return new Promise(function(resolve, reject){
-    let regex = /^[a-zA-Z0-9]+$/g;
     let username = input.toUpperCase();
-    let result = regex.test(username);
+    let result = AcceptableUsernameChars.test(username);
     let response = null;
 
     if (!result){
@@ -40,13 +41,47 @@ function verifyPassword(password){
   });
 }
 
+const LocalChars = new RegExp(/^[a-zA-Z0-9!#$%&'*+\-\/=?^_`{|}~.]*$/);
+const DomainChars = new RegExp(/^[a-zA-Z0-9-.]*$/);
 
-//async needs try catch after it
 function verifyEmail(email){
   return new Promise(function(resolve, reject){
-    let whitespaceRegex = /\s/g;
-    let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    let valid = emailRegex.test(email) && !whitespaceRegex.test(email);
+    function getValidity(){
+      if (email.includes(`"`)){
+        return false;
+      }
+      
+      let atIndex = email.indexOf('@');
+      if (atIndex === -1){
+        return false;
+      }
+      
+      let local = email.slice(0,atIndex);
+      let domain = email.slice(atIndex + 1);
+      
+      console.log(local);
+      console.log(domain);
+      
+      if (local.length > 64 || local.startsWith('.') || local.endsWith('.') || local.includes('..')){
+        return false;
+      }
+      
+      if (domain.length > 63 || domain.startsWith('-') || domain.endsWith('-')){
+        return false;
+      }
+      
+      if (!LocalChars.test(domain)){
+        return false;
+      }
+      
+      if (!DomainChars.test(domain)){
+        return false;
+      }
+      
+      return true;
+    }
+    
+    let valid = getValidity();
 
     if (!valid){
       return resolve({error:'Please Enter a Valid Email.'});

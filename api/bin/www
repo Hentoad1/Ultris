@@ -28,13 +28,12 @@ const io = new Server(server, {
 });
 
 //setup socket
-console.log('socket fired');
-io.use(function(socket, next) {
+/*io.use(function(socket, next) {
   sessionMiddleware(socket.request, socket.request.res, next);
-});
+});*/
 
 const bind = require('../modules/socket/socket');
-bind(io);
+bind(io, sessionMiddleware);
 
 /**
  * Listen on provided port, on all network interfaces.

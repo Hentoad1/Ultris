@@ -5,7 +5,7 @@ import './lobbymenu.css';
 function LobbyMenu(){
   let socket = useContext(SocketContext);
   let [display, setDisplay] = useState(true);
-  let [players, setPlayers] = useState([]);
+  let [players, setPlayers] = useState([JSON.parse(localStorage.getItem('session') ?? JSON.stringify({username:'GUEST'})).username]);
   let [lobbyInfo, setLobbyInfo] = useState({});
   let [countdown, setCountdown] = useState('');
 
@@ -13,6 +13,7 @@ function LobbyMenu(){
     socket.setLobbyInfo = setLobbyInfo;
 
     const updateFunction = function(users){
+      console.log('users', users);
       setPlayers(users);
     };
 
@@ -37,13 +38,13 @@ function LobbyMenu(){
   }, [socket]);
 
   let content = null;
-  if (display || true){
+  if (display){
     content = (
       <div className = 'lobbymenu'>
         <h1 className = 'title'>{lobbyInfo.name}</h1>
         <h1 className = 'countdown'>{countdown}</h1>
         <ul className = 'userlist'>
-          {players.map((username,i) => <li key = {i}>{username}</li>)}
+          {players.map((username,i) => <li key = {i}>{username ?? 'GUEST'}</li>)}
         </ul>
       </div>
     );

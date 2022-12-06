@@ -87,10 +87,10 @@ function Leaderboard(props){
   if (page > 1){
     backArrowContent = (
       <React.Fragment>
-        <Link to = '.?page=1'>
+        <Link to = '.?page=1' draggable = {false}>
           <DoubleLeft/>
         </Link>
-        <Link to = {'.?page=' + (page - 1)}>
+        <Link to = {'.?page=' + (page - 1)} draggable = {false}>
           <SingleLeft/>
         </Link>
       </React.Fragment>
@@ -102,10 +102,10 @@ function Leaderboard(props){
   if (page < maxPage){
     forwardArrowContent = (
       <React.Fragment>
-        <Link to = {'.?page=' + (page + 1)}>
+        <Link to = {'.?page=' + (page + 1)} draggable = {false}>
           <SingleRight/>
         </Link>
-        <Link to = {'.?page=' + maxPage}>
+        <Link to = {'.?page=' + maxPage} draggable = {false}>
           <DoubleRight/>
         </Link>
       </React.Fragment>
@@ -120,7 +120,7 @@ function Leaderboard(props){
         {backArrowContent}
         {numberedPages.map(pageNumber => {
           return (
-            <Link to = {'.?page=' + pageNumber} key = {pageNumber} className = {pageNumber === parseInt(page) ? 'active' : ''}>{pageNumber}</Link>
+            <Link to = {'.?page=' + pageNumber} key = {pageNumber} className = {pageNumber === parseInt(page) ? 'active' : ''} draggable = {false}>{pageNumber}</Link>
           );
         })}
         {forwardArrowContent}

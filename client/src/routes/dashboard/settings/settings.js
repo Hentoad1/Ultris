@@ -7,6 +7,8 @@ import './slider.css';
 import '../../../assets/styles/splitMenu.css';
 import { AnimatedInput } from '../../../assets/components/animatedInput.js';
 
+const NumberRegex = new RegExp(/[0-9]/, 'g');
+
 function Settings(){
   return (
     <div className = 'splitMenu'>
@@ -71,7 +73,7 @@ function HandlingSection(props){
 
   let inputFunc = function(e){
     if (e.key === 'Enter'){
-      let numbers = (e.target.value.match(/[0-9]/g) ?? []).join('');
+      let numbers = (e.target.value.match(NumberRegex) ?? []).join('');
       let number = parseInt(numbers);
       e.target.value = '';
       if (isNaN(number)){

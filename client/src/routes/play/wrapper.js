@@ -3,6 +3,8 @@ import { io } from 'socket.io-client';
 
 import { useParams } from 'react-router';
 
+import {ReactComponent as Disconnect} from '../../assets/svgs/Disconnected.svg';
+
 import Game from './modules/game.js';
 import Chat from './modules/chat';
 import Opponents from './modules/opponents.js';
@@ -19,6 +21,7 @@ const singlePlayerModes = new Set(['sprint','blitz','endless']);
 
 function Wrapper(){
   let [mode, setMode] = useState();
+  let [connected, setConnected] = useState(socket.connected);
   let params = useParams();
 
   useEffect(() => {
@@ -44,6 +47,20 @@ function Wrapper(){
     }
   },[])
 
+  useEffect(() => {
+    let connectHandler = () => setConnected(true);
+    let disconnectHandler = () => setConnected(false);
+
+    socket.on('connect', connectHandler);
+    socket.on('disconnect', disconnectHandler);
+
+    return () => {
+      socket.off('connect', connectHandler);
+      socket.off('disconnect', disconnectHandler);
+    }
+  })
+
+  
   let onlineContent = null;
   if (mode === 'online'){
     onlineContent = (
@@ -56,6 +73,21 @@ function Wrapper(){
     );
   }
 
+  console.log(connected);
+
+  let offlineWarning = null;
+  if (!connected){
+    offlineWarning = (
+      <div className = 'offline_warning'>
+        <Disconnect/>
+        <div className = 'warning_text'>
+          <span>You are playing offline</span>
+          <span>High scores wont be saved</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <SocketContext.Provider value = {socket}>
       <GameModeContext.Provider value = {mode}>
@@ -63,6 +95,7 @@ function Wrapper(){
           <Game/>
           <StatMenu/>
           {onlineContent}
+          {offlineWarning}
         </div>
       </GameModeContext.Provider>
     </SocketContext.Provider>

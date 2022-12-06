@@ -79,8 +79,6 @@ function StatMenu(){
     minors = stats.minorStats.map((e, i) => <li key={i + stats.secondaryStats.length}>{minorStatTitles[i]}: {e}</li>);
   }
 
-  console.log(stats);
-
   return (
     <div className={'statMenu ' + (display ? 'visible' : 'hidden')}>
       <span className='primaryStat'>{stats.primaryStat}</span>

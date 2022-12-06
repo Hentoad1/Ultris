@@ -2,6 +2,8 @@ import React, {useRef, useEffect, useState} from 'react';
 
 import './codeInput.css';
 
+const AcceptableCharsRegex = new RegExp(/^[1-9a-zA-Z]*$/);
+
 function CodeInput(props){
   let [value, setValue] = useState(new Array(props.length).fill(' '));
 
@@ -23,8 +25,7 @@ function CodeInput(props){
       }
 
       let InputHandler = function(e){
-        let regex = /^[1-9a-zA-Z]*$/
-        if (e.data && regex.test(e.data)){
+        if (e.data && AcceptableCharsRegex.test(e.data)){
           let value = e.data.toUpperCase();
 
           e.target.value = value;

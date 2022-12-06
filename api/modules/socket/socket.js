@@ -17,21 +17,37 @@ const handle = function(f) {
   }
 }
 
-function bind(io){
+function bind(io, sessionMiddleware){
   const rooms = new Map();
   const Room = require('./room')(io, rooms);
 
   new Room('quickplay',{},true);
 
-	io.on('connection',handle(function(socket){
-    //this doesnt need an 'else' because even guest users will be intialized the moment a post or get request is made, socket can still come in first however so this if statement is necessary.
+  const wrap = function(middleware){ 
+    return function(socket, next){
+      middleware(socket.request, {}, next);
+    }
+  }
+
+  io.use(wrap(sessionMiddleware));
+
+  io.use((socket, next) => {
+    console.log(socket.request.session);
     if (socket.request.session.initalized){
       socket.username = socket.request.session.user.username;
       socket.uuid = socket.request.session.user.uuid;
+      next();
     }
+    console.log(socket.username);
+    console.log(socket.uuid);
+  })
 
+  io.use((socket, next) => {
     console.log('found uuid of ' + socket.uuid);
+    next();
+  })
 
+	io.on('connection',handle(function(socket){
 		socket.boardData = new Board();
 
     resetBinds(socket);
@@ -39,13 +55,6 @@ function bind(io){
 
   function resetBinds(socket){
     console.log('reset');
-
-    if (socket.request.session.initalized){
-      socket.username = socket.request.session.user.username;
-      socket.uuid = socket.request.session.user.uuid;
-    }
-
-    console.log('found uuid of ' + socket.uuid);
 
     socket.removeAllListeners();
   

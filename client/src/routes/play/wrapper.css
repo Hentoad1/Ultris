@@ -12,3 +12,30 @@
 .main_wrapper * {
   outline: 0px solid white;
 }
+
+.offline_warning{
+  position:absolute;
+  left:50px;
+  bottom:50px;
+
+  padding:0.5em 1em;
+
+  background:#0004;
+
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+
+  gap:0.75em;
+
+  z-index:1;
+}
+
+.offline_warning > svg{
+  height:2em;
+}
+
+.offline_warning > .warning_text > span{
+  display:block;
+  text-align:left;
+}
