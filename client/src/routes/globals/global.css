@@ -75,7 +75,16 @@ html *{
   font-size:inherit;
 }
 
-html button{
+html button.nostyle{
+  color:inherit;
+  background:inherit;
+  border:none;
+  outline:none;
+  padding:0;
+  margin:0;
+}
+
+html button:not(.nostyle){
   --background:#4444FF;
   --color:white;
   --border:transparent;
@@ -99,7 +108,7 @@ html button{
   cursor: pointer;
 }
 
-html button::after{
+html button:not(.nostyle)::after{
   content:'';
   position:absolute;
   top:0;
@@ -112,31 +121,31 @@ html button::after{
   border-radius:inherit;
 }
 
-html button.AlternateColor{
+html button:not(.nostyle).AlternateColor{
   --background:white;
   --color:black;
   --border:black;
   --outline:white;
 }
 
-html button:focus-visible{
+html button:not(.nostyle):focus-visible{
   box-shadow:inset 0 0 0 1px var(--border);
   outline:2px solid var(--outline);
 }
 
-html button:hover::after{
+html button:not(.nostyle):hover::after{
   background:#fff1;
 }
 
-html button:active::after{
+html button:not(.nostyle):active::after{
   background:#fff2;
 }
 
-html button:disabled{
+html button:not(.nostyle):disabled{
   pointer-events: none;
 }
 
-html button:disabled::after{
+html button:not(.nostyle):disabled::after{
   background:#00000099;
 }
 

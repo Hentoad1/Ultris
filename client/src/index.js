@@ -23,7 +23,7 @@ root.render(
       <BrowserRouter>
         <Routes>
           <Route path='/' element = {<Globals />}>
-            <Route index element = {<h1>default</h1>} />
+            <Route index element = {<Navigate to = 'play'/>} />
             <Route path='register' element = {<Register />} />
             <Route path='login' element = {<Login />} />
             <Route path = 'leaderboard'>

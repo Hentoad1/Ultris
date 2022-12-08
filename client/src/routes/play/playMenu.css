@@ -1,0 +1,64 @@
+.playMenu{
+  display:flex;
+  justify-content:center;
+}
+
+.gameModes{
+  padding-top:5em;
+
+  display:flex;
+  align-items: center;
+  flex-direction:column;
+}
+
+.gameModes > *{
+  width:100%;
+}
+
+.gameModes > .header{
+  font-size:2rem;
+
+  padding-bottom:0.25em;
+
+  border-bottom:1px solid white;
+
+  margin-top:0.5em;
+
+  
+  padding-left:3rem;
+  padding-right:3rem;
+}
+
+.gameModes > .gameSection{
+  box-sizing:content-box;
+  padding-top:0.5em;
+  padding-bottom:0.5em;
+
+  padding-left:3rem;
+  padding-right:3rem;
+
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+
+  background:transparent;
+}
+
+.gameModes > .gameSection:hover{
+  background:#fff1;
+}
+
+.gameModes > .gameSection:active{
+  background:#fff2;
+}
+
+
+.gameModes > .gameSection > .title{
+  font-size:1.5rem;
+  font-weight:400;
+}
+
+.gameModes > .gameSection > .description{
+  font-size:1;
+  word-wrap: break-word;
+}
