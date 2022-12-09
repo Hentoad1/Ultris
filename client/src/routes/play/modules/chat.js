@@ -1,12 +1,12 @@
-import { useContext, useState, useEffect } from 'react';
-import { SocketContext } from '../wrapper';
+import { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router';
 
 import './chat.css';
 
 const WhiteSpaceRegex = new RegExp(/^\s*$/);
 
 function Chat(){
-  let socket = useContext(SocketContext);
+  let socket = useOutletContext();
   let [messages, setMessages] = useState([]);
   let [inLobby, setInLobby] = useState(true);
 
@@ -35,7 +35,6 @@ function Chat(){
     if (e.key === 'Enter') {
       let value = e.target.value;
       if (!WhiteSpaceRegex.test(value)) { //makes sure its not blank
-        console.log('message sent');
         socket.emit('send message', value);
       }
       e.target.value = '';

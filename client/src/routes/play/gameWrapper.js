@@ -1,7 +1,6 @@
 import { Fragment, useState, useEffect, createContext } from 'react';
-import { io } from 'socket.io-client';
 
-import { useParams } from 'react-router';
+import { useOutletContext, useParams } from 'react-router';
 
 import {ReactComponent as Disconnect} from '../../assets/svgs/Disconnected.svg';
 
@@ -11,15 +10,14 @@ import Opponents from './modules/opponents.js';
 import StatMenu from './modules/statmenu.js';
 import WinMenu from './modules/winmenu.js';
 import LobbyMenu from './modules/lobbymenu.js';
-import './wrapper.css';
+import './gameWrapper.css';
 
-const socket = io('localhost:9000');
-const SocketContext = createContext();
 const GameModeContext = createContext();
 
 const singlePlayerModes = new Set(['sprint','blitz','endless']);
 
 function Wrapper(){
+  let socket = useOutletContext();
   let [mode, setMode] = useState();
   let [connected, setConnected] = useState(socket.connected);
   let params = useParams();
@@ -38,14 +36,18 @@ function Wrapper(){
         }
       });
     }
-  },[params.gameMode])
+  },[socket, params.gameMode])
 
   useEffect(() => {
     window.onbeforeunload = () => {
       socket.removeAllListeners();
       socket.disconnect();
     }
-  },[])
+
+    return () => {
+      window.onbeforeunload = null;
+    }
+  },[socket])
 
   useEffect(() => {
     let connectHandler = () => setConnected(true);
@@ -73,8 +75,6 @@ function Wrapper(){
     );
   }
 
-  console.log(connected);
-
   let offlineWarning = null;
   if (!connected){
     offlineWarning = (
@@ -89,18 +89,16 @@ function Wrapper(){
   }
 
   return (
-    <SocketContext.Provider value = {socket}>
-      <GameModeContext.Provider value = {mode}>
-        <div className = 'main_wrapper page_content noscroll'>
-          <Game/>
-          <StatMenu/>
-          {onlineContent}
-          {offlineWarning}
-        </div>
-      </GameModeContext.Provider>
-    </SocketContext.Provider>
+    <GameModeContext.Provider value = {mode}>
+      <div className = 'main_wrapper page_content noscroll'>
+        <Game/>
+        <StatMenu/>
+        {onlineContent}
+        {offlineWarning}
+      </div>
+    </GameModeContext.Provider>
   )
 }
 
-export {SocketContext, GameModeContext};
+export {GameModeContext};
 export default Wrapper;

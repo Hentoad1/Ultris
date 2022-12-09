@@ -1,13 +1,11 @@
 import React from 'react';
-import { Link, useNavigate  } from 'react-router-dom';
-import { io } from 'socket.io-client';
+import { Link, useNavigate, useOutletContext  } from 'react-router-dom';
 
 import './playMenu.css';
 
-const socket = io('localhost:9000');
-
 function PlayMenu(){
   let Navigate = useNavigate();
+  let socket = useOutletContext();
 
   let createRoom = function(){
     socket.emit('create room',roomcode => {

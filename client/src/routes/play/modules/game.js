@@ -1,12 +1,13 @@
 import { useRef, useEffect, useContext } from 'react';
 
-import { SocketContext, GameModeContext } from '../wrapper.js';
+import { GameModeContext } from '../gameWrapper';
 
 import initalize from './logic.js'
 import './game.css';
+import { useOutletContext } from 'react-router';
 
 function Game(props){
-  let socket = useContext(SocketContext);
+  let socket = useOutletContext();
   let gameMode = useContext(GameModeContext);
 
   //CANVASES

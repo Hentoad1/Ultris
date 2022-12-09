@@ -13,9 +13,10 @@ import Settings from './routes/dashboard/settings/settings.js';
 import AccountInfo from './routes/dashboard/account/accountInfo/accountInfo.js';
 import Relog from './routes/dashboard/account/relog/relog.js'
 //play
+import BrowseMenu from './routes/play/browse.js';
 import PlayMenu from './routes/play/playMenu.js';
-import Wrapper from './routes/play/wrapper.js';
-
+import Wrapper from './routes/play/gameWrapper';
+import SocketWrapper from './routes/play/socketWrapper.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -40,8 +41,9 @@ root.render(
                 <Route path='relog' element = {<Relog/>} />
               </Route>
             </Route>
-            <Route path='play'>
+            <Route path='play' element = {<SocketWrapper/>}>
               <Route index element = {<PlayMenu />} />
+              <Route path='browse' element = {<BrowseMenu/>} />
               <Route path=':gameMode' element = {<Wrapper />} />
             </Route>
             <Route path='*' element = {<h1>404 Error</h1>} />

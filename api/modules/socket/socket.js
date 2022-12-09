@@ -18,10 +18,27 @@ const handle = function(f) {
 }
 
 function bind(io, sessionMiddleware){
-  const rooms = new Map();
-  const Room = require('./room')(io, rooms);
+  const Room = require('./room')(io); //import rooms class
+  const rooms = new Map(); //create room map
+  const publicRooms = new Set(); //create public rooms set so it can be listed easily in the browse menu
 
-  new Room('quickplay',{},true);
+  
+
+  const RoomKillFunction = (roomid) => {
+    rooms.delete(roomid);
+    publicRooms.delete(roomid);
+  }
+
+  let quickplayInfo = {
+    id:'quickplay',
+    owner:{
+      uuid:null,
+      username:null
+    },
+    automated:true
+  }
+
+  rooms.set('quickplay', new Room(quickplayInfo, RoomKillFunction));
 
   const wrap = function(middleware){ 
     return function(socket, next){
@@ -32,40 +49,39 @@ function bind(io, sessionMiddleware){
   io.use(wrap(sessionMiddleware));
 
   io.use((socket, next) => {
-    console.log(socket.request.session);
     if (socket.request.session.initalized){
       socket.username = socket.request.session.user.username;
       socket.uuid = socket.request.session.user.uuid;
       next();
+    }else{
+      console.log('got here');
+      next(new Error('There was an error loading your account information, please refresh the page.'));
     }
-    console.log(socket.username);
-    console.log(socket.uuid);
-  })
-
-  io.use((socket, next) => {
-    console.log('found uuid of ' + socket.uuid);
-    next();
   })
 
 	io.on('connection',handle(function(socket){
 		socket.boardData = new Board();
+    socket.ownedRoom = null;
 
     resetBinds(socket);
 	}));
 
   function resetBinds(socket){
-    console.log('reset');
-
     socket.removeAllListeners();
   
     socket.on('join room',handle(function(roomcode,callback){
       resetBinds(socket)
       if (!rooms.has(roomcode)){
-        callback(null,'Room does not exist.');
-        return;
+        return callback(null,'Room does not exist.');
       }
-  
+
       let currentRoom = rooms.get(roomcode);
+
+      let maxPlayers = currentRoom.settings.maxPlayers;
+      if (maxPlayers !== null && maxPlayers <= currentRoom.totalUsers.size){
+        return callback(null, 'Room is full.');
+      }
+
       let userObject = currentRoom.addUser(socket);
       
       let outgoingData = Object.assign({},currentRoom.settings);
@@ -94,6 +110,10 @@ function bind(io, sessionMiddleware){
       socket.on('disconnect', handle(function(){
         currentRoom.removeUser(userObject);
         socket.removeAllListeners();
+      }));
+
+      socket.on('reset', handle(function(){
+        currentRoom.removeUser(userObject);
       }));
       
       socket.on('send message', handle(function(message){ // MESSAGES
@@ -219,14 +239,51 @@ function bind(io, sessionMiddleware){
     }));
   
     socket.on('create room',handle(function(callback){
-      if (socket.uuid && socket.username){
-        let roomcode = generateRoomCode();
-        new Room(roomcode,{uuid:socket.uuid,username:socket.username},false);
-        callback(roomcode);
+      if (socket.ownedRoom !== null){
+        return callback(socket.ownedRoom.id);
       }
+
+
+      let roomcode = generateRoomCode();
+      let roomInfo = {
+        id:roomcode,
+        owner:{
+          uuid:socket.uuid,
+          username:socket.username
+        },
+        automated:false
+      };
+
+      let createdRoom = new Room(roomInfo, RoomKillFunction);
+
+      socket.ownedRoom = createdRoom;
+
+      rooms.set(roomcode, createdRoom);
+      publicRooms.add(roomcode);
+      callback(roomcode);
+    }));
+
+    socket.on('get rooms', handle(function(callback){
+      let roomData = [];
+
+      publicRooms.forEach(id => {
+        let room = rooms.get(id);
+        let info = {
+          id,
+          name:room.settings.name,
+          players:{
+            current:room.totalUsers.size,
+            max:room.settings.maxPlayers
+          }
+        };
+
+        roomData.push(info);
+      });
+
+      callback(roomData);
     }));
   
-    socket.on('reset', handle(() => resetBinds(socket)))
+    socket.on('reset', handle(() => {console.log('reset callked'); resetBinds(socket)}))
   }  
 }
 

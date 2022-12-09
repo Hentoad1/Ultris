@@ -21,7 +21,6 @@ function useAPI(){
     }
 
     let processResponse = async function(response){
-      console.log(response);
       if (response.redirect && location.pathname !== response.redirect.path){
         if (response.redirect.refresh){
           await new Promise(r => refresh(r));
@@ -43,7 +42,6 @@ function useAPI(){
     };
 
     let handleError = function(error){
-      console.log('fetcherror', error)
       addAlert('An error occured trying to communicate with the server.',{type:'error'});
       callback(null);
     };

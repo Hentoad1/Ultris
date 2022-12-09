@@ -1,17 +1,18 @@
 const { v1 } = require('uuid');
 
-function passVars(io, rooms){
+function passVars(io){
   return class Room{
-    constructor(name,owner,automated){
+    constructor({id,owner,automatic}, onExpire){
       //room information
-      this.name = name;
+      this.id = id;
       this.owner = owner; //owner should be an object with uuid and username.
-      this.automated = automated;
-      //customizable settings
+      this.automated = automatic;
+      //customizable settings (name in here because all of these are the vars that can be changed by the owner, nothing else)
       this.settings = {
         private:true,
-        name:this.automated ? this.name : owner.username + "'s Room",
-        custom:!this.automated
+        name:this.automated ? this.id : owner.username + "'s Room",
+        custom:!this.automated,
+        maxPlayers:null
       }
       //lobby states
       this.countingDown = false;
@@ -23,8 +24,8 @@ function passVars(io, rooms){
       this.aliveUsers = new Set();
       this.startingPlayers = 0;
       this.playerDeathList = [];
-      //set the room object in the rooms map.
-      rooms.set(this.name,this);
+      //set the onExpire function
+      this.onExpire = onExpire;
     }
     
     update(){
@@ -43,7 +44,7 @@ function passVars(io, rooms){
             linesReceived:user.socket.boardData.linesReceived
           })
         );
-        io.in(this.name).emit('end',playerData);
+        io.in(this.id).emit('end',playerData);
         this.deadUsers.add(finalPlayer);
         this.aliveUsers.clear();
       }
@@ -65,11 +66,11 @@ function passVars(io, rooms){
       this.breakCountdown = false;
         
       for (let i = 3; i > 0; i--){
-        io.in(this.name).emit('countdown',i);
+        io.in(this.id).emit('countdown',i);
         await new Promise(r => setTimeout(r,1000));
         if (this.breakCountdown){
-          io.in(this.name).emit('message','server','[SERVER]','There are no longer enough players left to start the game. The countdown has been canceled.');
-          io.in(this.name).emit('countdown','');
+          io.in(this.id).emit('message','server','[SERVER]','There are no longer enough players left to start the game. The countdown has been canceled.');
+          io.in(this.id).emit('countdown','');
           this.breakCountdown = false;
           this.countingDown = false;
           return;
@@ -83,12 +84,12 @@ function passVars(io, rooms){
       this.startingPlayers = this.aliveUsers.size; //save the number of players at the start of the game.
         
       const userData = [...this.aliveUsers].map(e => ({pid:e.pid, username:e.username})); //send the user data to the clients.
-      io.in(this.name).emit('updateUsers',userData);
+      io.in(this.id).emit('updateUsers',userData);
   
       let bagSalt = Math.random();
       let currentDate = Date.now();
       let gameStartDate = currentDate + 1000 * 15;
-      io.in(this.name).emit('start',gameStartDate,bagSalt); //starts the game
+      io.in(this.id).emit('start',gameStartDate,bagSalt); //starts the game
 
       this.aliveUsers.forEach(obj => this.resetUser(obj, bagSalt)); //resets the user data.
         
@@ -96,19 +97,27 @@ function passVars(io, rooms){
     }
   
     expire(){
+      console.log('expire started');
       if (typeof this.killExpire === 'function'){
         this.killExpire();
       }
   
-      new Promise(function(resolve,reject){
-        setTimeout(resolve,10 * 60 * 1000,true);
-        this.killExpire = (() => resolve(false));
-      }.bind(this)).then(function(result){
+      new Promise((resolve) => {
+        setTimeout(resolve,30 * 1000,true);
+        this.killExpire = (() => {
+          console.log('expire killed');
+          resolve(false);
+        });
+      }).then((result) => {
         if (result){
+          if (this.totalUsers.size !== 0){
+            //failsafe for expire somehow going through even though there still ppl in it
+            return console.log('expire failsafe called');
+          }
           this.killExpire = null;
-          rooms.delete(this.name);
+          this.onExpire(this.id); //call the onExpire function
         }
-      }.bind(this));
+      });
     }
   
     //USER FUNCTIONS
@@ -124,12 +133,12 @@ function passVars(io, rooms){
       this.deadUsers.add(obj);
       //this.resetUser(obj);
       
-      io.in(this.name).emit('server message', 'Welcome ' + socket.username + ' to the room!');
+      io.in(this.id).emit('server message', 'Welcome ' + socket.username + ' to the room!');
       let usernames = [...this.totalUsers].map(e => e.username);
-      io.in(this.name).emit('update lobby', usernames);
+      io.in(this.id).emit('update lobby', usernames);
   
       this.update();
-      
+
       if (this.countingDown){
         socket.emit('server message', 'The game should begin shortly.');
       }else{
@@ -153,7 +162,7 @@ function passVars(io, rooms){
           socket.emit('recieve boards',boardData); // spectate is true in this case.
         }
       }
-      
+
       if (typeof this.killExpire === 'function'){
         this.killExpire();
       }
@@ -167,10 +176,10 @@ function passVars(io, rooms){
       this.deadUsers.delete(obj);
       this.aliveUsers.delete(obj);
   
-      io.in(this.name).emit('remove user', obj.pid);
+      io.in(this.id).emit('remove user', obj.pid);
       
       let usernames = [...this.totalUsers].map(e => e.username);
-      io.in(this.name).emit('update lobby', usernames);
+      io.in(this.id).emit('update lobby', usernames);
       
       if (this.totalUsers.size === 0 && !this.automated){
         this.expire();
@@ -181,7 +190,7 @@ function passVars(io, rooms){
     
     killUser(obj){
       if (this.aliveUsers.delete(obj)){
-        io.in(this.name).emit('remove user', obj.pid);
+        io.in(this.id).emit('remove user', obj.pid);
         this.deadUsers.add(obj);
         this.playerDeathList.unshift(obj);
         this.update();
@@ -223,17 +232,6 @@ function passVars(io, rooms){
       return pid;
     }
   }
-}
-
-function genBlankBoard(){
-  let arr = [];
-  for (let i = 0; i < 40; i++){
-      arr[i] = [];
-  for (let j = 0; j < 10; j++){
-    arr[i][j] = 0;
-  }
-}
-  return arr;
 }
 
 module.exports = passVars;

@@ -1,12 +1,12 @@
-import {useState, useEffect, useContext} from 'react';
-import { SocketContext } from '../wrapper';
+import {useState, useEffect} from 'react';
+import { useOutletContext } from 'react-router';
 
 import './winmenu.css';
 
 const suffixList = ['ST','ND','RD','TH'];
 
 function WinMenu(){
-  let socket = useContext(SocketContext);
+  let socket = useOutletContext();
   let [display, setDisplay] = useState(false);
   let [playerList, setPlayerList] = useState([]);
 

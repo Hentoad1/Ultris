@@ -1,9 +1,9 @@
-import { useState, useContext, useEffect } from 'react';
-import { SocketContext } from '../wrapper';
+import { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router';
 import './lobbymenu.css';
 
 function LobbyMenu(){
-  let socket = useContext(SocketContext);
+  let socket = useOutletContext();
   let [display, setDisplay] = useState(true);
   let [players, setPlayers] = useState([JSON.parse(localStorage.getItem('session') ?? JSON.stringify({username:'GUEST'})).username]);
   let [lobbyInfo, setLobbyInfo] = useState({});
@@ -13,7 +13,6 @@ function LobbyMenu(){
     socket.setLobbyInfo = setLobbyInfo;
 
     const updateFunction = function(users){
-      console.log('users', users);
       setPlayers(users);
     };
 

@@ -1,5 +1,5 @@
-import { useContext, useState, useEffect } from 'react';
-import { SocketContext } from '../wrapper';
+import { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router';
 import './statmenu.css';
 
 const minorStatTitles = [
@@ -25,7 +25,7 @@ const defaultStats = {
 }
 
 function StatMenu(){
-  let socket = useContext(SocketContext);
+  let socket = useOutletContext();
   let [display, setDisplay] = useState(false);
   let [stats, setStats] = useState(defaultStats);
 

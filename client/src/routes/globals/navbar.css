@@ -12,6 +12,8 @@
   flex-shrink:0;
   padding:0 3em;
   
+  gap:2px;
+
   display:flex;
   flex-flow:row;
   align-items: center;
@@ -45,6 +47,7 @@
   text-decoration: none;
 
   cursor:pointer;
+  outline:none;
 }
 
 .navbar > a:hover{
@@ -55,4 +58,11 @@
 .navbar > a:active{
   background:var(--background_click);
   color:var(--color_click);
+  outline:1px solid white;
+}
+
+.navbar > a:focus{
+  background:var(--background_click);
+  color:var(--color_click);
+  outline:1px solid white;
 }

@@ -1,12 +1,12 @@
-import { Fragment, createRef, useContext, useState, useEffect } from 'react';
+import { Fragment, createRef, useState, useEffect } from 'react';
 
 import './opponents.css';
 
 import { bind } from './bind.js';
-import { SocketContext } from '../wrapper';
+import { useOutletContext } from 'react-router';
 
 function Opponents(){
-  let socket = useContext(SocketContext);
+  let socket = useOutletContext();
   let [userData, setUserData] = useState({users: [], redraw: false});
   let [resize, setResize] = useState(null);
 

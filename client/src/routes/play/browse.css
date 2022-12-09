@@ -1,0 +1,52 @@
+.browse{
+  display:flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+}
+
+.browse > .header{
+  font-size:2rem;
+  font-weight:400;
+
+  margin-top:1em;
+  margin-bottom:1em;
+}
+
+.roomList{
+  display:flex;
+  flex-direction: column;
+
+  gap:1em;
+}
+
+.roomList > svg{
+  height:1.5em;
+  margin-left:auto;
+
+  cursor: pointer;
+}
+
+.roomList > a{
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  min-width:25em;
+
+  font-size:1.5rem;
+
+  background:#0004;
+  padding:0.25rem 0.5rem;
+
+  border-radius:1px;
+}
+
+.roomList > a:hover{
+  background:#0006;
+}
+
+.roomList > a:active{
+  background:#0008;
+  outline:none;
+}
