@@ -17,6 +17,8 @@ import BrowseMenu from './routes/play/browse.js';
 import PlayMenu from './routes/play/playMenu.js';
 import Wrapper from './routes/play/gameWrapper';
 import SocketWrapper from './routes/play/socketWrapper.js';
+//404
+import Send404 from './routes/404/404.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -46,7 +48,7 @@ root.render(
               <Route path='browse' element = {<BrowseMenu/>} />
               <Route path=':gameMode' element = {<Wrapper />} />
             </Route>
-            <Route path='*' element = {<h1>404 Error</h1>} />
+            <Route path='*' element = {<Send404/>} />
           </Route>
         </Routes>
       </BrowserRouter>

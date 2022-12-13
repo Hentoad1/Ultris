@@ -8,15 +8,17 @@ import './dashboard.css';
 function Dashboard(){
   let [session] = useSession();
   let logout = useLogout();
-  
-  let dashboardHTML = session.guest ? null : 
-  (
-    <div className = 'section'>
-      <h1>Account Settings</h1>
-      <NavLink to = '/dashboard/account/information' className = ''>Account Infomation</NavLink>
-      <span onClick = {() => logout()}>Logout</span>
-    </div>
-  )
+
+  let dashboardHTML = null
+  if (!session.guest){
+    dashboardHTML = (
+      <div className = 'section'>
+        <h1>Account Settings</h1>
+        <NavLink to = '/dashboard/account/information'>Account Infomation</NavLink>
+        <span onClick = {() => logout()} className = 'nostyle'>Logout</span>
+      </div>
+    );
+  }
 
   return (
     <div className = "page_content dashboard">
@@ -24,7 +26,6 @@ function Dashboard(){
         <div className = 'section'>
           <h1>Game Settings</h1>
           <NavLink to = '/dashboard/settings'>Settings</NavLink>
-          <NavLink to = '/dashboard/skin'>Skin</NavLink>
         </div>
         {dashboardHTML}
       </div>

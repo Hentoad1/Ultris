@@ -73,6 +73,12 @@ li{
 html *{
   margin:0;
   font-size:inherit;
+
+  outline:none;
+}
+
+html *:focus{
+  outline:1px solid var(--outline-color,white);
 }
 
 html button.nostyle{
@@ -106,6 +112,8 @@ html button:not(.nostyle){
   position:relative;
   user-select: none;
   cursor: pointer;
+
+  font-family: inherit;
 }
 
 html button:not(.nostyle)::after{

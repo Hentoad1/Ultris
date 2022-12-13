@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router';
 import { Link } from 'react-router-dom';
 
@@ -23,17 +23,30 @@ function BrowseMenu(){
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
-  return (
-    <div className = 'page_content browse'>
-      <h1 className = 'header'>Public Rooms</h1>
-      <div className = 'roomList'>
+  let roomContent = null;
+  if (rooms.length > 0){
+    roomContent = (
+      <Fragment>
         <Refresh onClick = {refresh}/>
         {rooms.map(room => (
-          <Link to = {'play/' + room.id}>
+          <Link to = {'/play/' + room.id}>
             <div className = 'name'>{room.name}</div>
             <div className = 'players'>{room.players.max === null ? room.players.current : room.players.current + ' / ' + room.players.max}</div>
           </Link>
         ))}
+      </Fragment>
+    );
+  }else{
+    roomContent = (
+      <div>No public rooms have been created.</div>
+    );
+  }
+
+  return (
+    <div className = 'page_content browse'>
+      <h1 className = 'header'>Public Rooms</h1>
+      <div className = 'roomList'>
+        {roomContent}
       </div>
     </div>
   )
