@@ -11,8 +11,7 @@ function passVars(io){
       this.settings = {
         private:true,
         name:this.automated ? this.id : owner.username + "'s Room",
-        custom:!this.automated,
-        maxPlayers:null
+        maxPlayers:0
       }
       //lobby states
       this.countingDown = false;
@@ -135,7 +134,7 @@ function passVars(io){
       
       io.in(this.id).emit('server message', 'Welcome ' + socket.username + ' to the room!');
       let usernames = [...this.totalUsers].map(e => e.username);
-      io.in(this.id).emit('update lobby', usernames);
+      io.in(this.id).emit('update lobby players', usernames);
   
       this.update();
 
@@ -179,7 +178,7 @@ function passVars(io){
       io.in(this.id).emit('remove user', obj.pid);
       
       let usernames = [...this.totalUsers].map(e => e.username);
-      io.in(this.id).emit('update lobby', usernames);
+      io.in(this.id).emit('update lobby players', usernames);
       
       if (this.totalUsers.size === 0 && !this.automated){
         this.expire();

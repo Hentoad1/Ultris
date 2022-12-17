@@ -17,14 +17,19 @@ function SocketWrapper(){
 
   useEffect(() => {
     let alertFunc = (errorMessage) => {
-      console.log('error', errorMessage);
       alert(errorMessage.message, {type:'error'});
     }
 
+    let requestFunc = (errorMessage) => {
+      alert(errorMessage, {type:'error'});
+    }
+
     socket.on('connect_error', alertFunc);
+    socket.on('request_error', requestFunc);
 
     return () => {
       socket.off('connect_error', alertFunc);
+      socket.off('request_error', requestFunc);
     }
   })
 

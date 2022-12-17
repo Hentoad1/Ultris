@@ -28,11 +28,11 @@ function Wrapper(){
       setMode(gameMode);
     }else{
       setMode('online');
-      socket.emit('join room',gameMode,function(data,err){
+      socket.emit('join room',gameMode,function(err, roomData){
         if (err){
           alert(err);
         }else{
-          socket.setLobbyInfo(data);
+          socket.setLobbyInfo(roomData);
         }
       });
     }

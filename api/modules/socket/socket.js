@@ -35,7 +35,7 @@ function bind(io, sessionMiddleware){
       uuid:null,
       username:null
     },
-    automated:true
+    automatic:true
   }
 
   rooms.set('quickplay', new Room(quickplayInfo, RoomKillFunction));
@@ -72,29 +72,57 @@ function bind(io, sessionMiddleware){
     socket.on('join room',handle(function(roomcode,callback){
       resetBinds(socket)
       if (!rooms.has(roomcode)){
-        return callback(null,'Room does not exist.');
+        return callback('Room does not exist.');
       }
 
       let currentRoom = rooms.get(roomcode);
 
       let maxPlayers = currentRoom.settings.maxPlayers;
-      if (maxPlayers !== null && maxPlayers <= currentRoom.totalUsers.size){
-        return callback(null, 'Room is full.');
+      if (maxPlayers !== 0 && maxPlayers <= currentRoom.totalUsers.size){
+        return callback('Room is full.');
       }
+
+      //add rest of the listeners for procesing the game
+      socket.join(roomcode);
 
       let userObject = currentRoom.addUser(socket);
       
       let outgoingData = Object.assign({},currentRoom.settings);
-      outgoingData.admin = (currentRoom.owner.uuid === socket.uuid && socket.uuid);
-      callback(outgoingData,false);
+      outgoingData.admin = (currentRoom.owner.uuid === socket.uuid);
+      callback(null, outgoingData);
   
-      //add rest of the listeners for procesing the game
-      socket.join(roomcode);
   
       socket.publicID = userObject.pid;
     
       socket.emit('sendPID', socket.publicID);
       
+      socket.on('update lobby', handle(function(newData, callback){
+        let settings = currentRoom.settings;
+        for (let property in settings){
+          if (newData[property] !== undefined){
+            settings[property] = newData[property];
+          }
+        }
+
+        currentRoom.totalUsers.forEach(user => {
+          let socket = user.socket;
+
+          
+          let outgoingData = Object.assign({},settings);
+          outgoingData.admin = (currentRoom.owner.uuid === socket.uuid);
+          socket.emit('update lobby info', outgoingData);
+        })
+      }));
+
+      socket.on('start game', handle(function(){
+        if (currentRoom.totalUsers.size - currentRoom.spectatingUsers.size > 1){
+          currentRoom.beginCountdown();
+        }else{
+          socket.emit('request_error', 'You cannot start the game with only 1 player!');
+        }
+
+      }));
+
       socket.on('defeat',handle(function(){
         currentRoom.killUser(userObject);
       }));

@@ -157,6 +157,11 @@ html button:not(.nostyle):disabled::after{
   background:#00000099;
 }
 
+html input{
+  font-family: inherit;
+  color:inherit;
+}
+
 html a{
   color: inherit;
   text-decoration: none;

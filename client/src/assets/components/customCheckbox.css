@@ -1,71 +1,72 @@
-.CustomCheckbox{
-    width:1.25em;
-    height:1.25em;
+.CustomCheckbox {
+  width: 1.25em;
+  height: 1.25em;
 
-    background:inherit;
-    border:1px solid #aaa;
-    border-radius:3px;
+  background: inherit;
+  border: 1px solid #aaa;
+  border-radius: 3px;
 
-    position: relative;
+  position: relative;
 
-    display:inline-block;
+  display: inline-block;
 }
 
-.CustomCheckbox:focus-within{
-    border:1px solid #aaa;
-    outline:1px solid white;
+.CustomCheckbox:focus-within {
+  border: 1px solid #aaa;
+  outline: 1px solid white;
 }
 
-.CustomCheckbox > *{
-    outline:none;
-    border:none;
-    
-    position:absolute;
-    top:0;
-    height:100%;
-    left:0;
-    width:100%;
+.CustomCheckbox>* {
+  outline: none;
+  border: none;
 
-    pointer-events: none;
-    background:inherit;
+  position: absolute;
+  top: 0;
+  height: 100%;
+  left: 0;
+  width: 100%;
+
+  pointer-events: none;
+  background: inherit;
 }
 
-.CustomCheckbox span::after{
-    background:transparent;
+.CustomCheckbox span::after {
+  background: transparent;
 
-    position:absolute;
-    top:0;
-    bottom:0;
-    left:0;
-    right:0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 
-    content:'';
+  content: '';
 }
 
-.CustomCheckbox:hover span::after{
-    background:#00000044;
+.CustomCheckbox:hover span::after {
+  background: #00000044;
 }
 
-.CustomCheckbox:active span::after{
-    background:#00000088;
+.CustomCheckbox:active span::after {
+  background: #00000088;
 }
 
-.CustomCheckbox input{
-    pointer-events: auto;
-    cursor:pointer;
+.CustomCheckbox input {
+  appearance: none;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
-.CustomCheckbox input ~ svg{
+.CustomCheckbox input~svg {
 
-    left:1px;
-    top:1px;
-    width:calc(100% - 2px);
-    height:calc(100% - 2px);
+  left: 1px;
+  top: 1px;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
 
-    pointer-events: none;
-    display:none;
+  pointer-events: none;
+  display: none;
 }
 
-.CustomCheckbox input:checked ~ svg{
-    display:block;
+.CustomCheckbox input:checked~svg {
+  display: block;
 }

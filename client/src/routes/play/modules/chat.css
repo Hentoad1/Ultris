@@ -1,7 +1,6 @@
 .chat{
 	--userMsg:white;
 	--serverMsg:#AAAAAA;
-	--restingHeight:20%;
 
 	display:flex;
 	flex-flow:column;
@@ -25,11 +24,10 @@
 	left:auto;
 	right:50px;
 	bottom:50px;
-	--restingHeight:100%;
 }
 
-.chatMessages{
-	min-height:var(--restingHeight);
+.chat .chatMessages{
+	min-height:20%;
   height:20%;
 
 	overflow:hidden;
@@ -45,6 +43,11 @@
 	padding:0;
 	
 	background:#29292930;
+}
+
+.chat.inLobby .chatMessages{
+	/*min-height:100%;*/
+  flex-grow:1;
 }
 
 .chat:focus-within > .chatMessages{
@@ -75,4 +78,6 @@
 	border-bottom:1px solid white;
 	
 	width:100%;
+
+  --outline-color:transparent;
 }
