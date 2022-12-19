@@ -9,7 +9,7 @@ function LobbyMenu(){
   let socket = useOutletContext();
   let [display, setDisplay] = useState(true);
   let [players, setPlayers] = useState([JSON.parse(localStorage.getItem('session') ?? JSON.stringify({username:'GUEST'})).username]);
-  let [lobbyInfo, setLobbyInfo] = useState({admin: true, custom: true, maxPlayers: null, name: "GUEST'S ROOM", private: true});
+  let [lobbyInfo, setLobbyInfo] = useState({});
   let [countdown, setCountdown] = useState('');
   let alert = useAlerts();
 
@@ -17,6 +17,7 @@ function LobbyMenu(){
     socket.setLobbyInfo = setLobbyInfo;
 
     const updateInfoFunction = function(info){
+      console.log(info);
       setLobbyInfo(info);
     }
 
@@ -28,21 +29,30 @@ function LobbyMenu(){
       setCountdown(`Game Begins in ${secondsLeft} seconds.`);
     }
 
-    const startFunction = function(){
+    const startFunction = () => {
       setCountdown('');
       setDisplay(false);
+    }
+    
+    const endFunction = () => {
+      //wait one second for the placing menu to appear
+      new Promise(r => setTimeout(r, 1000)).then(() => {
+        setDisplay(true);
+      })
     }
 
     socket.on('update lobby info',updateInfoFunction);
     socket.on('update lobby players',updateFunction);
     socket.on('countdown',countdownFunction);
     socket.on('start',startFunction);
+    socket.on('end',endFunction);
 
     return function(){
       socket.off('update lobby info',updateInfoFunction);
       socket.off('update lobby players',updateFunction);
       socket.off('countdown',countdownFunction);
       socket.off('start',startFunction);
+      socket.off('end',endFunction);
     }
   }, [socket]);
 

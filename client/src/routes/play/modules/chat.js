@@ -17,7 +17,12 @@ function Chat(){
 
     const startFunction = () => setInLobby(false);
 
-    const endFunction = () => setInLobby(true);
+    const endFunction = () => {
+      //wait one second for the placing menu to appear
+      new Promise(r => setTimeout(r, 1000)).then(() => {
+        setInLobby(true);
+      });
+    }
     
     socket.on('message', messageFunction);
     socket.on('start', startFunction);

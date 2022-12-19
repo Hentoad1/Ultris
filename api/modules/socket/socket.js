@@ -72,31 +72,45 @@ function bind(io, sessionMiddleware){
     socket.on('join room',handle(function(roomcode,callback){
       resetBinds(socket)
       if (!rooms.has(roomcode)){
-        return callback('Room does not exist.');
+        return socket.emit('request_error', {error:'Room does not exist.', redirect: '/play'});
       }
 
       let currentRoom = rooms.get(roomcode);
 
-      let maxPlayers = currentRoom.settings.maxPlayers;
-      if (maxPlayers !== 0 && maxPlayers <= currentRoom.totalUsers.size){
-        return callback('Room is full.');
+      for (let i = 0; i < currentRoom.totalUsers.length; i++){
+        let userData = currentRoom.totalUsers[i];
+        if (userData.socket.uuid === socket.uuid){
+          return socket.emit('request_error', {error:'Your account has already logged into this lobby.', redirect: '/play'});
+        }
       }
 
-      //add rest of the listeners for procesing the game
-      socket.join(roomcode);
+      
+      socket.join(roomcode); // joining the socket room is important here because the addUser functions calls the socket room functions
 
       let userObject = currentRoom.addUser(socket);
-      
+
+      let maxPlayers = currentRoom.settings.maxPlayers;
+      //only less than is used because the user that joined is included in this count.
+      if (maxPlayers !== 0 && maxPlayers < currentRoom.aliveUsers.size + currentRoom.deadUsers.size){
+        currentRoom.setInActive(userObject);
+        
+        socket.emit('request_notify', 'Room is currently full, you will be set to a spectator.');
+      }
+
       let outgoingData = Object.assign({},currentRoom.settings);
       outgoingData.admin = (currentRoom.owner.uuid === socket.uuid);
-      callback(null, outgoingData);
+      callback(outgoingData);
   
   
       socket.publicID = userObject.pid;
     
       socket.emit('sendPID', socket.publicID);
       
-      socket.on('update lobby', handle(function(newData, callback){
+      socket.on('update lobby', handle((newData) => {
+        if (socket.uuid !== currentRoom.owner.uuid){
+          return;
+        }
+
         let settings = currentRoom.settings;
         for (let property in settings){
           if (newData[property] !== undefined){
@@ -118,7 +132,7 @@ function bind(io, sessionMiddleware){
         if (currentRoom.totalUsers.size - currentRoom.spectatingUsers.size > 1){
           currentRoom.beginCountdown();
         }else{
-          socket.emit('request_error', 'You cannot start the game with only 1 player!');
+          socket.emit('request_error', {error:'You cannot start the game with only 1 player!'});
         }
 
       }));

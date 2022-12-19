@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import { io } from 'socket.io-client';
 
 import useAlerts from '../../assets/hooks/useAlerts';
@@ -14,22 +14,36 @@ const socket = io('localhost:9000', {
 
 function SocketWrapper(){
   let alert = useAlerts();
+  let navigate = useNavigate();
 
   useEffect(() => {
-    let alertFunc = (errorMessage) => {
-      alert(errorMessage.message, {type:'error'});
+    let alertFunc = (error) => {
+      alert(error.message, {type:'error'});
     }
 
-    let requestFunc = (errorMessage) => {
-      alert(errorMessage, {type:'error'});
+    let requestFunc = (res) => {
+      if (res.redirect){
+        navigate(res.redirect);
+      }
+      if (res.error){
+        alert(res.error, {type:'error'});
+      }
+    }
+
+    let notifyFunc = (message) => {
+      if (message){
+        alert(message);
+      }
     }
 
     socket.on('connect_error', alertFunc);
     socket.on('request_error', requestFunc);
+    socket.on('request_notify', notifyFunc);
 
     return () => {
       socket.off('connect_error', alertFunc);
       socket.off('request_error', requestFunc);
+      socket.off('request_notify', notifyFunc);
     }
   })
 

@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect, createContext } from 'react';
 
-import { useOutletContext, useParams } from 'react-router';
+import { useNavigate, useOutletContext, useParams } from 'react-router';
 
 import {ReactComponent as Disconnect} from '../../assets/svgs/Disconnected.svg';
 
@@ -11,6 +11,7 @@ import StatMenu from './modules/statmenu.js';
 import WinMenu from './modules/winmenu.js';
 import LobbyMenu from './modules/lobbymenu.js';
 import './gameWrapper.css';
+import useAlerts from '../../assets/hooks/useAlerts';
 
 const GameModeContext = createContext();
 
@@ -28,12 +29,8 @@ function Wrapper(){
       setMode(gameMode);
     }else{
       setMode('online');
-      socket.emit('join room',gameMode,function(err, roomData){
-        if (err){
-          alert(err);
-        }else{
-          socket.setLobbyInfo(roomData);
-        }
+      socket.emit('join room',gameMode,(roomData) => {
+        socket.setLobbyInfo(roomData);
       });
     }
   },[socket, params.gameMode])
