@@ -73,12 +73,20 @@ function LobbyMenu(){
     let newLobbyInfo = Object.assign({}, lobbyInfo, newValue);
 
     socket.emit('update lobby', newLobbyInfo, info => {
+      console.log(info);
       setLobbyInfo(info);
     });
 
     if (event){
       event.target.value = '';
     }
+  }
+
+  const updateSpectateStatus = () => {
+    socket.emit('swap activity', info => {
+      console.log(info);
+      setLobbyInfo(info);
+    });
   }
 
   function CopyToClipboard(text){
@@ -94,6 +102,7 @@ function LobbyMenu(){
     if (lobbyInfo.admin){
       content = (
         <div className = 'lobbymenu'>
+          <div className = 'spectateInfo' onClick = {updateSpectateStatus}>{lobbyInfo.spectating ? 'You are set to spectate the next match' : 'You are set to play in the next match'}</div>
           <div className = 'settings'>
             <BasicInput placeholder = {lobbyInfo.name} onBlur = {e => UpdateLobbyInfo({name:e.target.value}, e)}/>
             <div className = 'linkShare' onClick = {() => CopyToClipboard(host + location.pathname)}>

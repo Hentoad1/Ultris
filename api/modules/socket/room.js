@@ -126,7 +126,8 @@ function passVars(io){
         id:socket.id,
         pid:pid,
         username:socket.username,
-        socket:socket
+        socket:socket,
+        spectating:false
       };
       this.totalUsers.add(obj);
       this.deadUsers.add(obj);
@@ -204,7 +205,7 @@ function passVars(io){
       this.spectatingUsers.delete(obj);
       this.deadUsers.add(obj);
       
-      this.resetUser(obj);
+      obj.spectating = false;
       
       obj.socket.emit('server message', 'You will now participate in the next match.');
     }
@@ -214,6 +215,8 @@ function passVars(io){
       this.deadUsers.delete(obj);
       this.spectatingUsers.add(obj);
       
+      obj.spectating = true;
+
       obj.socket.emit('server message', 'You will now automatically spectate every future match.');
     }
     

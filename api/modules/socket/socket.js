@@ -99,6 +99,7 @@ function bind(io, sessionMiddleware){
 
       let outgoingData = Object.assign({},currentRoom.settings);
       outgoingData.admin = (currentRoom.owner.uuid === socket.uuid);
+      outgoingData.spectating = userObject.spectating;
       callback(outgoingData);
   
   
@@ -124,17 +125,35 @@ function bind(io, sessionMiddleware){
           
           let outgoingData = Object.assign({},settings);
           outgoingData.admin = (currentRoom.owner.uuid === socket.uuid);
+          outgoingData.spectating = user.spectating;
           socket.emit('update lobby info', outgoingData);
         })
       }));
 
       socket.on('start game', handle(function(){
-        if (currentRoom.totalUsers.size - currentRoom.spectatingUsers.size > 1){
+        if (currentRoom.aliveUsers.size + currentRoom.deadUsers.size > 1){
           currentRoom.beginCountdown();
         }else{
           socket.emit('request_error', {error:'You cannot start the game with only 1 player!'});
         }
+      }));
 
+      socket.on('swap activity', handle((callback) => {
+        if (!userObject.spectating){
+          currentRoom.setInActive(userObject);
+        }else{
+          let maxPlayers = currentRoom.settings.maxPlayers;
+          if (maxPlayers === 0 || maxPlayers > currentRoom.aliveUsers.size + currentRoom.deadUsers.size){
+            currentRoom.setActive(userObject);
+          }else{
+            socket.emit('request_notify', 'Room is currently full!.');
+          }
+        }
+
+        let outgoingData = Object.assign({},currentRoom.settings);
+        outgoingData.admin = (currentRoom.owner.uuid === socket.uuid);
+        outgoingData.spectating = userObject.spectating;
+        callback(outgoingData);
       }));
 
       socket.on('defeat',handle(function(){
