@@ -6,10 +6,6 @@
 	bottom: 0;
 	background-color: #191919;
 
-	/*display: flex;
-	align-items: center;
-	justify-content: center;*/
-
 	display:grid;
 	grid-template-columns: 20% 1fr 20%;
 	grid-template-rows: 10% 1fr 10%;
@@ -19,39 +15,80 @@
 	z-index: 50;
 }
 
-.lobbymenu > .userlist{
-	background:#29292930;
-	overflow-y:scroll;
+.lobbymenu > .playerInfo{
+	grid-row: 1 / 4;
+	grid-column:1;
+	grid-gap:0;
+
+	display:flex;
+	flex-flow:column;
+	justify-content: flex-start;
+
+	background:#1C1C1C;
+}
+
+.lobbymenu > .playerInfo > .playerStatus{
+	display:flex;
+	flex-flow:column;
+	justify-content: flex-start;
+  text-align: center;
+
+  padding:1em;
+  cursor: pointer;
+}
+
+
+.lobbymenu > .playerInfo > .playerStatus:hover{
+  background:#40404050;
+}
+
+.lobbymenu > .playerInfo > .playerStatus:active{
+  background:#40404070;
+}
+
+
+.playerStatus > .username{
+  font-size:2rem;
+  margin-bottom:0.25em;
+}
+
+.playerStatus > .status{
+  font-size:1rem;
+}
+
+.lobbymenu > .playerInfo > .userlistWrapper{
+  overflow-y:scroll;
+  overflow-x:hidden;
+
+  position:relative;
+
+  flex-grow:1;
+}
+
+.lobbymenu > .playerInfo >  .userlistWrapper > .userlist{
+	font-size:1.25rem;
 	list-style-type: inside;
 
 	display:flex;
 	flex-flow:column;
 	justify-content: flex-start;
 
-	/*position:absolute;
-	top:50px;
-	bottom:50px;
-	left:50px;
-	right:auto;
-	width:20%;*/
-
-	grid-row: 1 / 4;
-	grid-column:1;
-	grid-gap:0;
+  flex-grow:1;
 	
-	padding:0;
 	margin:0;
+	padding:0.25em 0;
 }
 
-.lobbymenu > .userlist li{
-	font-size:1.25rem;
+
+.lobbymenu > .playerInfo >  .userlistWrapper > .userlist > li{
 	padding:0.5em;
 	margin:0.25em;
-	border-radius: 0.5em;
-	background:#29292930;
-
+  overflow:hidden;
 	text-align: center;
-	color:white;
+}
+
+.lobbymenu > .playerInfo >  .userlistWrapper > .userlist > li.spectator{
+  opacity:0.5;
 }
 
 .lobbymenu > .countdown{
@@ -72,7 +109,6 @@
 	justify-content: center;
   
   font-size:1.25rem;
-  font-weight:600;
 }
 
 .stylizedInput{
@@ -138,13 +174,12 @@
   right:0;
   bottom:0;
 
-  margin:0 0.25rem;
-
   background:transparent;
   border:none;
   color:inherit;
   font-weight:inherit;
   padding:0;
+  margin:0;
 
   outline:none;
 
@@ -152,7 +187,7 @@
 }
 
 .lobbymenu > .settings{
-	grid-row: 2;
+	grid-row:1;
 	grid-column:2;
 
 	display:flex;

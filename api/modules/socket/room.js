@@ -134,8 +134,11 @@ function passVars(io){
       //this.resetUser(obj);
       
       io.in(this.id).emit('server message', 'Welcome ' + socket.username + ' to the room!');
-      let usernames = [...this.totalUsers].map(e => e.username);
-      io.in(this.id).emit('update lobby players', usernames);
+
+
+      let players = [...this.aliveUsers, ...this.deadUsers].map(e => e.username).sort();
+      let spectators = [...this.spectatingUsers].map(e => e.username).sort();
+      io.in(this.id).emit('update lobby players', players, spectators);
   
       this.update();
 
@@ -178,8 +181,9 @@ function passVars(io){
   
       io.in(this.id).emit('remove user', obj.pid);
       
-      let usernames = [...this.totalUsers].map(e => e.username);
-      io.in(this.id).emit('update lobby players', usernames);
+      let players = [...this.aliveUsers, ...this.deadUsers].map(e => e.username).sort();
+      let spectators = [...this.spectatingUsers].map(e => e.username).sort();
+      io.in(this.id).emit('update lobby players', players, spectators);
       
       if (this.totalUsers.size === 0 && !this.automated){
         this.expire();
@@ -208,6 +212,10 @@ function passVars(io){
       obj.spectating = false;
       
       obj.socket.emit('server message', 'You will now participate in the next match.');
+
+      let players = [...this.aliveUsers, ...this.deadUsers].map(e => e.username).sort();
+      let spectators = [...this.spectatingUsers].map(e => e.username).sort();
+      io.in(this.id).emit('update lobby players', players, spectators);
     }
     
     setInActive(obj){
@@ -218,6 +226,10 @@ function passVars(io){
       obj.spectating = true;
 
       obj.socket.emit('server message', 'You will now automatically spectate every future match.');
+
+      let players = [...this.aliveUsers, ...this.deadUsers].map(e => e.username).sort();
+      let spectators = [...this.spectatingUsers].map(e => e.username).sort();
+      io.in(this.id).emit('update lobby players', players, spectators);
     }
     
     //MISC FUNCTIONS

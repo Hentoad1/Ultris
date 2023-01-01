@@ -68,7 +68,7 @@ function bind(io, sessionMiddleware){
 
   function resetBinds(socket){
     socket.removeAllListeners();
-  
+
     socket.on('join room',handle(function(roomcode,callback){
       resetBinds(socket)
       if (!rooms.has(roomcode)){
@@ -119,6 +119,12 @@ function bind(io, sessionMiddleware){
           }
         }
 
+        if (settings.private){ //if the room is private
+          publicRooms.delete(roomcode)
+        }else{
+          publicRooms.add(roomcode);
+        }
+
         currentRoom.totalUsers.forEach(user => {
           let socket = user.socket;
 
@@ -146,7 +152,7 @@ function bind(io, sessionMiddleware){
           if (maxPlayers === 0 || maxPlayers > currentRoom.aliveUsers.size + currentRoom.deadUsers.size){
             currentRoom.setActive(userObject);
           }else{
-            socket.emit('request_notify', 'Room is currently full!.');
+            socket.emit('request_error', {error:'Room is currently full!'});
           }
         }
 
@@ -169,6 +175,7 @@ function bind(io, sessionMiddleware){
       }));
       
       socket.on('disconnect', handle(function(){
+        console.log('disconnect fired');
         currentRoom.removeUser(userObject);
         socket.removeAllListeners();
       }));
@@ -320,7 +327,6 @@ function bind(io, sessionMiddleware){
       socket.ownedRoom = createdRoom;
 
       rooms.set(roomcode, createdRoom);
-      publicRooms.add(roomcode);
       callback(roomcode);
     }));
 
@@ -344,7 +350,9 @@ function bind(io, sessionMiddleware){
       callback(roomData);
     }));
   
-    socket.on('reset', handle(() => {console.log('reset callked'); resetBinds(socket)}))
+    socket.on('reset', handle(() => {
+      resetBinds(socket);
+    }))
   }  
 }
 

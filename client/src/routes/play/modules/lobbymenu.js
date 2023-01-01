@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useLocation, useOutletContext } from 'react-router';
 import CustomCheckbox from '../../../assets/components/customCheckbox';
 import useAlerts from '../../../assets/hooks/useAlerts';
+import useSession from '../../../assets/hooks/useSession';
 import './lobbymenu.css';
 
 function LobbyMenu(){
   let location = useLocation();
   let socket = useOutletContext();
+  let [{username}] = useSession();
   let [display, setDisplay] = useState(true);
-  let [players, setPlayers] = useState([JSON.parse(localStorage.getItem('session') ?? JSON.stringify({username:'GUEST'})).username]);
+  let [[players, spectators], setPlayers] = useState([[username], []]);
   let [lobbyInfo, setLobbyInfo] = useState({});
   let [countdown, setCountdown] = useState('');
   let alert = useAlerts();
@@ -21,8 +23,8 @@ function LobbyMenu(){
       setLobbyInfo(info);
     }
 
-    const updateFunction = function(users){
-      setPlayers(users);
+    const updateFunction = function(players, spectators){
+      setPlayers([players, spectators]);
     };
 
     const countdownFunction = function(secondsLeft){
@@ -97,12 +99,35 @@ function LobbyMenu(){
 
   let host = window.location.host;
 
+  console.log(players, spectators);
+
+  const staticContent = (
+    <Fragment>
+      <div className = 'countdown'>{countdown}</div>
+      <div className = 'playerInfo'>
+        <div className = 'userlistWrapper'>
+          <ul className = 'userlist'>
+            {players.map((username,i) => <li key = {i}>{username ?? 'GUEST'}</li>)}
+            {spectators.map((username,i) => <li key = {players.length + i} className = 'spectator'>{username ?? 'GUEST'}</li>)}
+          </ul>
+        </div>
+        <button className = 'nostyle playerStatus' onClick = {updateSpectateStatus}>
+          <span className = 'username'>
+            {username}
+          </span>
+          <span className = 'status'>
+            SET TO {lobbyInfo.spectating ? 'SPECTATE' : 'PLAY'} NEXT ROUND
+          </span>
+        </button>
+      </div>
+    </Fragment>
+  );
+
   let content = null;
   if (display){
     if (lobbyInfo.admin){
       content = (
         <div className = 'lobbymenu'>
-          <div className = 'spectateInfo' onClick = {updateSpectateStatus}>{lobbyInfo.spectating ? 'You are set to spectate the next match' : 'You are set to play in the next match'}</div>
           <div className = 'settings'>
             <BasicInput placeholder = {lobbyInfo.name} onBlur = {e => UpdateLobbyInfo({name:e.target.value}, e)}/>
             <div className = 'linkShare' onClick = {() => CopyToClipboard(host + location.pathname)}>
@@ -111,7 +136,7 @@ function LobbyMenu(){
             <div className = 'settingsRow'>
               <div title = 'Allow other players to join the lobby without the link.'>
                 <span>Private Lobby</span>
-                <CustomCheckbox defaultChecked = {lobbyInfo.private} onInput = {e => {console.log(e.target.checked); UpdateLobbyInfo({private:e.target.checked})}}/>
+                <CustomCheckbox defaultChecked = {lobbyInfo.private} onInput = {e => UpdateLobbyInfo({private:e.target.checked})}/>
               </div>
               <div title = 'Limit the amount of players that can be in the match'>
                 <span>Player Limit</span>
@@ -120,20 +145,14 @@ function LobbyMenu(){
             </div>
             <button onClick = {() => socket.emit('start game')}>START</button>
           </div>
-          <div className = 'countdown'>{countdown}</div>
-          <ul className = 'userlist'>
-            {players.map((username,i) => <li key = {i}>{username ?? 'GUEST'}</li>)}
-          </ul>
+          {staticContent}
         </div>
       );
     }else{
       content = (
         <div className = 'lobbymenu'>
           <div className = 'title'>{lobbyInfo.name}</div>
-          <div className = 'countdown'>{countdown}</div>
-          <ul className = 'userlist'>
-            {players.map((username,i) => <li key = {i}>{username ?? 'GUEST'}</li>)}
-          </ul>
+          {staticContent}
         </div>
       );
     }

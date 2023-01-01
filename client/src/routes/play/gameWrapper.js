@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect, createContext } from 'react';
 
-import { useNavigate, useOutletContext, useParams } from 'react-router';
+import { useOutletContext, useParams } from 'react-router';
 
 import {ReactComponent as Disconnect} from '../../assets/svgs/Disconnected.svg';
 
@@ -11,7 +11,6 @@ import StatMenu from './modules/statmenu.js';
 import WinMenu from './modules/winmenu.js';
 import LobbyMenu from './modules/lobbymenu.js';
 import './gameWrapper.css';
-import useAlerts from '../../assets/hooks/useAlerts';
 
 const GameModeContext = createContext();
 
