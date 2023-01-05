@@ -9,6 +9,8 @@ var app = express();
 
 require('dotenv').config();
 
+require('./modules/email');
+
 app.set("trust proxy", 1);
 
 

@@ -19,6 +19,8 @@ import Wrapper from './routes/play/gameWrapper';
 import SocketWrapper from './routes/play/socketWrapper.js';
 //404
 import Send404 from './routes/404/404.js';
+//verify
+import { VerifySuccess, VerifyFailure } from './routes/verify/verify';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -48,6 +50,8 @@ root.render(
               <Route path='browse' element = {<BrowseMenu/>} />
               <Route path=':gameMode' element = {<Wrapper />} />
             </Route>
+            <Route path = 'verify-success' element = {<VerifySuccess/>}/>
+            <Route path = 'verify-failure' element = {<VerifyFailure/>}/>
             <Route path='*' element = {<Send404/>} />
           </Route>
         </Routes>

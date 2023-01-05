@@ -5,7 +5,7 @@ var bcrypt = require('bcrypt');
 
 var {queryDB} = require('../../modules/database.js');
 var {verifyEmail, verifyPassword, verifyUsername} = require('../../modules/verifyInfo.js');
-const { info } = require('console');
+var {emailVerifyCode, emailVerifyLink} = require('../../modules/email.js');
 
 //send all guests to the login page
 router.use(function(req, res, next){
@@ -45,18 +45,18 @@ router.use(function(req, res, next){
         
     let buffer = randomBytes(6 * 0.5);
     let code = buffer.toString('hex').toUpperCase();
-    console.log(code);
-  
-    req.session.token = {
-      value:code,
-      expiration:Date.now() + 1000 * 60 * 15
-    }
-    
-    //generate params
-    let params = new URLSearchParams();
-    params.append('email',hideEmail(info.email));
-    
-    res.send({redirect:{path:'/dashboard/account/relog?' + params.toString()}});
+    emailVerifyCode({code}).then(() => {
+      req.session.token = {
+        value:code,
+        expiration:Date.now() + 1000 * 60 * 15
+      }
+      
+      //generate params
+      let params = new URLSearchParams();
+      params.append('email',hideEmail(info.email));
+      
+      res.send({redirect:{path:'/dashboard/account/relog?' + params.toString()}});
+    }).catch(next);
   }).catch(next);
 });
 
@@ -146,8 +146,12 @@ router.post('/verify', function(req,res,next){
 
     queryDB('DELETE FROM emailtoken WHERE uuid = ?', req.session.user.uuid).then(function(){
       queryDB('INSERT INTO emailtoken SET ?', data).then(function(result){
-        console.log(`${req.get('host')}/verify?token=${token}`);
-        res.send({alert:`A verification email has been sent to ${hideEmail(email)}`})
+        let link = `${req.get('host')}/verify?token=${token}`;
+        
+        console.log(); //send email here
+        emailVerifyLink({link,username:req.session.user.username}).then(() => {
+          res.send({alert:`A verification email has been sent to ${hideEmail(email)}`});
+        }).catch(next);
       }).catch(next);
     }).catch(next);
   }).catch(next);
