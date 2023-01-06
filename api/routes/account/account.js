@@ -45,7 +45,7 @@ router.use(function(req, res, next){
         
     let buffer = randomBytes(6 * 0.5);
     let code = buffer.toString('hex').toUpperCase();
-    emailVerifyCode({code}).then(() => {
+    emailVerifyCode({code,to:req.session.user.email}).then(() => {
       req.session.token = {
         value:code,
         expiration:Date.now() + 1000 * 60 * 15
@@ -148,8 +148,7 @@ router.post('/verify', function(req,res,next){
       queryDB('INSERT INTO emailtoken SET ?', data).then(function(result){
         let link = `${req.get('host')}/verify?token=${token}`;
         
-        console.log(); //send email here
-        emailVerifyLink({link,username:req.session.user.username}).then(() => {
+        emailVerifyLink({link,username:req.session.user.username,to:req.session.user.email}).then(() => {
           res.send({alert:`A verification email has been sent to ${hideEmail(email)}`});
         }).catch(next);
       }).catch(next);

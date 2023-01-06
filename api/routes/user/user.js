@@ -93,11 +93,13 @@ router.post('/login', function(req, res, next) {
     if (!user){
       return res.send({error:'Incorrect Login Information.'});
     }
+
     bcrypt.compare(req.body.password, user.password).then(function(match){
       if (match){
         req.session.user = {
           username: user.username,
           uuid: user.uuid,
+          email: user.email,
           guest:false,
           verified: user.verified === 1
         }

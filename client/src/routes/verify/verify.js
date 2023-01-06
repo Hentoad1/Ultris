@@ -14,16 +14,4 @@ function VerifySuccess(){
   )
 }
 
-function VerifyFailure(){
-  let addAlert = useAlerts();
-  
-  useEffect(() => {
-    addAlert('Verification Unsucessful', {type:'error'});
-  },[addAlert]);
-
-  return (
-    <Navigate to = '/play'/>
-  )
-}
-
-export {VerifySuccess, VerifyFailure};
+export default VerifySuccess;
