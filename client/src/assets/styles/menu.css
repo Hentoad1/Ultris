@@ -2,9 +2,8 @@
     background:#202020;
     color:white;
 
+    min-width:300px;
     width:min-content;
-    /*width:var(--menu-width,fit-content);*/
-    /*max-width:var(--menu-width, fit-content);*/
 
     display:grid;
     grid-template-rows:auto;

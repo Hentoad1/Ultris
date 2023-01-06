@@ -6,6 +6,7 @@ import { Navigate } from "react-router";
 import Globals from './routes/globals/global.js';
 import Register from './routes/register/register.js';
 import Login from './routes/login/login.js';
+import PasswordReset from './routes/forgot-password/forgot-password';
 import Leaderboard from './routes/leaderboard/leaderboard.js';
 //dashboard
 import Dashboard from './routes/dashboard/dashboard.js';
@@ -31,6 +32,7 @@ root.render(
             <Route index element = {<Navigate to = 'play'/>} />
             <Route path='register' element = {<Register />} />
             <Route path='login' element = {<Login />} />
+            <Route path='forgot-password' element = {<PasswordReset />} />
             <Route path = 'leaderboard'>
               <Route index element = {<Navigate to = 'sprint'/>}/>
               <Route path = 'sprint' element = {<Leaderboard type = 'sprint'/>} />
