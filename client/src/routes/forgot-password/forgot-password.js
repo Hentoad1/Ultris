@@ -9,21 +9,22 @@ import LoadingOverlay from '../../assets/components/loadingOverlay.js';
 import '../../assets/styles/menu.css';
 
 function PasswordReset(){
-  let [stage, setStage] = useState({state:0,response:null});
+  let [stage, setStage] = useState(0);
   let QueryAPI = useAPI();
 
   let nextStage = (email) => {
     QueryAPI('/user/forgot-password', {email}, (result) => {
-      console.log(result);
-      setStage({state:1,response:'example'});
+      if (result){
+        setStage(1);
+      }
     });
   }
 
   let stageContent = null;
-  if (stage.state === 0){
-    stageContent = <InitalSection setStage = {nextStage}/>
+  if (stage === 0){
+    stageContent = <InitalSection nextStage = {nextStage}/>
   }else{
-    stageContent = <SecondarySection response = {stage.response}/>
+    stageContent = <SecondarySection/>
   }
 
   return (
@@ -60,7 +61,7 @@ function SecondarySection(props){
         Email Sent
       </div>
       <div className = 'subheader'>
-        An email has been sent to {props.email} with instructions on how to reset your password.
+        An email has been sent to you if the email was linked to your account.
       </div>
 
     </Fragment>

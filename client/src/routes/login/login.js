@@ -46,7 +46,7 @@ function Login(props){
             <AnimatedPasswordInput onKeyUp = {keyHandler} onRef = {ref => setPassword(ref)} title = 'PASSWORD' background = '#0F0F0F11'/>
             <button onClick = {submit}>LOGIN</button>
             <span>Don't have an account? <Link to = '/register' className = 'link'>Sign Up</Link></span>
-            <Link to = '/forgot-password' style = {{'margin-top':'-1.5em'}} className = 'link'>Forgot Your Password?</Link>
+            <Link to = '/forgot-password' style = {{'marginTop':'-1.5em'}} className = 'link'>Forgot Your Password?</Link>
             {loadingContent}
         </div>
     </div>

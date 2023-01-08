@@ -55,4 +55,34 @@ function emailVerifyCode(options){
   })
 }
 
-module.exports = {emailVerifyLink, emailVerifyCode}
+function emailResetLink(options){
+  return new Promise((resolve, reject) => {
+    if (options.username === undefined){
+      reject(new Error('username is undefined'));
+    }
+
+    if (options.link === undefined){
+      reject(new Error('link is undefined'));
+    }
+    
+    let payload = {
+      to: (options.to ?? 'henry.liam.boyer@gmail.com'),
+      from: {
+        email:"support-noreply@ultris.app",
+        name:"Ultris Support"
+      },
+      templateId:'d-078438ab6240482bb71205a8087a901b',
+      dynamicTemplateData:{
+        subject:'Reset Password',
+        username:options.username,
+        link:options.link
+      }
+    }
+
+    console.log(options);
+
+    mailer.send(payload).then(resolve).catch(reject);
+  })
+}
+
+module.exports = {emailVerifyLink, emailVerifyCode, emailResetLink}

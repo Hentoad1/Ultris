@@ -101,4 +101,16 @@ function verifyEmail(email){
   });
 }
 
-module.exports = {verifyEmail, verifyPassword, verifyUsername};
+//an error being thrown here is fine, as it will be caught by the try catch because this is a synchronous function.
+function hideEmail(email){
+  let atIndex = email.indexOf('@');
+
+  let start = email.slice(0,atIndex);
+  let end = email.slice(atIndex);
+
+  let dotIndex = end.indexOf('.');
+
+  return start.slice(0,3) + '*****@***' + end.slice(dotIndex);
+}
+
+module.exports = {verifyEmail, verifyPassword, verifyUsername, hideEmail};

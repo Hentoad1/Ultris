@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
-var {randomBytes} = require('crypto');
 var bcrypt = require('bcrypt');
 
 var {queryDB} = require('../../modules/database.js');
-var {verifyEmail, verifyPassword, verifyUsername} = require('../../modules/verifyInfo.js');
+var {verifyEmail, verifyPassword, verifyUsername, hideEmail} = require('../../modules/verifyInfo.js');
 var {emailVerifyCode, emailVerifyLink} = require('../../modules/email.js');
+var {generateToken} = require('../../modules/generateToken.js');
 
 //send all guests to the login page
 router.use(function(req, res, next){
@@ -132,7 +132,7 @@ router.post('/verify', function(req,res,next){
   queryDB("SELECT * FROM account WHERE uuid = ?",req.session.user.uuid).then(function(result){
     let email = result[0].email;
 
-    let token = generateCode(50);
+    let token = generateToken(50);
 
     let expiration = new Date();
     expiration.setHours(expiration.getHours() + 1)
@@ -144,8 +144,8 @@ router.post('/verify', function(req,res,next){
       expiration
     }
 
-    queryDB('DELETE FROM emailtoken WHERE uuid = ?', req.session.user.uuid).then(function(){
-      queryDB('INSERT INTO emailtoken SET ?', data).then(function(result){
+    queryDB('DELETE FROM verifytoken WHERE uuid = ?', req.session.user.uuid).then(function(){
+      queryDB('INSERT INTO verifytoken SET ?', data).then(function(result){
         let link = `${req.get('host')}/verify?token=${token}`;
         
         emailVerifyLink({link,username:req.session.user.username,to:req.session.user.email}).then(() => {
@@ -157,21 +157,3 @@ router.post('/verify', function(req,res,next){
 });
 
 module.exports = router;
-
-//an error being thrown here is fine, as it will be caught by the try catch because this is a synchronous function.
-function hideEmail(email){
-  let atIndex = email.indexOf('@');
-
-  let start = email.slice(0,atIndex);
-  let end = email.slice(atIndex);
-
-  let dotIndex = end.indexOf('.');
-
-  return start.slice(0,3) + '*****@***' + end.slice(dotIndex);
-}
-
-function generateCode(length){
-  let buffer = randomBytes(length * (36 / 32));
-  let code = buffer.toString('base64url');
-  return code.slice(0, length);
-}

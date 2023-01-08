@@ -4,6 +4,8 @@ var bcrypt = require('bcrypt');
 
 var {genUUID, queryDB} = require('../../modules/database.js');
 var {verifyEmail, verifyPassword, verifyUsername} = require('../../modules/verifyInfo.js');
+var {generateToken} = require('../../modules/generateToken.js');
+var {emailResetLink} = require('../../modules/email.js');
 
 //USER
 router.post('/logout', function(req, res, next) {
@@ -107,6 +109,43 @@ router.post('/login', function(req, res, next) {
       }else{
         res.send({error:'Incorrect Login Information.'});
       }
+    }).catch(next);
+  }).catch(next);
+});
+
+router.post('/forgot-password', function(req,res,next){
+  let email = req.body.email;
+
+  queryDB('SELECT * FROM account WHERE email = ?', email).then((results) => {
+    if (results.length === 0){
+      return res.send({result:true}); //move on as if email was sent
+    }
+
+    let info = results[0];
+    let uuid = info.uuid;
+
+    let token = generateToken(50);
+
+    let expiration = new Date();
+    expiration.setHours(expiration.getHours() + 1)
+
+    let data = {
+      uuid,
+      email,
+      token,
+      expiration
+    }
+
+    queryDB('DELETE FROM resettoken WHERE uuid = ?', uuid).then(() => {
+      queryDB('INSERT INTO resettoken SET ?', data).then(() => {
+        let link = `${req.get('host')}/reset?token=${token}`;
+        
+        console.log(link);
+
+        emailResetLink({link,username:info.username/*,to:email*/}).then(() => {
+          res.send({result:true});
+        }).catch(next);
+      }).catch(next);
     }).catch(next);
   }).catch(next);
 });
