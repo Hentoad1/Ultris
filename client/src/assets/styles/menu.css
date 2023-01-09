@@ -1,39 +1,45 @@
-.menu{
-    background:#202020;
-    color:white;
+.menu {
+  background: #202020;
+  color: white;
 
-    min-width:300px;
-    width:min-content;
+  min-width: 300px;
+  width: min-content;
 
-    display:grid;
-    grid-template-rows:auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2em;
 
-    grid-gap:2em;
+  border-radius: 3px;
 
-    border-radius:3px;
+  padding: 4em;
 
-    padding:4em;
-
-    text-align: center;
-    position:relative;
-    white-space: nowrap;
+  text-align: center;
+  position: relative;
+  white-space: nowrap;
 }
 
-.menu > .header{
-  font-weight:bold;
-  font-size:1.25rem;
+.menu > *{
+  width:100%;
+  box-sizing: border-box;
 }
 
-.menu > .subheader{
-  font-size:1em;
-  margin-top:-1em;
-  margin-bottom:2em;
+.menu > .header {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.menu > .subheader {
+  font-size: 1em;
+  margin-top: -1em;
+  margin-bottom: 2em;
   white-space: normal;
 }
 
-.menu > .row{
-    background:inherit;
+.menu > .row {
+  background: inherit;
 
-    display:flex;
-    flex-flow:row;
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
 }

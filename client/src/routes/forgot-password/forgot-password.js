@@ -8,7 +8,7 @@ import LoadingOverlay from '../../assets/components/loadingOverlay.js';
 
 import '../../assets/styles/menu.css';
 
-function PasswordReset(){
+function ForgotPassword(){
   let [stage, setStage] = useState(0);
   let QueryAPI = useAPI();
 
@@ -29,7 +29,7 @@ function PasswordReset(){
 
   return (
     <div className = "page_content centered">
-      <div className = "menu" /*style = {{'--menu-width':'15em'}}*/>
+      <div className = "menu">
         {stageContent}
       </div>
     </div>
@@ -68,4 +68,4 @@ function SecondarySection(props){
   )
 }
 
-export default PasswordReset;
+export default ForgotPassword;

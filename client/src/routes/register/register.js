@@ -45,7 +45,7 @@ function Register(){
 
   return (
     <div className = "page_content centered">
-      <div className = "menu" /*style = {{'--menu-width':'15em'}}*/>
+      <div className = "menu">
         {stageContent}
         {loadingContent}
       </div>
@@ -144,7 +144,7 @@ function SigninSection(props){
         Would you like to sign in instead?
       </div>
       <Link to = '/login' style = {{width:'100%'}} tabIndex = '-1'><button>SIGN IN</button></Link>
-      <button className = 'AlternameColor' style = {{background:'white',color:'black'}} onClick = {() => props.setStage({},0)}>NO THANKS</button>
+      <button onClick = {() => props.setStage({},0)}>NO THANKS</button>
     </React.Fragment>
   )
 }

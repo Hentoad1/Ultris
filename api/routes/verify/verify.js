@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var {genUUID, queryDB} = require('../../modules/database.js');
+var {queryDB} = require('../../modules/database.js');
 
 router.get('/', function(req, res, next) {
   queryDB('SELECT * FROM verifytoken WHERE token = ?', req.query.token).then(function(result){

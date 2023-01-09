@@ -6,7 +6,7 @@ import { Navigate } from "react-router";
 import Globals from './routes/globals/global.js';
 import Register from './routes/register/register.js';
 import Login from './routes/login/login.js';
-import PasswordReset from './routes/forgot-password/forgot-password';
+import ForgotPassword from './routes/forgot-password/forgot-password';
 import Leaderboard from './routes/leaderboard/leaderboard.js';
 //dashboard
 import Dashboard from './routes/dashboard/dashboard.js';
@@ -22,6 +22,7 @@ import SocketWrapper from './routes/play/socketWrapper.js';
 import Send404 from './routes/404/404.js';
 //verify
 import VerifySuccess from './routes/verify/verify';
+import ResetPassword from './routes/reset/reset.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -32,7 +33,8 @@ root.render(
             <Route index element = {<Navigate to = 'play'/>} />
             <Route path='register' element = {<Register />} />
             <Route path='login' element = {<Login />} />
-            <Route path='forgot-password' element = {<PasswordReset />} />
+            <Route path='forgot-password' element = {<ForgotPassword />} />
+            <Route path='reset' element = {<ResetPassword />} />
             <Route path = 'leaderboard'>
               <Route index element = {<Navigate to = 'sprint'/>}/>
               <Route path = 'sprint' element = {<Leaderboard type = 'sprint'/>} />

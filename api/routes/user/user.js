@@ -150,6 +150,11 @@ router.post('/forgot-password', function(req,res,next){
   }).catch(next);
 });
 
+router.post('/resetPassword', function(req,res,next){
+  
+});
+
+
 //MAIN API
 router.post('/', function(req, res, next) {
   let session = req.session.user ?? {};
