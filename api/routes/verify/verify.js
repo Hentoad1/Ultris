@@ -6,7 +6,7 @@ var {queryDB} = require('../../modules/database.js');
 router.get('/', function(req, res, next) {
   queryDB('SELECT * FROM verifytoken WHERE token = ?', req.query.token).then(function(result){
     if (result.length === 0){
-      next(); // no match; technically not needed because error will be caught and passed but it feels a bit weird to do that.
+      return next();
     }
     
     let uuid = result[0].uuid;

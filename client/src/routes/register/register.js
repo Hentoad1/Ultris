@@ -86,7 +86,7 @@ function EmailSection(props){
         Enter your Email Address.
       </div>
       <div className = 'subheader'>
-        You will need to verify it later.
+        This will be used to keep your account secure. No promotional emails will be sent to you.
       </div>
       <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setEmail(ref); ref.current.focus()}} title = 'EMAIL ADDRESS' background = '#0F0F0F11'/>
       <button onClick = {submit}>CONTINUE</button>

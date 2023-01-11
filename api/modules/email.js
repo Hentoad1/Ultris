@@ -12,7 +12,7 @@ function emailVerifyLink(options){
     }
     
     let payload = {
-      to: (options.to ?? 'henry.liam.boyer@gmail.com'),
+      to: (options.to),
       from: {
         email:"support-noreply@ultris.app",
         name:"Ultris Support"
@@ -39,7 +39,7 @@ function emailVerifyCode(options){
     }
     
     let payload = {
-      to: (options.to ?? 'henry.liam.boyer@gmail.com'),
+      to: (options.to),
       from: {
         email:"support-noreply@ultris.app",
         name:"Ultris Support"
@@ -66,7 +66,7 @@ function emailResetLink(options){
     }
     
     let payload = {
-      to: (options.to ?? 'henry.liam.boyer@gmail.com'),
+      to: (options.to),
       from: {
         email:"support-noreply@ultris.app",
         name:"Ultris Support"

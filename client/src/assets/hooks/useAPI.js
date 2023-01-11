@@ -29,16 +29,14 @@ function useAPI(){
         if (response.redirect.reload){
           navigate(0); //reloads the page
         }
-        callback(null);
-      }else{
-        if (response.error){
-          addAlert(response.error, {type:'error'});
-        }
-        if (response.alert){
-          addAlert(response.alert);
-        }
-        callback(response.result);
       }
+      if (response.error){
+        addAlert(response.error, {type:'error'});
+      }
+      if (response.alert){
+        addAlert(response.alert);
+      }
+      callback(response.result);
     };
 
     let handleError = function(error){

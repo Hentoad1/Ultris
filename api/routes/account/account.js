@@ -1,11 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var bcrypt = require('bcrypt');
+var {randomBytes} = require('crypto');
 
 var {queryDB} = require('../../modules/database.js');
 var {verifyEmail, verifyPassword, verifyUsername, hideEmail} = require('../../modules/verifyInfo.js');
 var {emailVerifyCode, emailVerifyLink} = require('../../modules/email.js');
 var {generateToken} = require('../../modules/generateToken.js');
+
 
 //send all guests to the login page
 router.use(function(req, res, next){
@@ -135,7 +137,7 @@ router.post('/verify', function(req,res,next){
     let token = generateToken(50);
 
     let expiration = new Date();
-    expiration.setHours(expiration.getHours() + 1)
+    date.setDate(date.getDate() + 1);
 
     let data = {
       uuid:req.session.user.uuid,

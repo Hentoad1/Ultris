@@ -19,6 +19,8 @@ router.post('/logout', function(req, res, next) {
 //REGISTER ROUTE FROM CLIENT
 router.post('/register', function(req, res, next) {
   let userData = req.body;
+
+  console.log(req.body);
   verifyUsername(userData.username).then(function(result){
     let [usernameInvalid, username] = result;
     
@@ -62,6 +64,7 @@ router.post('/register', function(req, res, next) {
               req.session.user = {
                 username: userData.username,
                 uuid: userData.uuid,
+                email: userData.email,
                 guest: false,
                 verified: false //always will be false
               }
@@ -142,7 +145,7 @@ router.post('/forgot-password', function(req,res,next){
         
         console.log(link);
 
-        emailResetLink({link,username:info.username/*,to:email*/}).then(() => {
+        emailResetLink({link,username:info.username,to:email}).then(() => {
           res.send({result:true});
         }).catch(next);
       }).catch(next);
@@ -151,7 +154,45 @@ router.post('/forgot-password', function(req,res,next){
 });
 
 router.post('/resetPassword', function(req,res,next){
-  
+  console.log(req.body);
+
+  if (req.body.password !== req.body.confirm){
+    return res.send({error:'The passwords do not match'});
+  }
+
+  verifyPassword(req.body.password).then((passwordInvalid) => {
+    if (passwordInvalid){
+      return res.send({error: passwordInvalid});
+    }
+
+    
+    bcrypt.hash(req.body.password, 10).then((hash) => {
+      console.log(hash);
+
+      console.log(req.body.token)
+      queryDB('SELECT * FROM resettoken WHERE token = ?', req.body.token).then((results) => {
+        console.log(results);
+        if (results.length === 0){
+          return res.send({error: 'The reset token does not exist.'});
+        }
+
+        let info = results[0];
+        let uuid = info.uuid;
+        let expiration = new Date(info.expiration);
+
+        if (new Date > expiration){
+          return res.send({error: 'The reset token has expired.'});
+        }
+
+        
+        queryDB('UPDATE account SET password = ? WHERE uuid = ?', [hash, uuid]).then((result) => {
+          return res.send({redirect:{path:'/play'},alert:'Your password has been reset!'});
+        }).catch(next);
+      });
+      
+    });
+
+  });
 });
 
 

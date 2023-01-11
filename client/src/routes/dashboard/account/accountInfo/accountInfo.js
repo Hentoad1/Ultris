@@ -123,7 +123,7 @@ function PasswordSection(props){
     <div className = 'sideMenu'>
       <div className = 'header'>
         <div className = 'title'>Password</div>  
-        <div className = 'description'>Your password is used only to log into your account. Do not share this with anyone.</div>
+        <div className = 'description'>Your password is used only to log into your account. Do not share this with anyone. Must be 8-128 characters long.</div>
       </div>
       <div className = 'content'>
         <AnimatedPasswordInput title = 'Current Password' onValueChange = {e => setPassword1(e)} onRef = {r => updateRef(r, 0)}/>
@@ -198,7 +198,7 @@ function EmailSection(props){
     <div className = 'sideMenu'>
       <div className = 'header'>
         <div className = 'title'>Email</div>
-        <div className = 'description'>Your Email address is where all information involving your account and its security be sent to.</div>
+        <div className = 'description'>Your Email address is where all information involving your account and its security be sent to. No promotional content will be sent to your email.</div>
       </div>
       <div className = 'content'>
         <AnimatedInput title = 'Email' placeholder = {inital} onValueChange = {v => setValue(v)} onRef = {r => setRef(r)} parentStyle = {verifyStyle}/>

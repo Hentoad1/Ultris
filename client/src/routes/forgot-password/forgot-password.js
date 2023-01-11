@@ -1,10 +1,8 @@
 import { useState, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
-import {AnimatedInput,AnimatedPasswordInput} from '../../assets/components/animatedInput.js';
-import CustomCheckbox from '../../assets/components/customCheckbox.js';
+import {AnimatedInput} from '../../assets/components/animatedInput.js';
 import useAPI from '../../assets/hooks/useAPI.js';
-import LoadingOverlay from '../../assets/components/loadingOverlay.js';
 
 import '../../assets/styles/menu.css';
 
@@ -63,7 +61,6 @@ function SecondarySection(props){
       <div className = 'subheader'>
         An email has been sent to you if the email was linked to your account.
       </div>
-
     </Fragment>
   )
 }
