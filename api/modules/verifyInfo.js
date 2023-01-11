@@ -1,6 +1,6 @@
 var {queryDB} = require('./database.js');
 
-const AcceptableUsernameChars = new RegExp(/^[a-zA-Z0-9]+$/, 'g');
+const AcceptableUsernameChars = new RegExp(/^[a-zA-Z0-9]*$/);
 
 function verifyUsername(input){
   return new Promise(function(resolve, reject){
