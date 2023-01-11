@@ -1,15 +1,16 @@
 .alerts{
   position:fixed;
-  right:0;
   top:0;
-  bottom:0;
+  left:0;
+  height:100%;
+  width:100%;
 
-  width:20em; /* ???? */
   pointer-events:none;
 
   display:flex;
   flex-flow:column;
   justify-content: flex-end;
+  align-items: center;
 
   z-index: 1000;
 }
@@ -17,15 +18,11 @@
 .alert{
   pointer-events:auto;
 
-  outline:2px solid white;
-
-  color:white;
-
-  padding:1em;
+  padding:0.5em 0.5em;
   margin:1em;
-  border-radius:1em;
+  border-radius:4px;
 
-  background:var(--background-color);
+  width:fit-content;
 
   opacity:0; /* only applies when out of transition */
 
@@ -37,10 +34,9 @@
   flex-flow:row;
   justify-content:flex-start;
   align-items: center;
-}
-
-.alert.error{
-  outline:2px solid red;
+  
+  background:white;
+  color:black;
 }
 
 .alert > svg{
@@ -66,23 +62,23 @@
 
 @keyframes notification{
   0%{
-    transform:translateX(100%);
+    transform:translateY(100%);
     opacity:1;
   }
   10%{
-    transform:translateX(-15%);
+    transform:translateY(-15%);
     opacity:1;
   }
   15%{
-    transform:translateX(0);
+    transform:translateY(0);
     opacity:1;
   }
   80%{
-    transform:translateX(0);
+    transform:translateY(0);
     opacity:1;
   }
   100%{
-    transform:translateX(100%);
+    transform:translateY(100%);
     opacity:0;
   }
 }

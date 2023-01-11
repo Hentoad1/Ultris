@@ -54,8 +54,9 @@ function bind(io, sessionMiddleware){
       socket.uuid = socket.request.session.user.uuid;
       next();
     }else{
-      console.log('got here');
-      next(new Error('There was an error loading your account information, please refresh the page.'));
+      let err = new Error('There was an error loading your account information, please refresh the page.');
+      err.data = {alert:true};
+      next(err);
     }
   })
 

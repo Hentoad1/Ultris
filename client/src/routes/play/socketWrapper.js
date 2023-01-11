@@ -18,7 +18,13 @@ function SocketWrapper(){
 
   useEffect(() => {
     let alertFunc = (error) => {
-      alert(error.message, {type:'error'});
+      if (error.data?.alert){
+        alert(error.message, {type:'error'});
+      }
+    }
+
+    let failFunc = () => {
+      console.log('Connection to Socket.IO failed.');
     }
 
     let requestFunc = (res) => {
@@ -39,11 +45,13 @@ function SocketWrapper(){
     socket.on('connect_error', alertFunc);
     socket.on('request_error', requestFunc);
     socket.on('request_notify', notifyFunc);
+    socket.on('connect_failed', failFunc);
 
     return () => {
       socket.off('connect_error', alertFunc);
       socket.off('request_error', requestFunc);
       socket.off('request_notify', notifyFunc);
+      socket.off('connect_failed', failFunc);
     }
   })
 

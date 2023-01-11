@@ -1,7 +1,4 @@
-import { Fragment, useState, useEffect, useCallback, useContext, createContext } from 'react';
-
-import {ReactComponent as Warning} from '../svgs/Warning.svg';
-import {ReactComponent as Checkmark} from '../svgs/Checkmark.svg';
+import { Fragment, useState, useCallback, useContext, createContext } from 'react';
 
 import '../styles/alerts.css';
 
@@ -15,12 +12,12 @@ function AlertWrapper(props){
 
   const removeAlert = useCallback(id => {
     setState(state => state.filter(info => info.id !== id));
-  },[state, setState]);
+  },[setState]);
 
   const AddAlert = useCallback((text, options = {}) => {
     setState(state => [...state, {options, text, id:count, removeFunc:removeAlert}]);
     setCount(count => count + 1);
-  },[state, setState, count, setCount, removeAlert]);
+  },[setState, count, setCount, removeAlert]);
 
   return (
     <Fragment>
@@ -35,10 +32,7 @@ function AlertWrapper(props){
 }
 
 //hook components use to add an alert
-function useAlerts(){
-  let add = useContext(AlertContext);
-  return add;
-}
+const useAlerts = () => useContext(AlertContext);
 
 //the actual alert
 function Alert(props){
