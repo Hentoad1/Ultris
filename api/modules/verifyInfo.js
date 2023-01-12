@@ -1,5 +1,51 @@
 var {queryDB} = require('./database.js');
 
+
+
+
+const LEETPairs = [
+  ['4','A'],
+  ['3','E'],
+  ['6','G'],
+  ['1','I'],
+  ['5','S'],
+  ['7','T'],
+  ['2','Z'],
+  ['0','O']
+]
+const LEETReplacements = new Map(LEETPairs);
+function removeLeetSpeak(username){
+  LEETReplacements.forEach((letter, number) => {
+    username = username.replaceAll(number, letter);
+  })
+
+  return username;
+}
+
+const ProfanityPairs = [
+  ['NIGGER','######'],
+  ['FAGGOT','######']
+];
+const ProfanityReplacements = new Map(ProfanityPairs);
+
+function cleanUsername(username){
+  const noLeetUsername = removeLeetSpeak(username);
+
+  ProfanityReplacements.forEach((replacement, word) => {
+    if (username.includes(word)){
+      username = username.replaceAll(word, replacement);
+    }
+
+    var wordIndex = noLeetUsername.indexOf(word);
+    while(wordIndex > -1){
+      console.log('trying to remove');
+      username = username.slice(0,wordIndex) + replacement + username.slice(wordIndex + replacement.length);
+	    wordIndex = noLeetUsername.indexOf(word, wordIndex + replacement.length);
+    }
+  });
+  return username;
+}
+
 const AcceptableUsernameChars = new RegExp(/^[a-zA-Z0-9]*$/);
 
 function verifyUsername(input){
@@ -12,16 +58,9 @@ function verifyUsername(input){
       response = 'Username must contain only letters and numbers.';
     }else if (username.length > 15 || username.length < 3){
       response = "Username must be 3 to 15 characters long.";
-    }else{
-      const InnapropriatePhrases = ['FUCK']; //temporary
-      const ReplacementPhrases = ['','#','##','###','####']; //temporary
-      InnapropriatePhrases.forEach(function(word){
-        let index = username.indexOf(word);
-        if (index !== -1){
-          username = username.replace(word, ReplacementPhrases[InnapropriatePhrases.length]);
-        }
-      });
     }
+    
+    username = cleanUsername(username);
 
     resolve([response, username]);
   });
@@ -113,4 +152,4 @@ function hideEmail(email){
   return start.slice(0,3) + '*****@***' + end.slice(dotIndex);
 }
 
-module.exports = {verifyEmail, verifyPassword, verifyUsername, hideEmail};
+module.exports = {verifyEmail, verifyPassword, verifyUsername, cleanUsername, hideEmail};
