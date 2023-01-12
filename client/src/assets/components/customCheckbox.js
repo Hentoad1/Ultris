@@ -4,24 +4,24 @@ import { ReactComponent as Checkmark } from '../../assets/svgs/Basic_Checkmark.s
 
 import './customCheckbox.css';
 
-class CustomCheckbox extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      minimized: false
+function CustomCheckbox(props){
+  let inputFunc = (e) => {
+    console.log(e)
+    
+    e.target.focus(true);
+
+    if (props.onInput){
+      props.onInput(e);
     }
   }
 
-  render() {
-    return (
-      <div className={'CustomCheckbox ' + (this.props.className ?? '')} style={this.props.style}>
-        <input type='checkbox' onInput={this.props.onInput ?? null} defaultChecked = {this.props.defaultChecked}/>
-        <span />
-        <Checkmark />
-      </div>
-    )
-  }
+  return (
+    <div className={'CustomCheckbox ' + (props.className ?? '')} style={props.style}>
+      <input type='checkbox' onInput={inputFunc} defaultChecked = {props.defaultChecked}/>
+      <span />
+      <Checkmark />
+    </div>
+  )
 }
-
 
 export default CustomCheckbox;

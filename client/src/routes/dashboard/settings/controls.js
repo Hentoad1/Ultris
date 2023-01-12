@@ -1,23 +1,14 @@
 import {Fragment, useState} from 'react';
 
 
-const defaultControls = {
-  exit:'Escape',
-  reset:'r',
-  left:'ArrowLeft',
-  right:'ArrowRight',
-  soft:'ArrowDown',
-  rotate90:'ArrowUp',
-  rotate180:'a',
-  rotate270:'z',
-  hold:'c',
-  hard:' ',
-}
+import useControls, {defaultControls} from '../../../assets/hooks/useControls';
+
+
 const joinedDefault = Object.values(defaultControls).join();
-const stringifyedDefault = JSON.stringify(defaultControls); 
 
 function Controls(){
-  let [controls, setControls] = useState(JSON.parse(localStorage.getItem('controls') ?? stringifyedDefault));
+  let [getControls, setControl] = useControls();
+  let [controls, setControls] = useState(getControls());
   let [popup, setPopup] = useState(null);
   let [inital, setInital] = useState(Object.assign({},controls));
 
@@ -50,8 +41,8 @@ function Controls(){
     setPopup(popup);
   }
 
-  let save = function(){
-    localStorage.setItem('controls', JSON.stringify(controls));
+  let save = () => {
+    setControl(controls);
     setInital(Object.assign({},controls));
   }
 

@@ -139,6 +139,10 @@ html button:not(.nostyle){
   color:black;
 }
 
+html button:not(.nostyle):focus-visible{
+  box-shadow:0 0 0 5px #ffffff40;
+}
+
 html button:not(.nostyle):disabled{
   color:#555;
   box-shadow:0 0 0 2px #555;

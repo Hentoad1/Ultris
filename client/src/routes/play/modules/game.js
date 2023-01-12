@@ -5,10 +5,13 @@ import { GameModeContext } from '../gameWrapper';
 import initalize from './logic.js'
 import './game.css';
 import { useOutletContext } from 'react-router';
+import useControls from '../../../assets/hooks/useControls';
 
 function Game(props){
   let socket = useOutletContext();
   let gameMode = useContext(GameModeContext);
+  let [getControls] = useControls();
+
 
   //CANVASES
   let holdRef = useRef();
@@ -53,7 +56,9 @@ function Game(props){
       full: wrapperRef
     }
 
-    let {addListeners, removeListeners, cleanup} = initalize(DOM, socket, gameMode);
+    let controls = getControls();
+
+    let {addListeners, removeListeners, cleanup} = initalize(DOM, socket, gameMode, controls);
 
     socket.game = {
       addListeners,

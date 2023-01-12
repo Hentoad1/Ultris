@@ -28,7 +28,11 @@ function LobbyMenu(){
     };
 
     const countdownFunction = function(secondsLeft){
-      setCountdown(`Game Begins in ${secondsLeft} seconds.`);
+      if (secondsLeft === ''){
+        setCountdown(''); //case where countdown is canceled
+      }else{
+        setCountdown(`Game Begins in ${secondsLeft} seconds.`);
+      }
     }
 
     const startFunction = () => {

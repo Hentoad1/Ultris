@@ -64,7 +64,7 @@ function passVars(io){
       this.countingDown = true;
       this.breakCountdown = false;
         
-      for (let i = 3; i > 0; i--){
+      for (let i = 10; i > 0; i--){
         io.in(this.id).emit('countdown',i);
         await new Promise(r => setTimeout(r,1000));
         if (this.breakCountdown){
@@ -216,6 +216,8 @@ function passVars(io){
       let players = [...this.aliveUsers, ...this.deadUsers].map(e => e.username).sort();
       let spectators = [...this.spectatingUsers].map(e => e.username).sort();
       io.in(this.id).emit('update lobby players', players, spectators);
+      
+      this.update();
     }
     
     setInActive(obj){
@@ -230,6 +232,8 @@ function passVars(io){
       let players = [...this.aliveUsers, ...this.deadUsers].map(e => e.username).sort();
       let spectators = [...this.spectatingUsers].map(e => e.username).sort();
       io.in(this.id).emit('update lobby players', players, spectators);
+
+      this.update();
     }
     
     //MISC FUNCTIONS

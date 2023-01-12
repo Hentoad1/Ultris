@@ -90,7 +90,8 @@ var endFunction;
 var startFunction;
 
 //EXPORTS
-function initalize(DOM, socket, gameMode) {
+function initalize(DOM, socket, gameMode, keybinds) {
+  
 
   class Tetrimino {
     constructor(p) {
@@ -323,17 +324,17 @@ function initalize(DOM, socket, gameMode) {
   //CONTROLS
   const controls = {
     exit: {
-      key: 'Escape',
+      key: keybinds.exit,
       function: null,
       held: false
     },
     reset: {
-      key: 'r',
+      key: keybinds.reset,
       function: reset,
       held: false
     },
     left: {
-      key: 'ArrowLeft',
+      key: keybinds.left,
       function: function () {
         if (gameRunning) {
           DAS = handling.DAS;
@@ -342,7 +343,7 @@ function initalize(DOM, socket, gameMode) {
       held: false
     },
     right: {
-      key: 'ArrowRight',
+      key: keybinds.right,
       function: function () {
         if (gameRunning) {
           DAS = handling.DAS;
@@ -351,12 +352,12 @@ function initalize(DOM, socket, gameMode) {
       held: false
     },
     soft: {
-      key: 'ArrowDown',
+      key: keybinds.soft,
       function: null,
       held: false
     },
     rotate90: {
-      key: 'ArrowUp',
+      key: keybinds.rotate90,
       function: function () {
         if (gameRunning) {
           current.rotate(90);
@@ -366,7 +367,7 @@ function initalize(DOM, socket, gameMode) {
       held: false
     },
     rotate180: {
-      key: 'a',
+      key: keybinds.rotate180,
       function: function () {
         if (gameRunning) {
           current.rotate(180);
@@ -376,7 +377,7 @@ function initalize(DOM, socket, gameMode) {
       held: false
     },
     rotate270: {
-      key: 'z',
+      key: keybinds.rotate270,
       function: function () {
         if (gameRunning) {
           current.rotate(270);
@@ -386,7 +387,7 @@ function initalize(DOM, socket, gameMode) {
       held: false
     },
     hold: {
-      key: 'c',
+      key: keybinds.hold,
       function: function () {
         if (gameRunning) {
           holdCurrent();
@@ -396,7 +397,7 @@ function initalize(DOM, socket, gameMode) {
       held: false
     },
     hard: {
-      key: ' ',
+      key: keybinds.hard,
       function: function () {
         if (gameRunning) {
           while (current.shift(0, -1)) {
