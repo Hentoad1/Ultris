@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router';
+import Scrollbar from '../../../assets/components/scrollbar';
 import './statmenu.css';
 
 const minorStatTitles = [
@@ -83,10 +84,12 @@ function StatMenu(){
     <div className={'statMenu ' + (display ? 'visible' : 'hidden')}>
       <span className='primaryStat'>{stats.primaryStat}</span>
       <span className='primaryStatValue'>{stats.primaryStatValue}</span>
-      <ul className="minorStats">
-        {stats.secondaryStats.map((x, i) => <li key={i}>{x.title}: {x.value}</li>)}
-        {minors}
-      </ul>
+      <Scrollbar>
+        <ul className="minorStats">
+          {stats.secondaryStats.map((x, i) => <li key={i}>{x.title}: {x.value}</li>)}
+          {minors}
+        </ul>
+      </Scrollbar>
       <span>
         PRESS R TO RESTART
       </span>

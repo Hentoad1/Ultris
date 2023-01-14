@@ -62,8 +62,7 @@
   flex-direction: column;
 
   position:relative;
-
-  overflow-y:scroll;
+  
   height:100%;
 }
 

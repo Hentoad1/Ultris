@@ -1,19 +1,19 @@
 .scrollbar_track{
-  position:absolute;
+  position:fixed;
   
   right:0;
   width:10px;
   height:100%;
 
-  background:#FFFFFF10;
+  background:transparent;
 
   transition:0.25s background linear;
 
   z-index:200;
 }
 
-:hover ~ .scrollbar_track{
-  background:#ffffff20;
+:hover ~ .scrollbar_track, .scrollbar_track:hover{
+  background:#ffffff10;
 }
 
 .scrollbar_thumb_outer{
@@ -22,8 +22,9 @@
   left:0;
   right:0;
 
+  z-index:201;
+
   background:transparent;
-  cursor: pointer;
 }
 
 .scrollbar_thumb_inner{
@@ -36,7 +37,11 @@
 
   background:#FFFFFF80;
 
-  z-index:201;
+  z-index:202;
 
   border-radius:5px;
+}
+
+.scrollbar_thumb_inner:active{
+  background:#FFFFFF60;
 }

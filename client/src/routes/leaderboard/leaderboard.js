@@ -139,26 +139,6 @@ function Leaderboard(props){
         </div>
         <div className = 'leaderboard'>
           {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
-          {table}
           {navigatorContent}
         </div>
       </div>

@@ -35,16 +35,12 @@ li{
 
 .page_content{
   overflow:hidden;
-  
+
   position:relative;
   height:calc(100% - var(--navbar-height));
 
   background:var(--background-color);
   color:var(--color);
-}
-
-.page_content.noscroll{
-  overflow-y:hidden;
 }
 
 .centered{

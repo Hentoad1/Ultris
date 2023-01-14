@@ -7,21 +7,15 @@ function Scrollbar(props){
   let [top, setTop] = useState(null);
   let [height, setHeight] = useState(null);
   let [display, setDisplay] = useState(true);
-  let [mouseHeld, mouseRelased] = useState(false);
 
-
-  let updateScrollbarPosition = useCallback((DeltaY) => {
+  let updateScrollbarPosition = useCallback((deltaY) => {
     let elem = ref.current;
     
     let clientHeight = elem.clientHeight; //visable height of the main element
     let scrollHeight = elem.scrollHeight; //amount the element has been scrolled
     let scrollTop = elem.scrollTop; //amount the element can be scrolled
 
-    //scroll page manually
-
-    scrollTop = scrollTop + DeltaY;
-    
-    console.log(scrollTop);
+    scrollTop = scrollTop + deltaY;
 
     elem.scroll(0, scrollTop);
 
@@ -34,7 +28,7 @@ function Scrollbar(props){
     let thumbTop = percentageScrolled * (clientHeight - height);
 
     setTop(thumbTop);
-  },[ref, setTop, height]);
+  },[setTop, height]);
 
   let updateScrollbarSize = useCallback(() => {
     let elem = ref.current;
@@ -48,10 +42,12 @@ function Scrollbar(props){
     let percentageOfPageVisible = (clientHeight / scrollHeight);
     let thumbHeight = percentageOfPageVisible * clientHeight;
 
+    console.log(thumbHeight);
+
     setHeight(thumbHeight);
 
     updateScrollbarPosition(0);
-  }, [ref, setDisplay, updateScrollbarPosition])
+  }, [setDisplay, updateScrollbarPosition])
 
   //connect to scroll wheel
   useEffect(() => {
@@ -66,35 +62,75 @@ function Scrollbar(props){
     return () => {
       elem.removeEventListener('wheel', eventHandler);
     }
-  }, [ref, updateScrollbarPosition])
+  }, [updateScrollbarPosition])
 
   //observe size change
   useEffect(() => {
-    let observer = new ResizeObserver(updateScrollbarSize)
+    let resizeObserver = new ResizeObserver(updateScrollbarSize);
+    let mutationObserver = new MutationObserver(updateScrollbarSize);
 
-    if (ref.current){
-      observer.observe(ref.current);
-    }
+    let target = ref.current;
+
+    resizeObserver.observe(target);
+
+    mutationObserver.observe(target, {
+      childList: true,
+      subtree: true,
+    });
+
 
     return () => {
-      observer.disconnect();
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
     }
   }, [updateScrollbarSize])
   
+  //scroll page with mouse
+  let HandleMouseDown = useCallback((event) => {
+    event.preventDefault(); //disables text selection
+
+    let mouseY = event.clientY;
+
+    let HandleMouseMove = (event) => {  
+      let elem = ref.current;
+      
+      let clientHeight = elem.clientHeight; //visable height of the main element
+      let scrollHeight = elem.scrollHeight; //amount the element has been scrolled
+
+      let deltaY = event.clientY - mouseY;
+
+      let thumbTop = top + deltaY;
+      let percentageScrolled = thumbTop / (clientHeight - height);
+      thumbTop = Math.max(0, thumbTop);
+      thumbTop = Math.min(clientHeight - height, thumbTop);
+
+      let scrollTop = scrollHeight * percentageScrolled;
+
+      elem.scroll(0, scrollTop);
+
+      setTop(thumbTop);
+    }
+
+    let HandleMouseUp = () => {
+      window.removeEventListener('mouseup', HandleMouseUp);
+      window.removeEventListener('mousemove', HandleMouseMove);
+    }
+
+    window.addEventListener('mouseup', HandleMouseUp);
+    window.addEventListener('mousemove', HandleMouseMove);
+  }, [top, height, setTop]);
 
   let child = Children.only(props.children);
   return (
     <Fragment>
-      {cloneElement(child, {...child.props, ref})}
+      {cloneElement(child, {...child.props, style:{"overflow":"hidden"},ref})}
       <div className = 'scrollbar_track' style = {{top:ref.current?.getBoundingClientRect?.()?.y ?? null,display:display ? null : 'none'}}>
-        <div className = 'scrollbar_thumb_outer' style = {{top,height}}>
+        <div className = 'scrollbar_thumb_outer' style = {{top,height}} onMouseDown = {HandleMouseDown}>
           <div className = 'scrollbar_thumb_inner'></div>
         </div>
       </div>
     </Fragment>
   )
 }
-
-  console.log(Scrollbar)
 
 export default Scrollbar;

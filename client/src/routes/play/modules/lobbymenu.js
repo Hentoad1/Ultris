@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import { useLocation, useOutletContext } from 'react-router';
 import CustomCheckbox from '../../../assets/components/customCheckbox';
+import Scrollbar from '../../../assets/components/scrollbar';
 import useAlerts from '../../../assets/hooks/useAlerts';
 import useSession from '../../../assets/hooks/useSession';
 import './lobbymenu.css';
@@ -109,12 +110,14 @@ function LobbyMenu(){
     <Fragment>
       <div className = 'countdown'>{countdown}</div>
       <div className = 'playerInfo'>
-        <div className = 'userlistWrapper'>
-          <ul className = 'userlist'>
-            {players.map((username,i) => <li key = {i}>{username ?? 'GUEST'}</li>)}
-            {spectators.map((username,i) => <li key = {players.length + i} className = 'spectator'>{username ?? 'GUEST'}</li>)}
-          </ul>
-        </div>
+        <Scrollbar>
+          <div className = 'userlistWrapper'>
+            <ul className = 'userlist'>
+              {players.map((username,i) => <li key = {i}>{username ?? 'GUEST'}</li>)}
+              {spectators.map((username,i) => <li key = {players.length + i} className = 'spectator'>{username ?? 'GUEST'}</li>)}
+            </ul>
+          </div>
+        </Scrollbar>
         <button className = 'nostyle playerStatus' onClick = {updateSpectateStatus}>
           <span className = 'username'>
             {username}

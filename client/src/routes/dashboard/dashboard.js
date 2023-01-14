@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
+import Scrollbar from '../../assets/components/scrollbar';
 
 import useSession, {useLogout} from '../../assets/hooks/useSession';
 
@@ -29,9 +30,11 @@ function Dashboard(){
         </div>
         {dashboardHTML}
       </div>
-      <div className = 'dashboard-content'>
-        <Outlet />
-      </div>
+      <Scrollbar>
+        <div className = 'dashboard-content'>
+          <Outlet />
+        </div>
+      </Scrollbar>
     </div>
   )
 }

@@ -86,7 +86,7 @@ function Wrapper(){
 
   return (
     <GameModeContext.Provider value = {mode}>
-      <div className = 'main_wrapper page_content noscroll'>
+      <div className = 'main_wrapper page_content'>
         <Game/>
         <StatMenu/>
         {onlineContent}
