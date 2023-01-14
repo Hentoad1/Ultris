@@ -2,19 +2,41 @@
   position:absolute;
   
   right:0;
-  width:20px;
+  width:10px;
   height:100%;
 
-  background:red;
+  background:#FFFFFF10;
 
-  opacity: 0.1;
+  transition:0.25s background linear;
+
+  z-index:200;
 }
 
-.scrollbar_thumb{
+:hover ~ .scrollbar_track{
+  background:#ffffff20;
+}
+
+.scrollbar_thumb_outer{
   position:absolute;
 
   left:0;
   right:0;
 
-  background:green;
+  background:transparent;
+  cursor: pointer;
+}
+
+.scrollbar_thumb_inner{
+  position:absolute;
+
+  top:2px;
+  bottom:2px;
+  left:2px;
+  right:2px;
+
+  background:#FFFFFF80;
+
+  z-index:201;
+
+  border-radius:5px;
 }

@@ -1,7 +1,6 @@
 .leaderboardWrapper{
   display:flex;
   flex-direction: column;
-  overflow-y: scroll;
 }
 
 .leaderboard > svg{

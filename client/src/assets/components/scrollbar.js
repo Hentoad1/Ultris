@@ -7,37 +7,70 @@ function Scrollbar(props){
   let [top, setTop] = useState(null);
   let [height, setHeight] = useState(null);
   let [display, setDisplay] = useState(true);
+  let [mouseHeld, mouseRelased] = useState(false);
 
-  let updateScrollbar = useCallback(() => {
+
+  let updateScrollbarPosition = useCallback((DeltaY) => {
     let elem = ref.current;
     
     let clientHeight = elem.clientHeight; //visable height of the main element
     let scrollHeight = elem.scrollHeight; //amount the element has been scrolled
     let scrollTop = elem.scrollTop; //amount the element can be scrolled
 
-    let percentageScrolled = (scrollTop) / (scrollHeight - clientHeight); //right now it caps where the slider maxes out but whatever ill cross that bridge when i get there
-    let percentageOfPageVisible = (clientHeight / scrollHeight);
+    //scroll page manually
 
-    let thumbHeight = percentageOfPageVisible * clientHeight;
-    let thumbTop = percentageScrolled * (clientHeight - thumbHeight);
+    scrollTop = scrollTop + DeltaY;
+    
+    console.log(scrollTop);
+
+    elem.scroll(0, scrollTop);
+
+
+    let percentageScrolled = (scrollTop) / (scrollHeight - clientHeight);
+    percentageScrolled = Math.max(0, percentageScrolled);
+    percentageScrolled = Math.min(1, percentageScrolled);
+
+
+    let thumbTop = percentageScrolled * (clientHeight - height);
 
     setTop(thumbTop);
+  },[ref, setTop, height]);
+
+  let updateScrollbarSize = useCallback(() => {
+    let elem = ref.current;
+
+    let clientHeight = elem.clientHeight; //visable height of the main element
+    let scrollHeight = elem.scrollHeight; //amount the element has been scrolled
+
+    let hasOverflow = clientHeight >= scrollHeight;
+    setDisplay(!hasOverflow);
+
+    let percentageOfPageVisible = (clientHeight / scrollHeight);
+    let thumbHeight = percentageOfPageVisible * clientHeight;
+
     setHeight(thumbHeight);
-    console.log('fired');
-  },[ref.current, setTop, setHeight]);
+
+    updateScrollbarPosition(0);
+  }, [ref, setDisplay, updateScrollbarPosition])
 
   //connect to scroll wheel
   useEffect(() => {
-    ref.current.addEventListener('scroll', updateScrollbar);
+    let eventHandler = (event) => {
+      updateScrollbarPosition(event.deltaY);
+    }
+
+    let elem = ref.current;
+
+    elem.addEventListener('wheel', eventHandler);
 
     return () => {
-      ref.current.removeEventListener('scroll', updateScrollbar);
+      elem.removeEventListener('wheel', eventHandler);
     }
-  })
+  }, [ref, updateScrollbarPosition])
 
   //observe size change
   useEffect(() => {
-    let observer = new ResizeObserver(updateScrollbar)
+    let observer = new ResizeObserver(updateScrollbarSize)
 
     if (ref.current){
       observer.observe(ref.current);
@@ -46,23 +79,7 @@ function Scrollbar(props){
     return () => {
       observer.disconnect();
     }
-  })
-
-
-
-  /*
-  both of these should be tacked with a resize observer
-  useEffect(() => {
-    if (ref.current.clientHeight >= ref.current.scrollHeight){
-      setDisplay(false);
-    }
-  });
-
-  useEffect(() => {
-    updateScrollbar();
-  }, [scrllheight]);*/
-
-  
+  }, [updateScrollbarSize])
   
 
   let child = Children.only(props.children);
@@ -70,7 +87,9 @@ function Scrollbar(props){
     <Fragment>
       {cloneElement(child, {...child.props, ref})}
       <div className = 'scrollbar_track' style = {{top:ref.current?.getBoundingClientRect?.()?.y ?? null,display:display ? null : 'none'}}>
-        <div className = 'scrollbar_thumb' style = {{top,height}}></div>
+        <div className = 'scrollbar_thumb_outer' style = {{top,height}}>
+          <div className = 'scrollbar_thumb_inner'></div>
+        </div>
       </div>
     </Fragment>
   )

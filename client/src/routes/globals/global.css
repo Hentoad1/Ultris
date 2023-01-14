@@ -34,8 +34,8 @@ li{
 }
 
 .page_content{
-  overflow-y:scroll;
-
+  overflow:hidden;
+  
   position:relative;
   height:calc(100% - var(--navbar-height));
 
