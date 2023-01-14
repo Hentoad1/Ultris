@@ -50,10 +50,12 @@
 .playerStatus > .username{
   font-size:2rem;
   margin-bottom:0.25em;
+  width:100%;
 }
 
 .playerStatus > .status{
   font-size:1rem;
+  width:100%;
 }
 
 .lobbymenu > .playerInfo > .userlistWrapper{
@@ -90,6 +92,7 @@
 .lobbymenu > .playerInfo >  .userlistWrapper > .userlist > li.spectator{
   opacity:0.5;
 }
+
 
 .lobbymenu > .countdown{
 	grid-row:3;

@@ -3,6 +3,8 @@ import { NavLink, Link, useSearchParams } from 'react-router-dom';
 
 import useAPI from '../../assets/hooks/useAPI.js';
 
+import Scrollbar from '../../assets/components/scrollbar.js';
+
 import {ReactComponent as SingleLeft} from '../../assets/svgs/Single_Arrow_Left.svg';
 import {ReactComponent as DoubleLeft} from '../../assets/svgs/Double_Arrow_Left.svg';
 import {ReactComponent as SingleRight} from '../../assets/svgs/Single_Arrow_Right.svg';
@@ -129,16 +131,38 @@ function Leaderboard(props){
   }
 
   return (
-    <div className = 'page_content leaderboardWrapper'>
-      <div className = 'categoryButtons'>
-        <NavLink to = '/leaderboard/sprint'>Sprint</NavLink>
-        <NavLink to = '/leaderboard/blitz'>Blitz</NavLink>
+    <Scrollbar>
+      <div className = 'page_content leaderboardWrapper'>
+        <div className = 'categoryButtons'>
+          <NavLink to = '/leaderboard/sprint'>Sprint</NavLink>
+          <NavLink to = '/leaderboard/blitz'>Blitz</NavLink>
+        </div>
+        <div className = 'leaderboard'>
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {table}
+          {navigatorContent}
+        </div>
       </div>
-      <div className = 'leaderboard'>
-        {table}
-        {navigatorContent}
-      </div>
-    </div> 
+    </Scrollbar>
   )
 }
 
