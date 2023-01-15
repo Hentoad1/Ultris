@@ -2,7 +2,10 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var sessions = require('express-session');
+var session = require('express-session');
+var mysql2 = require('mysql2/promise');
+var MySQLStore = require('express-mysql-session')(session);
+var sharedSession = require('express-socket.io-session');
 var logger = require('morgan');
 var cors = require("cors");
 var app = express();
@@ -12,7 +15,6 @@ require('dotenv').config();
 require('./modules/email');
 
 app.set("trust proxy", 1);
-
 
 // direct to build folder
 let dir = path.resolve(__dirname + '/../client/build');
@@ -25,29 +27,51 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-var sessionMiddleware = sessions({
+const db_options = {
+	host: "localhost",
+	user: "root",
+	password: process.env.DATABASE_PASSWORD,
+	database:'session',
+	port:'3306'
+}
+
+var connection = mysql2.createPool(db_options);
+var sessionStore = new MySQLStore({
+  secret: process.env.SESSIONSECRET,
+  resave: true,
+  saveUninitialized: true,
+}, connection);
+
+const session_options = {
   secret: process.env.SESSIONSECRET,
 	name: 'id',
-  saveUninitialized:true,
-  resave:false,
+  store:sessionStore,
+  resave: true,
+  saveUninitialized: true,
   cookie: {
     httpOnly:true,
     expires:30 * 24 * 60 * 60 * 1000,
     secure:false,
-    sameSite:false
+    sameSite:false,
   }
-});
+};
+
+let sessionMiddleware = session(session_options);
 
 app.use(sessionMiddleware);
-
-app.use(async function(req, res, next){ //simulate latency
-  await new Promise((resolve, reject) => setTimeout(resolve, 1000));
-  next()
-});
 
 var router = require('./routes/index');
 app.use('/', router);
 
+let wrapMiddleware = (io) => {
+  const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+
+  io.use(sharedSession(session,{
+    autoSave:true,
+    resave: true,
+    saveUninitialized: true,
+  }));
+}
 
 // create 404 if no route is found
 app.use(function(req, res, next) {
@@ -70,4 +94,4 @@ app.use(function(err, req, res, next) {
   res.send({error:'An unexpected error has occured. Please try again later.'});
 });
 
-module.exports = {app, sessionMiddleware};
+module.exports = {app, wrapMiddleware};

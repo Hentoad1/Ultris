@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router';
 import { Link } from 'react-router-dom';
+import useSocket from '../../assets/hooks/useSocket';
 
 import {ReactComponent as Refresh} from '../../assets/svgs/Reload.svg';
 
@@ -8,7 +8,7 @@ import './browse.css';
 
 
 function BrowseMenu(){
-  let socket = useOutletContext();
+  let socket = useSocket();
   let [rooms, setRooms] = useState([]);
 
   let refresh = () => {

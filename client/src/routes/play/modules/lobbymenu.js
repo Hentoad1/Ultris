@@ -1,14 +1,15 @@
 import { Fragment, useState, useEffect } from 'react';
-import { useLocation, useOutletContext } from 'react-router';
+import { useLocation } from 'react-router';
 import CustomCheckbox from '../../../assets/components/customCheckbox';
 import Scrollbar from '../../../assets/components/scrollbar';
+import useSocket from '../../../assets/hooks/useSocket';
 import useAlerts from '../../../assets/hooks/useAlerts';
 import useSession from '../../../assets/hooks/useSession';
 import './lobbymenu.css';
 
 function LobbyMenu(){
   let location = useLocation();
-  let socket = useOutletContext();
+  let socket = useSocket();
   let [{username}] = useSession();
   let [display, setDisplay] = useState(true);
   let [[players, spectators], setPlayers] = useState([[username], []]);
@@ -113,7 +114,7 @@ function LobbyMenu(){
         <Scrollbar>
           <div className = 'userlistWrapper'>
             <ul className = 'userlist'>
-              {players.map((username,i) => <li key = {i}>{username ?? 'GUEST'}</li>)}
+              {players.map((username,i) => <li key = {i}>{username}</li>)}
               {spectators.map((username,i) => <li key = {players.length + i} className = 'spectator'>{username ?? 'GUEST'}</li>)}
             </ul>
           </div>

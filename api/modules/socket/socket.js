@@ -17,7 +17,7 @@ const handle = function(f) {
   }
 }
 
-function bind(io, sessionMiddleware){
+function bind(io){
   const Room = require('./room')(io); //import rooms class
   const rooms = new Map(); //create room map
   const publicRooms = new Set(); //create public rooms set so it can be listed easily in the browse menu
@@ -40,38 +40,46 @@ function bind(io, sessionMiddleware){
 
   rooms.set('quickplay', new Room(quickplayInfo, RoomKillFunction));
 
-  const wrap = function(middleware){ 
-    return function(socket, next){
-      middleware(socket.request, {}, next);
-    }
-  }
-
-  io.use(wrap(sessionMiddleware));
-
-  io.use((socket, next) => {
+  /*io.use((socket, next) => {
+    console.log(socket.request.session);
     if (socket.request.session.initalized){
-      socket.username = socket.request.session.user.username;
-      socket.uuid = socket.request.session.user.uuid;
-      next();
+
     }else{
-      let err = new Error('There was an error loading your account information, please refresh the page.');
-      err.data = {alert:true};
-      next(err);
+      let error = new Error('Session did not initalize properly, please refresh the page.');
+      error.data = {code:"BAD_SESSION"};
+
+      return next(error);
     }
-  })
+
+    
+
+
+    next();
+  })*/
 
 	io.on('connection',handle(function(socket){
+
+    socket.use(() => {
+      socket.request.session.reload(err => {
+        console.log(err);
+      })
+    })
+
+    console.log(socket.request.session);
+    
 		socket.boardData = new Board();
     socket.ownedRoom = null;
 
-    resetBinds(socket);
+    addUserBinds(socket);
 	}));
 
-  function resetBinds(socket){
-    socket.removeAllListeners();
+  function addUserBinds(socket){
+   
+    let join_room_cleanup = () => {};
+    const join_room = handle(function(roomcode,callback){
+      socket.getUserInfo();
 
-    socket.on('join room',handle(function(roomcode,callback){
-      resetBinds(socket)
+      removeSecondaryListeners()
       if (!rooms.has(roomcode)){
         return socket.emit('request_error', {error:'Room does not exist.', redirect: '/play'});
       }
@@ -108,7 +116,7 @@ function bind(io, sessionMiddleware){
     
       socket.emit('sendPID', socket.publicID);
       
-      socket.on('update lobby', handle((newData) => {
+      const update_lobby = handle((newData) => {
         if (socket.uuid !== currentRoom.owner.uuid){
           return;
         }
@@ -135,17 +143,17 @@ function bind(io, sessionMiddleware){
           outgoingData.spectating = user.spectating;
           socket.emit('update lobby info', outgoingData);
         })
-      }));
+      })
 
-      socket.on('start game', handle(function(){
+      const start_game = handle(() => {
         if (currentRoom.aliveUsers.size + currentRoom.deadUsers.size > 1){
           currentRoom.beginCountdown();
         }else{
           socket.emit('request_error', {error:'You cannot start the game with only 1 player!'});
         }
-      }));
+      });
 
-      socket.on('swap activity', handle((callback) => {
+      const swap_activity = handle((callback) => {
         if (!userObject.spectating){
           currentRoom.setInActive(userObject);
         }else{
@@ -161,64 +169,94 @@ function bind(io, sessionMiddleware){
         outgoingData.admin = (currentRoom.owner.uuid === socket.uuid);
         outgoingData.spectating = userObject.spectating;
         callback(outgoingData);
-      }));
+      });
 
-      socket.on('defeat',handle(function(){
+      const defeat = handle(function(){
         currentRoom.killUser(userObject);
-      }));
-      
-      socket.on('spectate', handle(function(){
+      });
+
+      const spectate = handle(function(){
         currentRoom.setInActive(userObject);
-      }));
-      
-      socket.on('play', handle(function(){
+      });
+
+      const play = handle(function(){
         currentRoom.setActive(userObject);
-      }));
-      
-      socket.on('disconnect', handle(function(){
+      });
+
+      const disconnect = handle(function(){
         console.log('disconnect fired');
         currentRoom.removeUser(userObject);
         socket.removeAllListeners();
-      }));
+      });
 
-      socket.on('reset', handle(function(){
+      const reset = handle(function(){
         currentRoom.removeUser(userObject);
-      }));
-      
-      socket.on('send message', handle(function(message){ // MESSAGES
+      });
+
+      const send_message = handle(function(message){ // MESSAGES
         io.in(roomcode).emit('message','userMessage',socket.username,message);
-      }));
-      
-      socket.on('hold', handle(function(){
+      });
+
+      const hold = handle(function(){
         socket.boardData.hold();
-      }))
-  
-      //MANAGE GAME EVENTS
-      socket.on('placed',handle(function(board, movement){
+      });
+
+      const placed = handle(function(board, movement){
         let [valid, pointInfo] = socket.boardData.newMove(board, movement);
   
         socket.broadcast.emit('recieve board',board,socket.publicID);
-      }));
-      
-      socket.on('send peice',handle(function(cords,ghost,color){
+      });
+
+      const send_peice = handle(function(cords,ghost,color){
         socket.broadcast.emit('recieve peice',cords,ghost,color,socket.publicID);
-      }));
-    }));
+      });
+
+      socket.on('update lobby', update_lobby);
+      socket.on('start game', start_game);
+      socket.on('swap activity', swap_activity);
+      socket.on('defeat', defeat);
+      socket.on('spectate', spectate);
+      socket.on('play', play);
+      socket.on('disconnect', disconnect);
+      socket.on('reset', reset);
+      socket.on('send message', send_message);
+      socket.on('hold', hold);
+      socket.on('placed', placed);
+      socket.on('send peice', send_peice);
+
+      join_room_cleanup = () => {
+        socket.off('update lobby', update_lobby);
+        socket.off('start game', start_game);
+        socket.off('swap activity', swap_activity);
+        socket.off('defeat', defeat);
+        socket.off('spectate', spectate);
+        socket.off('play', play);
+        socket.off('disconnect', disconnect);
+        socket.off('reset', reset);
+        socket.off('send message', send_message);
+        socket.off('hold', hold);
+        socket.off('placed', placed);
+        socket.off('send peice', send_peice);
+      }
+    });
+
+    socket.on('join room',join_room);
   
-    socket.on('sprint', handle(function(salt){
-      resetBinds(socket);
+    let sprint_cleanup = () => {};
+    const sprint = handle(function(salt){
+      removeSecondaryListeners();
       socket.boardData.reset(salt);
   
       let totalLinesCleared = 0; //finish condition
       let startDate = Date.now(); //score measurement
   
       let synced = true;
-      socket.on('hold', handle(function(){
+
+      const hold = handle(function(){
         socket.boardData.hold();
-      }))
+      });
   
-      //MANAGE GAME EVENTS
-      socket.on('placed',handle(function(board, movement){
+      const placed = handle(function(board, movement){
         let [valid, pointInfo] = socket.boardData.newMove(board, movement);
         if (synced){
           if (valid){
@@ -240,11 +278,23 @@ function bind(io, sessionMiddleware){
             synced = false;
           }
         }
-      }));
-    }));
+      });
+
+      socket.on('hold', hold);
+      socket.on('placed', placed);
+
+      sprint_cleanup = () => {
+        socket.off('hold', hold);
+        socket.off('placed', placed);
+      }
+    });
+
+    socket.on('sprint', sprint);
+
   
-    socket.on('blitz', handle(function(salt){
-      resetBinds(socket);
+    let blitz_cleanup = () => {};
+    const blitz = handle(function(salt){
+      removeSecondaryListeners();
       socket.boardData.reset(salt);
   
       let startDate = Date.now(); //finish condition
@@ -255,8 +305,7 @@ function bind(io, sessionMiddleware){
         socket.boardData.hold();
       }))
   
-      //MANAGE GAME EVENTS
-      socket.on('placed',handle(function(board, movement, fallPoints){
+      const placed = handle(function(board, movement, fallPoints){
         let [valid, pointInfo] = socket.boardData.newMove(board, movement);
         if (synced){
           if (valid){
@@ -274,9 +323,9 @@ function bind(io, sessionMiddleware){
             synced = false;
           }
         }
-      }));
-  
-      socket.on('timeout', function(fallPoints){
+      })
+
+      const timeout = handle(function(fallPoints){
         if (synced){ 
           if (fallPoints > 80){
             synced = false;
@@ -288,6 +337,15 @@ function bind(io, sessionMiddleware){
           addLeaderboardScore('blitz', socket.uuid, totalPoints);
         }
       })
+
+      //MANAGE GAME EVENTS
+      socket.on('placed', placed);
+      socket.on('timeout', timeout);
+
+      blitz_cleanup = () => {
+        socket.off('placed', placed);
+        socket.off('timeout', timeout);
+      }
   
       function calcPoints(data){
         if (data.lines === 0){
@@ -305,9 +363,11 @@ function bind(io, sessionMiddleware){
   
         return points;
       }
-    }));
+    })
+
+    socket.on('blitz', blitz);
   
-    socket.on('create room',handle(function(callback){
+    const create_room = handle(function(callback){
       if (socket.ownedRoom !== null){
         return callback(socket.ownedRoom.id);
       }
@@ -329,9 +389,11 @@ function bind(io, sessionMiddleware){
 
       rooms.set(roomcode, createdRoom);
       callback(roomcode);
-    }));
+    });
 
-    socket.on('get rooms', handle(function(callback){
+    socket.on('create room', create_room);
+
+    const get_rooms = handle(function(callback){
       let roomData = [];
 
       publicRooms.forEach(id => {
@@ -349,12 +411,32 @@ function bind(io, sessionMiddleware){
       });
 
       callback(roomData);
-    }));
-  
-    socket.on('reset', handle(() => {
-      resetBinds(socket);
-    }))
-  }  
+    });
+
+    socket.on('get rooms', get_rooms);
+
+    const reset = handle(() => {
+      removeSecondaryListeners();
+    });
+
+    socket.on('reset', reset)
+
+    let removeSecondaryListeners = () => {
+      /*socket.off('join room', join_room);
+      socket.off('sprint', sprint);
+      socket.off('blitz', blitz);
+      socket.off('get rooms', get_rooms);
+      socket.off('create room', create_room);*/
+
+      join_room_cleanup();
+      sprint_cleanup();
+      blitz_cleanup();
+
+      join_room_cleanup = () => {};
+      sprint_cleanup = () => {};
+      blitz_cleanup = () => {};
+    }
+  }
 }
 
 module.exports = bind;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router';
 import Scrollbar from '../../../assets/components/scrollbar';
+import useSocket from '../../../assets/hooks/useSocket';
 import './statmenu.css';
 
 const minorStatTitles = [
@@ -26,7 +26,7 @@ const defaultStats = {
 }
 
 function StatMenu(){
-  let socket = useOutletContext();
+  let socket = useSocket();
   let [display, setDisplay] = useState(false);
   let [stats, setStats] = useState(defaultStats);
 

@@ -4,11 +4,11 @@ import { GameModeContext } from '../gameWrapper';
 
 import initalize from './logic.js'
 import './game.css';
-import { useOutletContext } from 'react-router';
 import useControls from '../../../assets/hooks/useControls';
+import useSocket from '../../../assets/hooks/useSocket';
 
 function Game(props){
-  let socket = useOutletContext();
+  let socket = useSocket();
   let gameMode = useContext(GameModeContext);
   let [getControls] = useControls();
 

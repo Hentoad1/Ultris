@@ -47,42 +47,4 @@ function queryDB(...query){
   });
 }
 
-/*function genUUID(callback){
-  try {
-    let id = uuid.v4();
-
-    queryDB("SELECT EXISTS(SELECT * FROM account WHERE uuid = ?)", id, function (err, results) {
-      if (err) return callback(err);
-
-      let object = results[0];
-      let result = Object.values(object)[0];
-
-      if (result === 1){
-        genUUID(callback); //try again
-      }else{
-        callback(err, id);
-      }
-    });
-  } catch (error) {
-    callback(error);
-  }
-}*/
-
-/*function queryDB(...query){
-  try {
-    let callback = query.pop();
-
-    let connection = mysql.createConnection(options);
-    connection.query(...query, function(err, result) {
-      connection.end();
-
-      callback(err, result);
-    });
-  } catch (error) {
-   callback(error); 
-  }
-}*/
-
-
-
 module.exports = {genUUID, queryDB};

@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var {app, sessionMiddleware} = require('../app');
+var {app, wrapMiddleware} = require('../app');
 var debug = require('debug')('api:server');
 var http = require('http');
 
@@ -21,19 +21,14 @@ app.set('port', port);
 
 var server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server, {
-  cors: {
-    origin: '*',
-  }
-});
+const io = new Server(server);
+
+wrapMiddleware(io);
 
 //setup socket
-/*io.use(function(socket, next) {
-  sessionMiddleware(socket.request, socket.request.res, next);
-});*/
 
 const bind = require('../modules/socket/socket');
-bind(io, sessionMiddleware);
+bind(io);
 
 /**
  * Listen on provided port, on all network interfaces.

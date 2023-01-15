@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router';
+import useSocket from '../../../assets/hooks/useSocket';
 
 import './chat.css';
 
 const WhiteSpaceRegex = new RegExp(/^\s*$/);
 
 function Chat(){
-  let socket = useOutletContext();
+  let socket = useSocket();
   let [messages, setMessages] = useState([]);
   let [inLobby, setInLobby] = useState(true);
 

@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect, createContext } from 'react';
 
-import { useOutletContext, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
 import {ReactComponent as Disconnect} from '../../assets/svgs/Disconnected.svg';
 
@@ -11,13 +11,14 @@ import StatMenu from './modules/statmenu.js';
 import WinMenu from './modules/winmenu.js';
 import LobbyMenu from './modules/lobbymenu.js';
 import './gameWrapper.css';
+import useSocket from '../../assets/hooks/useSocket';
 
 const GameModeContext = createContext();
 
 const singlePlayerModes = new Set(['sprint','blitz','endless']);
 
 function Wrapper(){
-  let socket = useOutletContext();
+  let socket = useSocket();
   let [mode, setMode] = useState();
   let [connected, setConnected] = useState(socket.connected);
   let params = useParams();

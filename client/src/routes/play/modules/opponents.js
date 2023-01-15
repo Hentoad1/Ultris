@@ -3,10 +3,10 @@ import { Fragment, createRef, useState, useEffect } from 'react';
 import './opponents.css';
 
 import { bind } from './bind.js';
-import { useOutletContext } from 'react-router';
+import useSocket from '../../../assets/hooks/useSocket';
 
 function Opponents(){
-  let socket = useOutletContext();
+  let socket = useSocket();
   let [userData, setUserData] = useState({users: [], redraw: false});
   let [resize, setResize] = useState(null);
 

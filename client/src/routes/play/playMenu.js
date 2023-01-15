@@ -1,10 +1,11 @@
-import { Link, useNavigate, useOutletContext  } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
+import useSocket from '../../assets/hooks/useSocket';
 
 import './playMenu.css';
 
 function PlayMenu(){
   let Navigate = useNavigate();
-  let socket = useOutletContext();
+  let socket = useSocket();
 
   let createRoom = function(){
     socket.emit('create room',roomcode => {

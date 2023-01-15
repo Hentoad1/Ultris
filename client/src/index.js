@@ -17,7 +17,6 @@ import Relog from './routes/dashboard/account/relog/relog.js'
 import BrowseMenu from './routes/play/browse.js';
 import PlayMenu from './routes/play/playMenu.js';
 import Wrapper from './routes/play/gameWrapper';
-import SocketWrapper from './routes/play/socketWrapper.js';
 //404
 import Send404 from './routes/404/404.js';
 //verify
@@ -49,7 +48,7 @@ root.render(
                 <Route path='relog' element = {<Relog/>} />
               </Route>
             </Route>
-            <Route path='play' element = {<SocketWrapper/>}>
+            <Route path='play'>
               <Route index element = {<PlayMenu />} />
               <Route path='browse' element = {<BrowseMenu/>} />
               <Route path=':gameMode' element = {<Wrapper />} />

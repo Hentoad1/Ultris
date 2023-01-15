@@ -2,6 +2,7 @@ import { useState, useEffect, useContext, createContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const SessionContext = createContext();
+
 const Provider = (props) => {
   const [session, setSession] = useState(JSON.parse(localStorage.getItem('session') ?? JSON.stringify({username:'', guest:true})));
   const location = useLocation();

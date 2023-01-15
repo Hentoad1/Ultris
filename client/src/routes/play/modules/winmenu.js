@@ -1,13 +1,13 @@
 import {useState, useEffect} from 'react';
-import { useOutletContext } from 'react-router';
 import Scrollbar from '../../../assets/components/scrollbar';
+import useSocket from '../../../assets/hooks/useSocket';
 
 import './winmenu.css';
 
 const suffixList = ['ST','ND','RD','TH'];
 
 function WinMenu(){
-  let socket = useOutletContext();
+  let socket = useSocket();
   let [display, setDisplay] = useState(false);
   let [playerList, setPlayerList] = useState([]);
 
