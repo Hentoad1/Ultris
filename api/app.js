@@ -44,15 +44,14 @@ var sessionStore = new MySQLStore({
 
 const session_options = {
   secret: process.env.SESSIONSECRET,
-	name: 'id',
+  resave: false,
+  saveUninitialized:true,
   store:sessionStore,
-  resave: true,
-  saveUninitialized: true,
   cookie: {
-    httpOnly:true,
-    expires:30 * 24 * 60 * 60 * 1000,
+    httpOnly:false,
+    expires:1000 * 60 * 60 * 24 * 30,
     secure:false,
-    sameSite:false,
+    sameSite:'lax',
   }
 };
 
@@ -66,10 +65,8 @@ app.use('/', router);
 let wrapMiddleware = (io) => {
   const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
-  io.use(sharedSession(session,{
+  io.use(sharedSession(sessionMiddleware,{
     autoSave:true,
-    resave: true,
-    saveUninitialized: true,
   }));
 }
 

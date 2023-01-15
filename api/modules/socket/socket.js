@@ -40,32 +40,13 @@ function bind(io){
 
   rooms.set('quickplay', new Room(quickplayInfo, RoomKillFunction));
 
-  /*io.use((socket, next) => {
-    console.log(socket.request.session);
-    if (socket.request.session.initalized){
-
-    }else{
-      let error = new Error('Session did not initalize properly, please refresh the page.');
-      error.data = {code:"BAD_SESSION"};
-
-      return next(error);
-    }
-
-    
-
-
-    next();
-  })*/
-
 	io.on('connection',handle(function(socket){
+    console.log(socket.handshake.session);
 
-    socket.use(() => {
-      socket.request.session.reload(err => {
-        console.log(err);
-      })
-    })
-
-    console.log(socket.request.session);
+    if (socket.handshake.session.initalized){
+      socket.username = socket.handshake.session.user.username;
+      socket.uuid = socket.handshake.session.user.uuid;
+    }
     
 		socket.boardData = new Board();
     socket.ownedRoom = null;
@@ -77,8 +58,6 @@ function bind(io){
    
     let join_room_cleanup = () => {};
     const join_room = handle(function(roomcode,callback){
-      socket.getUserInfo();
-
       removeSecondaryListeners()
       if (!rooms.has(roomcode)){
         return socket.emit('request_error', {error:'Room does not exist.', redirect: '/play'});

@@ -12,6 +12,7 @@ function useAPI(){
   let APIcall = function(path, body, callback = function(){}){
     let options = (body) ? {
       method: 'POST',
+      credentials: 'include',
       body: JSON.stringify(body),
       headers: {
         'Content-type':'application/json'
