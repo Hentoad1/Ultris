@@ -36,11 +36,7 @@ const db_options = {
 }
 
 var connection = mysql2.createPool(db_options);
-var sessionStore = new MySQLStore({
-  secret: process.env.SESSIONSECRET,
-  resave: true,
-  saveUninitialized: true,
-}, connection);
+var sessionStore = new MySQLStore({}, connection);
 
 const session_options = {
   secret: process.env.SESSIONSECRET,
