@@ -41,12 +41,16 @@ function bind(io){
   rooms.set('quickplay', new Room(quickplayInfo, RoomKillFunction));
 
 	io.on('connection',handle(function(socket){
-    console.log(socket.handshake.session);
+    io.use((socket, next) => {
+      if (socket.handshake.session.initalized){
+        socket.username = socket.handshake.session.user.username;
+        socket.uuid = socket.handshake.session.user.uuid;
 
-    if (socket.handshake.session.initalized){
-      socket.username = socket.handshake.session.user.username;
-      socket.uuid = socket.handshake.session.user.uuid;
-    }
+        next();
+      }else{
+        next(new Error("Unauthorized"));
+      }
+    })
     
 		socket.boardData = new Board();
     socket.ownedRoom = null;

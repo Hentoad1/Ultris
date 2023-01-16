@@ -28,9 +28,13 @@ router.use(function(req,res,next){
       expiration:null
     }
 
-    req.session.save();
+    req.session.save(err => {
+      if (err) console.log(err);
 
-    next();
+      console.log('session has been saved');
+
+      next();
+    });
   }).catch(next);
 });
 

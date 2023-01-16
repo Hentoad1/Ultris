@@ -38,7 +38,6 @@ function cleanUsername(username){
 
     var wordIndex = noLeetUsername.indexOf(word);
     while(wordIndex > -1){
-      console.log('trying to remove');
       username = username.slice(0,wordIndex) + replacement + username.slice(wordIndex + replacement.length);
 	    wordIndex = noLeetUsername.indexOf(word, wordIndex + replacement.length);
     }
@@ -97,9 +96,6 @@ function verifyEmail(email){
       
       let local = email.slice(0,atIndex);
       let domain = email.slice(atIndex + 1);
-      
-      console.log(local);
-      console.log(domain);
       
       if (local.length > 64 || local.startsWith('.') || local.endsWith('.') || local.includes('..')){
         return false;

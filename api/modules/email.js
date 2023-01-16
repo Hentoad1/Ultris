@@ -25,8 +25,6 @@ function emailVerifyLink(options){
       }
     }
 
-    console.log(options);
-
     mailer.send(payload).then(resolve).catch(reject);
   })
 }
@@ -78,8 +76,6 @@ function emailResetLink(options){
         link:options.link
       }
     }
-
-    console.log(options);
 
     mailer.send(payload).then(resolve).catch(reject);
   })

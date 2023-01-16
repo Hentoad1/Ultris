@@ -20,10 +20,16 @@ app.set("trust proxy", 1);
 let dir = path.resolve(__dirname + '/../client/build');
 app.use(express.static(dir));
 
-app.use(cors());
+
+const corsOptions = {
+  origin: 'http://localhost:9000',  //Your Client, do not write '*'
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -41,11 +47,11 @@ var sessionStore = new MySQLStore({}, connection);
 const session_options = {
   secret: process.env.SESSIONSECRET,
   resave: false,
-  saveUninitialized:true,
+  saveUninitialized:false,
   store:sessionStore,
   cookie: {
     httpOnly:false,
-    expires:1000 * 60 * 60 * 24 * 30,
+    maxAge:1000 * 60 * 60 * 24 * 30,
     secure:false,
     sameSite:'lax',
   }
@@ -59,8 +65,6 @@ var router = require('./routes/index');
 app.use('/', router);
 
 let wrapMiddleware = (io) => {
-  const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
-
   io.use(sharedSession(sessionMiddleware,{
     autoSave:true,
   }));

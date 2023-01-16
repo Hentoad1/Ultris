@@ -108,6 +108,8 @@ router.post('/login', function(req, res, next) {
           guest:false,
           verified: user.verified === 1
         }
+        console.log(req.session);
+
         res.send({redirect:{path:'/play',refresh:true,reload:true}});
       }else{
         res.send({error:'Incorrect Login Information.'});

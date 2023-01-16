@@ -8,7 +8,6 @@ function addLeaderboardScore(type, uuid, score){
   }
 
   queryDB(`SELECT * FROM ${type} WHERE uuid = ?`, [uuid]).then(results => {
-    console.log(uuid);
     if (results.length === 0){
       console.log('guest account cannot save score');
       return;
