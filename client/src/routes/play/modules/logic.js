@@ -306,7 +306,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
       reset(salt);
   }
 
-  socket.on('recieve garbage', receiveGarbageFunction);
+  socket.on('receive garbage', receiveGarbageFunction);
   
   socket.on('cancel garbage', cancelGarbageFunction);
 
@@ -510,7 +510,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
     if (current !== null) { //draw piece
       current.display();
       if (gameMode === 'online') {
-        socket.emit('send peice', current.export(), current.exportShadow(), current.colorIndex);
+        socket.emit('send piece', current.export(), current.exportShadow(), current.colorIndex);
       }
     }
   }
@@ -809,7 +809,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
     current = new Tetrimino(queue[0]);
 
 
-    /*This is genius, this calls a non test of a shift of 0,0 returning a boolean value of if the peice spawns inside another peice already but also because it is not doing a test it will update the falling varabile causing peices spawning on top of blocks to still place properly.*/
+    /*This is genius, this calls a non test of a shift of 0,0 returning a boolean value of if the piece spawns inside another piece already but also because it is not doing a test it will update the falling varabile causing pieces spawning on top of blocks to still place properly.*/
     if (!current.shift(0, 0)) {
       end(false);
       if (gameMode === 'blitz'){
@@ -1063,7 +1063,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
   function cleanup(){
     document.removeEventListener('keydown', keyDownHandler, false);
     document.removeEventListener('keyup', keyUpHandler, false);
-    socket.off('recieve garbage', receiveGarbageFunction);
+    socket.off('receive garbage', receiveGarbageFunction);
     socket.off('cancel garbage', cancelGarbageFunction);
     socket.off('end',endFunction);
     socket.off('start',startFunction);

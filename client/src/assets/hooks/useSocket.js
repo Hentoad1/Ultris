@@ -26,15 +26,6 @@ function SocketWrapper(props){
   useEffect(() => {
     let alertFunc = (error) => {
       console.log(error);
-      if (error.data.code === "BAD_SESSION"){
-        /*socket.once('disconnect', () => {
-          new Promise(r => setTimeout(r, 1000)).then(() => {
-            socket.connect();
-          });
-        })
-
-        socket.disconnect()*/
-      }
       if (error.data?.alert){
         alert(error.message, {type:'error'});
       }

@@ -162,7 +162,7 @@ function passVars(io){
           
           socket.emit('updateUsers',userData,true); // spectate is true in this case.
         
-          socket.emit('recieve boards',boardData); // spectate is true in this case.
+          socket.emit('receive boards',boardData); // spectate is true in this case.
         }
       }
 

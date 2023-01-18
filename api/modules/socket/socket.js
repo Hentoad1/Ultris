@@ -187,11 +187,11 @@ function bind(io){
       const placed = handle(function(board, movement){
         let [valid, pointInfo] = socket.boardData.newMove(board, movement);
   
-        socket.broadcast.emit('recieve board',board,socket.publicID);
+        socket.broadcast.emit('receive board',board,socket.publicID);
       });
 
-      const send_peice = handle(function(cords,ghost,color){
-        socket.broadcast.emit('recieve peice',cords,ghost,color,socket.publicID);
+      const send_piece = handle(function(cords,ghost,color){
+        socket.broadcast.emit('receive piece',cords,ghost,color,socket.publicID);
       });
 
       socket.on('update lobby', update_lobby);
@@ -205,7 +205,7 @@ function bind(io){
       socket.on('send message', send_message);
       socket.on('hold', hold);
       socket.on('placed', placed);
-      socket.on('send peice', send_peice);
+      socket.on('send piece', send_piece);
 
       join_room_cleanup = () => {
         socket.off('update lobby', update_lobby);
@@ -219,7 +219,7 @@ function bind(io){
         socket.off('send message', send_message);
         socket.off('hold', hold);
         socket.off('placed', placed);
-        socket.off('send peice', send_peice);
+        socket.off('send piece', send_piece);
       }
     });
 

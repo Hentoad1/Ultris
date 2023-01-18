@@ -66,7 +66,7 @@ function bind(socket, createRef, setUserData) {
     }
   }
 
-  const pieceFunction = function (peice, ghost, color, id) {
+  const pieceFunction = function (piece, ghost, color, id) {
     let [userIndex, user] = getUser(id);
     if (userIndex !== -1 && id !== currentPid) {
       display(user, function (ctx, size) {
@@ -76,7 +76,7 @@ function bind(socket, createRef, setUserData) {
           ghost.forEach(e => ctx.fillRect(e[0] * size + 1.5, (19 - e[1]) * size + 1.5, size - 2, size - 2));
         }
 
-        peice.forEach(e => pasteOnGrid(e[0], e[1], color, ctx, size));
+        piece.forEach(e => pasteOnGrid(e[0], e[1], color, ctx, size));
       });
     }
   };
@@ -194,9 +194,9 @@ function bind(socket, createRef, setUserData) {
   socket.on('sendPID', PIDFunction);
   socket.on('updateUsers', updateFunction);
   socket.on('remove user', removeFunction);
-  socket.on('recieve boards', boardsFunction);
-  socket.on('recieve board', replaceBoard);
-  socket.on('recieve peice', pieceFunction);
+  socket.on('receive boards', boardsFunction);
+  socket.on('receive board', replaceBoard);
+  socket.on('receive piece', pieceFunction);
   
   window.addEventListener('resize', resizeHandler);
 
@@ -205,9 +205,9 @@ function bind(socket, createRef, setUserData) {
     socket.off('sendPID', PIDFunction);
     socket.off('updateUsers', updateFunction);
     socket.off('remove user', removeFunction);
-    socket.off('recieve boards', boardsFunction);
-    socket.off('recieve board', replaceBoard);
-    socket.off('recieve peice', pieceFunction);
+    socket.off('receive boards', boardsFunction);
+    socket.off('receive board', replaceBoard);
+    socket.off('receive piece', pieceFunction);
     window.removeEventListener('resize', resizeHandler);
   }
 
