@@ -25,6 +25,8 @@ function passVars(io){
       this.playerDeathList = [];
       //set the onExpire function
       this.onExpire = onExpire;
+      //gravity timeout
+      this.timeoutID = 0;
     }
     
     update(){
@@ -46,6 +48,8 @@ function passVars(io){
         io.in(this.id).emit('end',playerData);
         this.deadUsers.add(finalPlayer);
         this.aliveUsers.clear();
+
+        clearTimeout(this.timeoutID);
       }
       
       
@@ -91,10 +95,22 @@ function passVars(io){
       io.in(this.id).emit('start',gameStartDate,bagSalt); //starts the game
 
       this.aliveUsers.forEach(obj => this.resetUser(obj, bagSalt)); //resets the user data.
-        
+      
+      this.startGravity();
+
       this.countingDown = false; //reset the counting down flag.
     }
-  
+
+    startGravity(delay = 10000, rate = 1000){
+      
+      io.in(this.id).emit('gravity', rate);
+
+      rate *= 0.9;
+      delay *= 1.05;
+
+      this.timeoutID = setTimeout(() => this.startGravity(delay, rate), delay)
+    }
+
     expire(){
       console.log('expire started');
       if (typeof this.killExpire === 'function'){

@@ -7,6 +7,7 @@ function Scrollbar(props){
   let [top, setTop] = useState(null);
   let [height, setHeight] = useState(null);
   let [display, setDisplay] = useState(true);
+  let [targetDims, setTargetDims] = useState({});
 
   let updateScrollbarPosition = useCallback((deltaY) => {
     let elem = ref.current;
@@ -84,7 +85,9 @@ function Scrollbar(props){
       mutationObserver.disconnect();
     }
   }, [updateScrollbarSize])
-  
+
+
+
   //scroll page with mouse
   let HandleMouseDown = useCallback((event) => {
     event.preventDefault(); //disables text selection
@@ -120,11 +123,17 @@ function Scrollbar(props){
     window.addEventListener('mousemove', HandleMouseMove);
   }, [top, height, setTop]);
 
+  useEffect(() => {
+    if (ref.current){
+      setTargetDims(ref.current.getBoundingClientRect());
+    }
+  }, [setTargetDims]);
+
   let child = Children.only(props.children);
   return (
     <Fragment>
       {cloneElement(child, {...child.props, style:{"overflow":"hidden"},ref})}
-      <div className = 'scrollbar_track' style = {{top:ref.current?.getBoundingClientRect?.()?.y ?? null,display:display ? null : 'none'}}>
+      <div className = 'scrollbar_track' style = {{left:targetDims.right - 10 ?? null,top:targetDims.y ?? null,height:targetDims.height ?? null,display:display ? null : 'none'}}>
         <div className = 'scrollbar_thumb_outer' style = {{top,height}} onMouseDown = {HandleMouseDown}>
           <div className = 'scrollbar_thumb_inner'></div>
         </div>

@@ -48,7 +48,7 @@ function Settings(){
           <div className = 'description'>The factor that is applied to the soft drop speed. Increasing this will make soft drops faster, but will make it harder to tuck pieces under an overhang.</div>
         </div>
         <div className = 'content'>
-          <HandlingSection min = {1} max = {40} default = {1} step = {1} dir = 'ltr' name = 'SDF'/>
+          <HandlingSection min = {2} max = {40} default = {2} step = {1} dir = 'ltr' name = 'SDF'/>
         </div>
       </div>
 
@@ -108,14 +108,11 @@ function HandlingSection(props){
     }
   }
 
-  let sliderValue;
-  try {
-    sliderValue = slider.current.value;
-  } catch (error) {
-    sliderValue = startingValue;
-  }
+  let sliderValue = slider.current?.value ?? startingValue;
 
-  if (props.name === 'SDF' && sliderValue === 40){
+  console.log(sliderValue, props.name);
+
+  if (props.name === 'SDF' && parseInt(sliderValue) === 40){
     sliderValue = 'Instant';
   }
 

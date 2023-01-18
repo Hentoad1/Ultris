@@ -8,6 +8,7 @@ import useSocket from '../../../assets/hooks/useSocket';
 function Opponents(){
   let socket = useSocket();
   let [userData, setUserData] = useState({users: [], redraw: false});
+  let [playerAlive, setPlayerAlive] = useState(true);
   let [resize, setResize] = useState(null);
 
   useEffect(() => {
@@ -17,15 +18,24 @@ function Opponents(){
 
     return cleanup;
   }, [socket]);
-  
+
   useEffect(() => {
-    if (resize !== null){
-      resize();
+    socket.playerAlive = ((params) => {
+      new Promise(r => setTimeout(r, 1000)).then(() => {
+        setPlayerAlive(params);
+      });
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setPlayerAlive, resize])
+
+  useEffect(() => {
+    if (typeof resize === 'function'){
+      resize(true);
     }
-  }, [resize]);
+  },[resize, playerAlive]);
 
   let users = userData.users;
-  if (users.length > 12){
+  if (users.length > 12 && playerAlive){
       const left = users.slice(0,users.length / 2);
       const right = users.slice(users.length / 2);
 

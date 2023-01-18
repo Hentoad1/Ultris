@@ -187,6 +187,8 @@ function bind(io){
       const placed = handle(function(board, movement){
         let [valid, pointInfo] = socket.boardData.newMove(board, movement);
   
+        console.log(pointInfo)
+
         socket.broadcast.emit('receive board',board,socket.publicID);
       });
 

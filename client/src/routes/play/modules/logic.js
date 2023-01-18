@@ -47,7 +47,7 @@ var b2bMax = 0;
 
 //HANDLING
 const fallSpeed = 1000;
-var handling = { DAS: 133, ARR: 10, DCD: 0, SDF: 1, ISDF: true };
+var handling = { DAS: localStorage.getItem('DAS') ?? 133, ARR: localStorage.getItem('ARR') ?? 167, SDF: localStorage.getItem('SDF') ?? 2, ISDF: localStorage.getItem('SDF') === 'Instant' };
 var DAS = 10;
 
 //PIECES
@@ -79,11 +79,9 @@ var gameRunning = false;
 var garbageQueue = [];
 var garbageMeter = [];
 var dropBonusCounter = 0;
-
-var syncedFallMultiplier = 1;
+var onlineFallRate = 1000;
 
 //SOCKET FUNCTIONS
-
 var receiveGarbageFunction;
 var cancelGarbageFunction;
 var endFunction;
@@ -303,12 +301,20 @@ function initalize(DOM, socket, gameMode, keybinds) {
   };
 
   startFunction = function(startDate,salt){
-      reset(salt);
+    socket.playerAlive(true);
+    reset(salt);
   }
+
+  let setGravity = (rate) => {
+    console.log(rate);
+    onlineFallRate = rate;
+  }  
 
   socket.on('receive garbage', receiveGarbageFunction);
   
   socket.on('cancel garbage', cancelGarbageFunction);
+
+  socket.on('gravity', setGravity);
 
   socket.on('end',endFunction);
 
@@ -700,7 +706,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
     var leftDown = controls.left.held;
     var rightDown = controls.right.held;
     var downDown = controls.soft.held;
-    let fallMultiplier = (gameMode === 'online') ? syncedFallMultiplier : Math.pow(0.8, DOM.level.current.innerHTML);
+    let fallMultiplier = Math.pow(0.8, DOM.level.current.innerHTML);
 
     if (gameRunning) {
       if (leftDown || rightDown) {
@@ -729,17 +735,18 @@ function initalize(DOM, socket, gameMode, keybinds) {
         }
         display();
       } else {
+        console.log(handling)
         const SDFmultiplier = downDown ? handling.SDF : 1;
-        fallTimer -= (currentFrame - previousFrame) * SDFmultiplier;
-        while (fallTimer <= 0) {
-          let fallTotal = fallSpeed * fallMultiplier;
-          if (current.shift(0, -1) && downDown) {
-            DOM.score.current.innerHTML = parseInt(DOM.score.current.innerHTML) + 1;
-            dropBonusCounter++;
+          fallTimer -= (currentFrame - previousFrame) * SDFmultiplier;
+          while (fallTimer <= 0) {
+            let fallTotal = gameMode === 'online' ? onlineFallRate : fallSpeed * fallMultiplier;
+            if (current.shift(0, -1) && downDown) {
+              DOM.score.current.innerHTML = parseInt(DOM.score.current.innerHTML) + 1;
+              dropBonusCounter++;
+            }
+            display();
+            fallTimer += fallTotal;
           }
-          display();
-          fallTimer += fallTotal;
-        }
       }
 
 
@@ -998,6 +1005,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
     let full = DOM.full.current;
 
     if (gameMode === 'online') {
+      socket.playerAlive(false);
       socket.emit('defeat');
 
       full.style = null;
@@ -1067,6 +1075,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
     socket.off('cancel garbage', cancelGarbageFunction);
     socket.off('end',endFunction);
     socket.off('start',startFunction);
+    socket.off('gravity', setGravity);
     gameRunning = false;
     current = null;
     clearInterval(TimerID);

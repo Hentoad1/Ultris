@@ -37,8 +37,8 @@ function bind(socket, createRef, setUserData) {
       index++;
     }
 
-
     setUserData({users:userData, redraw:true});
+    resize(true);
   }
 
   const removeFunction = function (id) {
@@ -47,6 +47,7 @@ function bind(socket, createRef, setUserData) {
       userData.splice(userIndex, 1);
       setUserData({users:userData, redraw:false});
     }
+    resize();
   };
 
   const boardsFunction = function (data) {
@@ -153,15 +154,13 @@ function bind(socket, createRef, setUserData) {
 
   
   let resize = function(forceRedraw = false) {
+    console.log('resize called');
     const margin = 10;
     const textHeight = 30;
 
-    let clientWidth = 0;
-    if (socket.game.clientRef.current !== null) {
-      clientWidth = socket.game.clientRef.current.offsetWidth;
-    }
+    let playerWidth = socket.game?.clientRef?.current?.clientWidth ?? 0;
 
-    let availibleWidth = (window.innerWidth - clientWidth - 200) / 2; // divied by 2 for 2 halves
+    let availibleWidth = (window.innerWidth - playerWidth - 200) / 2; // divied by 2 for 2 halves
     let availibleHeight = window.innerHeight - 100;
 
 
@@ -187,7 +186,7 @@ function bind(socket, createRef, setUserData) {
   }
 
   let resizeHandler = () => {
-    resize(false); //its important that the event element isnt passed here which would overwrite forceRewdraw variable.
+    resize(false); //its important that the event element isnt passed here which would overwrite forceRedraw variable.
   }
 
   socket.on('end', endFunction);
