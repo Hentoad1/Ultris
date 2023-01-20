@@ -15,20 +15,6 @@
 	margin:5px;
 }
 
-.opponentWrapper[preview|=true]:hover:after{
-	content:attr(name);
-	position:absolute;
-	top:calc(50% - 0.65em - 2px);
-	height:1.3em;
-	width:fit-content;
-	font-size:1rem;
-	padding:0.1em 0.2em;
-	background:#191919;
-	border:2px solid #FFFFFF;
-	/*z-index:500;*/ /*reevailuate this when you get to implementing this feature.*/
-}
-
-
 .opponentWrapper *{
 	flex-grow:0;
 	flex-shrink:0;

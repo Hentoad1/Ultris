@@ -355,7 +355,11 @@ function initalize(DOM, socket, gameMode, keybinds) {
     },
     reset: {
       key: keybinds.reset,
-      function: reset,
+      function: function(){    
+        if (gameMode !== 'online'){
+          reset();
+        }
+      },
       held: false
     },
     left: {
