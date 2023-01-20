@@ -10,6 +10,7 @@ class Board {
     this.combo = 0,
     this.garbageMeter = [],
     this.garbageQueue = [],
+    this.incomingGarbage = 0,
     this.linesSent = 0,
     this.linesReceived = 0,
     this.totalLines = 0, 
@@ -18,11 +19,12 @@ class Board {
 
   reset(salt){ //needs salt for queue and then queue uses .reset
     this.board = genBlankBoard(),
-    this.queue.reset(salt),
+    this.queue.reset(Math.random()), //salt should be here; testing
     this.b2b = 0,
     this.combo = 0,
     this.garbageMeter = [],
     this.garbageQueue = [],
+    this.incomingGarbage = 0,
     this.linesSent = 0,
     this.linesReceived = 0,
     this.totalLines = 0, 
@@ -39,6 +41,8 @@ class Board {
     }
     
     this.garbageMeter.push(lines);
+
+    this.incomingGarbage += lines;
   }
 
   //remove garbage from the queue
@@ -51,6 +55,7 @@ class Board {
         this.garbageMeter[0] -= 1;
       }
     }
+    this.incomingGarbage -= lines;
   }
 
   //garbage garbage from queue to the board, always will convert up to 8 when a piece is placed.
@@ -69,8 +74,26 @@ class Board {
   }
 
   newMove(newBoard, movementType){
-    let preGarbageData = getMoveData(this.board, newBoard); //this only should be used for clear data as clear data only uses the move data if a line is cleared and garabage wouldnt be added in that case
-    let [clearData, clearedBoard] = getClearData(newBoard, preGarbageData, movementType);
+    let moveData = getMoveData(this.board, newBoard);
+    let [clearData, clearedBoard] = getClearData(newBoard, moveData, movementType);
+
+    //make sure there is alignment with what the queue should be with the given salt
+    let expectedType = this.queue.next();
+
+    if (!moveData.valid){
+      console.log('invalid move');
+      return [false, null];
+    }
+
+    if (expectedType !== moveData.type){
+      console.log('incorrect type');
+      console.log(expectedType);
+      console.log(moveData.type);
+      return [false, null];
+    }
+
+    //update board for next time, needs to be done before calculate points
+    this.board = clearedBoard;
 
     if (clearData.linesCleared === 0){
       this.convertGarbage();//only convert garbage if line isnt cleared
@@ -90,25 +113,6 @@ class Board {
     console.log('combo ' + this.combo);
     console.log('b2b ' + this.b2b);
 
-    //make sure there is alignment with what the queue should be with the given salt
-    let moveData = getMoveData(this.board, newBoard);
-    let expectedType = this.queue.next();
-
-    if (expectedType !== moveData.type){
-      console.log('incorrect type');
-      console.log(expectedType);
-      console.log(moveData.type);
-      return [false, null];
-    }
-
-    if (!moveData.valid){
-      console.log('invalid move');
-      return [false, null];
-    }
-
-
-    //update board for next time, needs to be done before calculate points
-    this.board = clearedBoard;
 
     //pass off point data for server to use depending on game mode
     let pointData = {

@@ -308,13 +308,32 @@ function initalize(DOM, socket, gameMode, keybinds) {
   let setGravity = (rate) => {
     console.log(rate);
     onlineFallRate = rate;
-  }  
+  }
+  
+  let sync = (newBoard, newBagSalt, newBags) => {
+    console.log('before', bags, 'after', newBags);
+
+    bags = newBags;
+    bagSalt = newBagSalt;
+    board = newBoard;
+
+    queue = newBag().concat(newBag());
+    current = new Tetrimino(queue.shift());
+
+    displayQueue();
+
+    const letters = ['T','J','I','Z','L','S','O'];
+
+    console.log(queue.map(e => letters[e]));
+  }
 
   socket.on('receive garbage', receiveGarbageFunction);
   
   socket.on('cancel garbage', cancelGarbageFunction);
 
   socket.on('gravity', setGravity);
+
+  socket.on('sync', sync);
 
   socket.on('end',endFunction);
 
@@ -428,10 +447,10 @@ function initalize(DOM, socket, gameMode, keybinds) {
     board = genBlankBoard();
 
     queue = newBag().concat(newBag());
-    current = new Tetrimino(queue[0]);
+    current = new Tetrimino(queue.shift());
     hold = null;
     justHeld = false;
-    queue.shift();
+    
 
     display();
     displayQueue();
@@ -735,7 +754,6 @@ function initalize(DOM, socket, gameMode, keybinds) {
         }
         display();
       } else {
-        console.log(handling)
         const SDFmultiplier = downDown ? handling.SDF : 1;
           fallTimer -= (currentFrame - previousFrame) * SDFmultiplier;
           while (fallTimer <= 0) {
@@ -813,6 +831,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
       }
     }
 
+   
     current = new Tetrimino(queue[0]);
 
 
@@ -1076,6 +1095,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
     socket.off('end',endFunction);
     socket.off('start',startFunction);
     socket.off('gravity', setGravity);
+    socket.off('sync', sync);
     gameRunning = false;
     current = null;
     clearInterval(TimerID);

@@ -184,12 +184,44 @@ function bind(io){
         socket.boardData.hold();
       });
 
-      const placed = handle(function(board, movement){
-        let [valid, pointInfo] = socket.boardData.newMove(board, movement);
+      const placed = handle(function(beforeClear, movement){
+        let [valid, pointInfo] = socket.boardData.newMove(beforeClear, movement);
   
-        console.log(pointInfo)
+        if (!valid){
+          
 
-        socket.broadcast.emit('receive board',board,socket.publicID);
+          socket.emit('sync', socket.boardData.board, ...socket.boardData.queue.sync());
+          console.log(socket.boardData.queue.values);
+        }else{
+          let outgoingLines = pointInfo.lines;
+          if (outgoingLines > 0){
+            //cancel any garbage in the queue
+            if (socket.boardData.incomingGarbage > 0){
+              let canceledLines = Math.min(socket.boardData.incomingGarbage, outgoingLines);
+
+              outgoingLines -= canceledLines;
+              socket.boardData.removeGarbage(canceledLines);
+              socket.emit('cancel garbage', canceledLines);
+            }
+
+            if (outgoingLines > 0){
+              let opponentArray = [...currentRoom.aliveUsers];
+
+              let randomOpponent;
+              do{
+                randomOpponent = opponentArray[Math.floor(Math.random() * opponentArray.length)];
+              }while(randomOpponent === userObject);
+
+              let holePos = Math.floor(Math.random() * 10);
+
+              randomOpponent.socket.boardData.addGarbage(outgoingLines, holePos);
+              randomOpponent.socket.emit('receive garbage', outgoingLines, holePos);
+              
+            }
+          }
+        }
+
+        socket.broadcast.emit('receive board',beforeClear,socket.publicID);
       });
 
       const send_piece = handle(function(cords,ghost,color){

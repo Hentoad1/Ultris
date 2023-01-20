@@ -15,6 +15,17 @@ class Queue{
     this.generate();
   }
 
+  sync(){
+    while(this.values.length > 0){
+      this.values.shift();
+    }
+    let returnData = [this.bagSalt, this.bags];
+
+    this.generate();
+
+    return returnData;
+  }
+
   hold(){
     if (this.held){
       let swap = this.held;
