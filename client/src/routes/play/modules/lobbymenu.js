@@ -53,6 +53,7 @@ function LobbyMenu(){
     socket.on('update lobby players',updateFunction);
     socket.on('countdown',countdownFunction);
     socket.on('start',startFunction);
+    socket.on('spectate', startFunction);
     socket.on('end',endFunction);
 
     return function(){
@@ -60,6 +61,7 @@ function LobbyMenu(){
       socket.off('update lobby players',updateFunction);
       socket.off('countdown',countdownFunction);
       socket.off('start',startFunction);
+      socket.off('spectate', startFunction);
       socket.off('end',endFunction);
     }
   }, [socket]);

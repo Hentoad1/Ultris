@@ -19,7 +19,7 @@ class Board {
 
   reset(salt){ //needs salt for queue and then queue uses .reset
     this.board = genBlankBoard(),
-    this.queue.reset(Math.random()), //salt should be here; testing
+    this.queue.reset(salt),
     this.b2b = 0,
     this.combo = 0,
     this.garbageMeter = [],

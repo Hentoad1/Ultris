@@ -33,10 +33,12 @@ function WinMenu(){
 
     socket.on('end', endFunction);
     socket.on('start', startFunction);
+    socket.on('spectate', startFunction);
 
     return function(){
       socket.off('end', endFunction);
       socket.off('start', startFunction);
+      socket.off('spectate', startFunction);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket])

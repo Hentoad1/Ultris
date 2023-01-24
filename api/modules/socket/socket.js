@@ -187,14 +187,17 @@ function bind(io){
       const placed = handle(function(beforeClear, movement){
         let [valid, pointInfo] = socket.boardData.newMove(beforeClear, movement);
   
-        if (!valid){
-          
+        console.log(pointInfo);
 
+        if (!valid){
           socket.emit('sync', socket.boardData.board, ...socket.boardData.queue.sync());
-          console.log(socket.boardData.queue.values);
         }else{
-          let outgoingLines = pointInfo.lines;
+          let outgoingLines = calcLines(pointInfo);
+          console.log(outgoingLines);
           if (outgoingLines > 0){
+            socket.boardData.linesSent += outgoingLines;
+
+
             //cancel any garbage in the queue
             if (socket.boardData.incomingGarbage > 0){
               let canceledLines = Math.min(socket.boardData.incomingGarbage, outgoingLines);
@@ -216,12 +219,46 @@ function bind(io){
 
               randomOpponent.socket.boardData.addGarbage(outgoingLines, holePos);
               randomOpponent.socket.emit('receive garbage', outgoingLines, holePos);
-              
+              randomOpponent.socket.boardData.linesReceived += outgoingLines;
             }
           }
         }
+        
+        socket.broadcast.emit('receive board',socket.boardData.board,socket.publicID);
 
-        socket.broadcast.emit('receive board',beforeClear,socket.publicID);
+        function calcLines(pointInfo){
+          if (pointInfo.lines === 0){
+            return 0;
+          }
+
+          let normalLines = [0,1,2,4];
+          let tSpinLines = [2,4,6];
+          let tSpinMiniLines = [1,2];
+
+          let moveMap = new Map([['Normal', normalLines], ['T-Spin', tSpinLines], ['T-Spin-Mini', tSpinMiniLines]]);
+
+          let outgoingLines = moveMap.get(pointInfo.type)[pointInfo.lines - 1];
+
+          if (outgoingLines === undefined){
+            return 0;
+          }
+
+          let b2bBonus = 0;
+          for (let i = 0; Math.pow(2,i + 0.7) - 1 < (pointInfo.b2b - 1); i++){
+            b2bBonus++;
+          }
+
+          outgoingLines += b2bBonus;
+
+          let comboMultiplier = 1 + 0.25 * (pointInfo.combo - 1) 
+          outgoingLines *= comboMultiplier;
+
+          let pcBonus = pointInfo.pc ? 10 : 0;
+
+          outgoingLines += pcBonus;
+
+          return Math.round(outgoingLines);
+        }
       });
 
       const send_piece = handle(function(cords,ghost,color){

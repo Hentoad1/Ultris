@@ -303,6 +303,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
   startFunction = function(startDate,salt){
     socket.playerAlive(true);
     reset(salt);
+    displayGarbage();
   }
 
   let setGravity = (rate) => {
@@ -311,8 +312,6 @@ function initalize(DOM, socket, gameMode, keybinds) {
   }
   
   let sync = (newBoard, newBagSalt, newBags) => {
-    console.log('before', bags, 'after', newBags);
-
     bags = newBags;
     bagSalt = newBagSalt;
     board = newBoard;
@@ -1033,7 +1032,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
 
       full.style = null;
       refreshDOM(full);
-      full.style.animation = "spectateAnimation 1s cubic-bezier(0.0, 0.0, 1.0, 1.0)";
+      full.style.animation = "spectateAnimation 1s linear";
 
       full.onanimationend = function () {
         full.style.display = 'none';

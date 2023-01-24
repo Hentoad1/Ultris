@@ -26,11 +26,13 @@ function Chat(){
     
     socket.on('message', messageFunction);
     socket.on('start', startFunction);
+    socket.on('spectate', startFunction);
     socket.on('end', endFunction);
 
     return function(){
       socket.off('message', messageFunction);
       socket.off('start', startFunction);
+      socket.off('spectate', startFunction);
       socket.off('end', endFunction);
     }
 

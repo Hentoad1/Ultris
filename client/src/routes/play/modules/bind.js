@@ -50,10 +50,6 @@ function bind(socket, createRef, setUserData) {
     resize();
   };
 
-  const boardsFunction = function (data) {
-    data.forEach(e => replaceBoard(e.board, e.pid));
-  };
-
   function replaceBoard(board, id) {
     let [userIndex, user] = getUser(id);
     if (userIndex !== -1 && id !== currentPid) {
@@ -193,7 +189,6 @@ function bind(socket, createRef, setUserData) {
   socket.on('sendPID', PIDFunction);
   socket.on('updateUsers', updateFunction);
   socket.on('remove user', removeFunction);
-  socket.on('receive boards', boardsFunction);
   socket.on('receive board', replaceBoard);
   socket.on('receive piece', pieceFunction);
   
@@ -204,7 +199,6 @@ function bind(socket, createRef, setUserData) {
     socket.off('sendPID', PIDFunction);
     socket.off('updateUsers', updateFunction);
     socket.off('remove user', removeFunction);
-    socket.off('receive boards', boardsFunction);
     socket.off('receive board', replaceBoard);
     socket.off('receive piece', pieceFunction);
     window.removeEventListener('resize', resizeHandler);

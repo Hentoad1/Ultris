@@ -1,4 +1,4 @@
-import { useRef, useEffect, useContext } from 'react';
+import { useRef, useEffect, useContext, useState } from 'react';
 
 import { GameModeContext } from '../gameWrapper';
 
@@ -11,6 +11,7 @@ function Game(props){
   let socket = useSocket();
   let gameMode = useContext(GameModeContext);
   let [getControls] = useControls();
+  let [display, setDisplay] = useState(null);
 
 
   //CANVASES
@@ -75,8 +76,26 @@ function Game(props){
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[gameMode]);
 
+  useEffect(() => {
+    let startFunction = () => {
+      setDisplay(null);
+    }
+    
+    let specatateFunction = () => {
+      setDisplay('none');
+    }
+
+    socket.on('start', startFunction);
+    socket.on('spectate', specatateFunction);
+
+    return () => {
+      socket.off('start', startFunction);
+      socket.off('spectate', specatateFunction)
+    }
+  }, [socket, setDisplay])
+
   return (
-    <div className = 'clientWrapper' ref = {wrapperRef}>
+    <div className = 'clientWrapper' ref = {wrapperRef} style = {{display}}>
       <div className = "inner_left_wrapper">
         <canvas width = '100' height = '100' ref={holdRef} className = "box"></canvas>
         <div className = "broadcast_wrapper" >

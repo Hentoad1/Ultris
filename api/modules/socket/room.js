@@ -148,9 +148,6 @@ function passVars(io){
       this.totalUsers.add(obj);
       this.deadUsers.add(obj);
       //this.resetUser(obj);
-      
-      io.in(this.id).emit('server message', 'Welcome ' + socket.username + ' to the room!');
-
 
       let players = [...this.aliveUsers, ...this.deadUsers].map(e => e.username).sort();
       let spectators = [...this.spectatingUsers].map(e => e.username).sort();
@@ -159,13 +156,15 @@ function passVars(io){
       this.update();
 
       if (this.countingDown){
-        socket.emit('server message', 'The game should begin shortly.');
+        socket.emit('message', 'serverMessage', '[SERVER]', 'Welcome to the room! The next game should begin shortly.');
       }else{
         if (this.totalUsers.size < 2){
-          socket.emit('server message', 'There are currently not enough players to start, please wait for more to join and the game will begin.');
+          socket.emit('message', 'serverMessage', '[SERVER]', 'Welcome to the room! There are currently not enough players to start, please wait for more players to join.');
         }else{
-          socket.emit('server message', 'You have joined during the middle of the match, you will be able to play after the current round finishes.');
+          socket.emit('message', 'serverMessage', '[SERVER]', 'Welcome to the room! You have joined during the middle of the match and will be able to play after the current round finishes.');
           
+
+
           //allow the player to spectate
           
           //generate user data
@@ -175,10 +174,10 @@ function passVars(io){
             userData.push({pid:data.pid, username:data.username});
             boardData.push({pid:data.pid, board:data.socket.boardData.board});
           });
-          
-          socket.emit('updateUsers',userData,true); // spectate is true in this case.
-        
-          socket.emit('receive boards',boardData); // spectate is true in this case.
+
+          socket.emit('spectate');
+          socket.emit('updateUsers',userData);
+          boardData.forEach(e => socket.emit('receive board', e.board, e.pid));
         }
       }
 
