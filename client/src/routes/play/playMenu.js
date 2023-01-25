@@ -1,4 +1,5 @@
 import { Link, useNavigate  } from 'react-router-dom';
+import useAlerts from '../../assets/hooks/useAlerts';
 import useSocket from '../../assets/hooks/useSocket';
 
 import './playMenu.css';
@@ -6,12 +7,38 @@ import './playMenu.css';
 function PlayMenu(){
   let Navigate = useNavigate();
   let socket = useSocket();
+  let Alert = useAlerts();
 
-  let createRoom = function(){
-    socket.emit('create room',roomcode => {
-      Navigate('/play/' + roomcode);
-    });
+  
+  let quickplay = () => {
+    if (socket.connected){
+      Navigate('/play/quickplay');
+    }else{
+      Alert('Unable to connect the server. Try refreshing the page.');
+    }
   }
+
+  let browseRooms = () => {
+    if (socket.connected){
+      Navigate('/play/browse');
+    }else{
+      Alert('Unable to connect the server. Try refreshing the page.');
+    }
+  }
+
+  let createRoom = () => {
+    if (socket.connected){
+      socket.emit('create room',roomcode => {
+        Navigate('/play/' + roomcode);
+      });
+    }else{
+      Alert('Unable to connect the server. Try refreshing the page.');
+    }
+  }
+
+  
+  
+  
 
   return (
     <div className = 'page_content playMenu'>
@@ -40,15 +67,15 @@ function PlayMenu(){
           MULTIPLAYER
         </div>
 
-        <Link to = "quickplay" className = 'gameSection'>
+        <button onClick = {quickplay} className = 'gameSection nostyle'>
           <div className = 'title'>Quickplay</div>
           <div className = 'description'>Join the public Quickplay lobby.</div>
-        </Link>
+        </button>
 
-        <Link to = "browse" className = 'gameSection'>
+        <button onClick = {browseRooms} className = 'gameSection nostyle'>
           <div className = 'title'>Browse Rooms</div>
           <div className = 'description'>Browse the list of availble public rooms.</div>
-        </Link>
+        </button>
 
         <button onClick = {createRoom} className = 'gameSection nostyle'>
           <div className = 'title'>Create Room</div>

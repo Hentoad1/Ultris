@@ -11,11 +11,25 @@ function AlertWrapper(props){
 
 
   const removeAlert = useCallback(id => {
-    setState(state => state.filter(info => info.id !== id));
+    setState(state => {
+      let alertsHanging = state.some(info => info.id !== id && !info.expired);
+
+      if (alertsHanging){
+        return state.map(info => {
+          if (info.id === id){
+            return {...info, expired:true};
+          }else{
+            return info;
+          }
+        });
+      }else{
+        return [];
+      }
+    });
   },[setState]);
 
   const AddAlert = useCallback((text, options = {}) => {
-    setState(state => [...state, {options, text, id:count, removeFunc:removeAlert}]);
+    setState(state => [...state, {options, text, id:count, removeFunc:removeAlert, expired:false}]);
     setCount(count => count + 1);
   },[setState, count, setCount, removeAlert]);
 

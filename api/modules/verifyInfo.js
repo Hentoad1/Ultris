@@ -1,5 +1,5 @@
 var {queryDB} = require('./database.js');
-
+var fs = require('node:fs');
 
 
 
@@ -22,10 +22,9 @@ function removeLeetSpeak(username){
   return username;
 }
 
-const ProfanityPairs = [
-  ['NIGGER','######'],
-  ['FAGGOT','######']
-];
+const blockedWord = '####################';
+const Profanity = fs.readFileSync('profanity.txt').toString().split(/\r?\n/).filter(e => e !== '');
+const ProfanityPairs = Profanity.map(word => [word, blockedWord.slice(0, word.length)]);
 const ProfanityReplacements = new Map(ProfanityPairs);
 
 function cleanUsername(username){
