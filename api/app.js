@@ -52,8 +52,8 @@ const session_options = {
   cookie: {
     httpOnly:false,
     maxAge:1000 * 60 * 60 * 24 * 30,
-    secure:false,
-    sameSite:'lax',
+    secure:true, //true only will work if HTTPS being used.
+    sameSite:true,
   }
 };
 
@@ -72,7 +72,6 @@ let wrapMiddleware = (io) => {
 
 // create 404 if no route is found
 app.use(function(req, res, next) {
-  console.log('not found on path: ' + req.url);
   next(createError(404));
 });
 

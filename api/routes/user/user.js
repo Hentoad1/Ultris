@@ -20,7 +20,6 @@ router.post('/logout', function(req, res, next) {
 router.post('/register', function(req, res, next) {
   let userData = req.body;
 
-  console.log(req.body);
   verifyUsername(userData.username).then(function(result){
     let [usernameInvalid, username] = result;
     
@@ -108,7 +107,6 @@ router.post('/login', function(req, res, next) {
           guest:false,
           verified: user.verified === 1
         }
-        console.log(req.session);
 
         res.send({redirect:{path:'/play',refresh:true,reload:true}});
       }else{
@@ -144,8 +142,6 @@ router.post('/forgot-password', function(req,res,next){
     queryDB('DELETE FROM resettoken WHERE uuid = ?', uuid).then(() => {
       queryDB('INSERT INTO resettoken SET ?', data).then(() => {
         let link = `${req.get('host')}/reset?token=${token}`;
-        
-        console.log(link);
 
         emailResetLink({link,username:info.username,to:email}).then(() => {
           res.send({result:true});
@@ -156,7 +152,6 @@ router.post('/forgot-password', function(req,res,next){
 });
 
 router.post('/resetPassword', function(req,res,next){
-  console.log(req.body);
 
   if (req.body.password !== req.body.confirm){
     return res.send({error:'The passwords do not match'});
@@ -169,11 +164,7 @@ router.post('/resetPassword', function(req,res,next){
 
     
     bcrypt.hash(req.body.password, 10).then((hash) => {
-      console.log(hash);
-
-      console.log(req.body.token)
       queryDB('SELECT * FROM resettoken WHERE token = ?', req.body.token).then((results) => {
-        console.log(results);
         if (results.length === 0){
           return res.send({error: 'The reset token does not exist.'});
         }

@@ -112,7 +112,6 @@ function passVars(io){
     }
 
     expire(){
-      console.log('expire started');
       if (typeof this.killExpire === 'function'){
         this.killExpire();
       }
@@ -120,14 +119,13 @@ function passVars(io){
       new Promise((resolve) => {
         setTimeout(resolve,30 * 1000,true);
         this.killExpire = (() => {
-          console.log('expire killed');
           resolve(false);
         });
       }).then((result) => {
         if (result){
           if (this.totalUsers.size !== 0){
             //failsafe for expire somehow going through even though there still ppl in it
-            return console.log('expire failsafe called');
+            return;
           }
           this.killExpire = null;
           this.onExpire(this.id); //call the onExpire function

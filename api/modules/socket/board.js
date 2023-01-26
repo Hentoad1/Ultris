@@ -81,14 +81,14 @@ class Board {
     let expectedType = this.queue.next();
 
     if (!moveData.valid){
-      console.log('invalid move');
+      //console.log('invalid move');
       return [false, null];
     }
 
     if (expectedType !== moveData.type){
-      console.log('incorrect type');
-      console.log(expectedType);
-      console.log(moveData.type);
+      //console.log('incorrect type');
+      //console.log(expectedType);
+      //console.log(moveData.type);
       return [false, null];
     }
 
@@ -109,10 +109,6 @@ class Board {
         this.b2b = 0;
       }
     }
-
-    console.log('combo ' + this.combo);
-    console.log('b2b ' + this.b2b);
-
 
     //pass off point data for server to use depending on game mode
     let pointData = {

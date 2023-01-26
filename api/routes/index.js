@@ -31,8 +31,6 @@ router.use(function(req,res,next){
     req.session.save(err => {
       if (err) console.log(err);
 
-      console.log('session has been saved');
-
       next();
     });
   }).catch(next);

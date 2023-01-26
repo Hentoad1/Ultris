@@ -167,7 +167,6 @@ function bind(io){
       });
 
       const disconnect = handle(function(){
-        console.log('disconnect fired');
         currentRoom.removeUser(userObject);
         socket.removeAllListeners();
       });
@@ -186,14 +185,11 @@ function bind(io){
 
       const placed = handle(function(beforeClear, movement){
         let [valid, pointInfo] = socket.boardData.newMove(beforeClear, movement);
-  
-        console.log(pointInfo);
 
         if (!valid){
           socket.emit('sync', socket.boardData.board, ...socket.boardData.queue.sync());
         }else{
           let outgoingLines = calcLines(pointInfo);
-          console.log(outgoingLines);
           if (outgoingLines > 0){
             socket.boardData.linesSent += outgoingLines;
 
@@ -371,7 +367,6 @@ function bind(io){
   
             if (Date.now() - startDate < 1000 * 60 * 20){
               totalPoints += calcPoints(pointInfo);
-              console.log(totalPoints);
             };
           }else{
             synced = false;
@@ -405,7 +400,6 @@ function bind(io){
         if (data.lines === 0){
           return 0;
         }
-        console.log(data);
         const linesToPoints = [100, 300, 500, 800];
         
         var points = linesToPoints[Math.min(data.lines, 4) - 1];

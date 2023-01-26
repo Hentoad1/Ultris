@@ -129,11 +129,17 @@ function Scrollbar(props){
     }
   }, [setTargetDims]);
 
+  //could be optimized with the use of a useEffect
+
+  let position = ['aligned', 'fixed'].includes(props.position) ? props.position : 'aligned';
+  let horozontalPos = position === 'aligned' ? targetDims.right - 10 : window.innerWidth - 10; //subtracting ten due to it being the width of the slider.
+
+
   let child = Children.only(props.children);
   return (
     <Fragment>
       {cloneElement(child, {...child.props, style:{"overflow":"hidden"},ref})}
-      <div className = 'scrollbar_track' style = {{left:targetDims.right - 10 ?? null,top:targetDims.y ?? null,height:targetDims.height ?? null,display:display ? null : 'none'}}>
+      <div className = 'scrollbar_track' style = {{left:horozontalPos ?? null,top:targetDims.y ?? null,height:targetDims.height ?? null,display:display ? null : 'none'}}>
         <div className = 'scrollbar_thumb_outer' style = {{top,height}} onMouseDown = {HandleMouseDown}>
           <div className = 'scrollbar_thumb_inner'></div>
         </div>

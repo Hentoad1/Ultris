@@ -22,6 +22,8 @@ import Send404 from './routes/404/404.js';
 //verify
 import VerifySuccess from './routes/verify/verify';
 import ResetPassword from './routes/reset/reset.js';
+//privacy
+import Privacy from './routes/privacy/privacy.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -34,6 +36,7 @@ root.render(
             <Route path='login' element = {<Login />} />
             <Route path='forgot-password' element = {<ForgotPassword />} />
             <Route path='reset' element = {<ResetPassword />} />
+            <Route path='privacy' element = {<Privacy />} />
             <Route path = 'leaderboard'>
               <Route index element = {<Navigate to = 'sprint'/>}/>
               <Route path = 'sprint' element = {<Leaderboard type = 'sprint'/>} />
