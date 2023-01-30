@@ -3,6 +3,7 @@ import {Fragment, useState} from 'react';
 
 import useControls, {defaultControls} from '../../../assets/hooks/useControls';
 
+import styles from './settings.css';
 
 const joinedDefault = Object.values(defaultControls).join();
 
@@ -31,7 +32,7 @@ function Controls(){
     window.addEventListener('keyup',keyListener,false);
 
     let popup = (
-      <div className = 'controlPopup' onClick = {keyListener}>
+      <div className = {styles.controlPopup} onClick = {keyListener}>
           <h1>PRESS ANY KEY TO REBIND</h1>
 
           <span>CLICK ANYWHERE TO UNBIND</span>
@@ -51,7 +52,7 @@ function Controls(){
 
   return (
     <Fragment>
-      <table className = 'controlTable'>
+      <table className = {styles.controlTable}>
         <thead>
           <tr>
             <th>Action</th>
@@ -67,8 +68,8 @@ function Controls(){
           )}
         </tbody>
       </table>
-      <div className = 'controlButtons'>
-        <button className = 'AlternateColor' onClick = {() => setControls(Object.assign({},defaultControls))} disabled = {ctrlsMatchDefault}>Set to Default</button>
+      <div className = {styles.controlButtons}>
+        <button onClick = {() => setControls(Object.assign({},defaultControls))} disabled = {ctrlsMatchDefault}>Set to Default</button>
         <button disabled = {ctrlsMatchInitial} onClick = {save}>Save</button>
       </div>
       {popup}

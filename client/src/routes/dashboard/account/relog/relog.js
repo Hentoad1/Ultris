@@ -5,6 +5,8 @@ import LoadingOverlay from '../../../../assets/components/loadingOverlay';
 import CodeInput from '../../../../assets/components/codeInput';
 import useAPI from '../../../../assets/hooks/useAPI';
 
+import styles from '../../../../assets/styles/menu.css';
+
 function Relog(){
   let [code, setCode] = useState('');
   let [loading, setLoading] = useState(false);
@@ -25,12 +27,12 @@ function Relog(){
   let loadingContent = loading ? <LoadingOverlay/> : null; 
 
   return (
-    <div className = 'centered'>
-      <div className = "menu">
-        <div className = 'header'>
+    <div className = 'c'>
+      <div className = {styles.menu}>
+        <div className = {styles.header}>
           Extra Verification Required
         </div>
-        <div className = 'subheader'>
+        <div className = {styles.subheader}>
           As an extra security measure, an Email containing a code has been sent to {email}
         </div>
         <CodeInput length = {6} getValue = {code => setCode(code)}/>

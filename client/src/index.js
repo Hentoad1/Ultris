@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navigate } from "react-router";
 
-import Globals from './routes/globals/global.js';
+import Globals from './global.js';
 import Register from './routes/register/register.js';
 import Login from './routes/login/login.js';
 import ForgotPassword from './routes/forgot-password/forgot-password';

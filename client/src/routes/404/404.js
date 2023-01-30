@@ -1,12 +1,11 @@
-
-import './404.css';
-
 import { Link } from 'react-router-dom';
+
+import styles from './404.css';
 
 function Send404(){
   return (
-    <div className = "page_content centered">
-      <div className = "Error404">
+    <div className = 'p c'>
+      <div className = {styles.Error404}>
         <h1>404 Error</h1>
         <div>This page does not exist.</div>
         <Link to = '/'>Return to home</Link>

@@ -4,7 +4,7 @@ import useSocket from '../../assets/hooks/useSocket';
 
 import {ReactComponent as Refresh} from '../../assets/svgs/Reload.svg';
 
-import './browse.css';
+import styles from './browse.css';
 
 
 function BrowseMenu(){
@@ -30,8 +30,8 @@ function BrowseMenu(){
         <Refresh onClick = {refresh}/>
         {rooms.map(room => (
           <Link to = {'/play/' + room.id}>
-            <div className = 'name'>{room.name}</div>
-            <div className = 'players'>{room.players.max === null ? room.players.current : room.players.current + ' / ' + room.players.max}</div>
+            <div className = {styles.name}>{room.name}</div>
+            <div className = {styles.players}>{room.players.max === null ? room.players.current : room.players.current + ' / ' + room.players.max}</div>
           </Link>
         ))}
       </Fragment>
@@ -43,9 +43,9 @@ function BrowseMenu(){
   }
 
   return (
-    <div className = 'page_content browse'>
-      <h1 className = 'header'>Public Rooms</h1>
-      <div className = 'roomList'>
+    <div className = {'p ' + styles.browse}>
+      <h1 className = {styles.header}>Public Rooms</h1>
+      <div className = {styles.roomList}>
         {roomContent}
       </div>
     </div>

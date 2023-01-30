@@ -12,7 +12,7 @@ import {ReactComponent as DoubleRight} from '../../assets/svgs/Double_Arrow_Righ
 
 import {ReactComponent as Loading} from '../../assets/svgs/Loading.svg';
 
-import './leaderboard.css';
+import styles from './leaderboard.css';
 
 function Leaderboard(props){
   let [params] = useSearchParams();
@@ -48,7 +48,7 @@ function Leaderboard(props){
     table = <div>An error occured loading the leaderboard.</div>;
   }else{
     table = (
-      <table className = 'statTable'>
+      <table className = {styles.statTable}>
         <thead>
           <tr>
             <th></th>
@@ -118,11 +118,11 @@ function Leaderboard(props){
 
   if (!hideTable){
     navigatorContent = (
-      <div className = 'pageButtons'>
+      <div className = {styles.pageButtons}>
         {backArrowContent}
         {numberedPages.map(pageNumber => {
           return (
-            <Link to = {'.?page=' + pageNumber} key = {pageNumber} className = {pageNumber === parseInt(page) ? 'active' : ''} draggable = {false}>{pageNumber}</Link>
+            <Link to = {'.?page=' + pageNumber} key = {pageNumber} className = {pageNumber === parseInt(page) ? styles.active : null} draggable = {false}>{pageNumber}</Link>
           );
         })}
         {forwardArrowContent}
@@ -132,12 +132,12 @@ function Leaderboard(props){
 
   return (
     <Scrollbar>
-      <div className = 'page_content leaderboardWrapper'>
-        <div className = 'categoryButtons'>
+      <div className = {"p " + styles.leaderboardWrapper}>
+        <div className = {styles.categoryButtons}>
           <NavLink to = '/leaderboard/sprint'>Sprint</NavLink>
           <NavLink to = '/leaderboard/blitz'>Blitz</NavLink>
         </div>
-        <div className = 'leaderboard'>
+        <div className = {styles.leaderboard}>
           {table}
           {navigatorContent}
         </div>

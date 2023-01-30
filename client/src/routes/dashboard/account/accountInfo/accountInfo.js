@@ -7,7 +7,7 @@ import { AnimatedInput, AnimatedPasswordInput } from '../../../../assets/compone
 import LoadingOverlay from '../../../../assets/components/loadingOverlay';
 import useAPI from '../../../../assets/hooks/useAPI';
 
-import '../../../../assets/styles/splitMenu.css';
+import styles from '../../../../assets/styles/splitMenu.css';
 
 function AccountInfo(){
   let [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ function AccountInfo(){
   let loadingContent = loading ? <LoadingOverlay /> : null;
   
   return (
-    <div className = 'splitMenu'>
+    <div className = {styles.splitMenu}>
       <UsernameSection username = {info.username}/>
       <PasswordSection/>
       <EmailSection email = {info.email} verified = {info.verified}/>
@@ -66,15 +66,15 @@ function UsernameSection(props){
   }
 
   return (
-    <div className = 'sideMenu'>
-      <div className = 'header'>
-        <div className = 'title'>Display Name</div>
-        <div className = 'description'>The Display Name is what other players will see when battling against you in online matches. It will also display when you get a high score on leaderboards.</div>
+    <div className = {styles.sideMenu}>
+      <div className = {styles.header}>
+        <div className = {styles.title}>Display Name</div>
+        <div className = {styles.description}>The Display Name is what other players will see when battling against you in online matches. It will also display when you get a high score on leaderboards.</div>
       </div>
-      <div className = 'content'>
+      <div className = {styles.content}>
         <AnimatedInput title = 'Display Name' value = {props.username} onValueChange = {v => setValue(v)} inputHandler = {e => e.target.value = e.target.value.toUpperCase()}/>
-        <div className = 'buttons'>
-          <button className = 'save' disabled = {inital === value} onClick = {submit}>SAVE CHANGES</button>
+        <div className = {styles.buttons}>
+          <button className = {styles.save} disabled = {inital === value} onClick = {submit}>SAVE CHANGES</button>
         </div>
       </div>
     </div>
@@ -120,17 +120,17 @@ function PasswordSection(props){
   }
 
   return (
-    <div className = 'sideMenu'>
-      <div className = 'header'>
-        <div className = 'title'>Password</div>  
-        <div className = 'description'>Your password is used only to log into your account. Do not share this with anyone. Must be 8-128 characters long.</div>
+    <div className = {styles.sideMenu}>
+      <div className = {styles.header}>
+        <div className = {styles.title}>Password</div>  
+        <div className = {styles.description}>Your password is used only to log into your account. Do not share this with anyone. Must be 8-128 characters long.</div>
       </div>
-      <div className = 'content'>
+      <div className = {styles.content}>
         <AnimatedPasswordInput title = 'Current Password' onValueChange = {e => setPassword1(e)} onRef = {r => updateRef(r, 0)}/>
         <AnimatedPasswordInput title = 'New Password' onValueChange = {e => setPassword2(e)} onRef = {r => updateRef(r, 1)}/>
         <AnimatedPasswordInput title = 'Confirm New Password' onValueChange = {e => setPassword3(e)} onRef = {r => updateRef(r, 2)}/>
-        <div className = 'buttons'>
-          <button className = 'save' disabled = {!filled} onClick = {submit}>SAVE CHANGES</button>
+        <div className = {styles.buttons}>
+          <button className = {styles.save} disabled = {!filled} onClick = {submit}>SAVE CHANGES</button>
         </div>
       </div>
     </div>
@@ -186,8 +186,8 @@ function EmailSection(props){
   let verifyError = null;
   let verifyStyle = {};
   if (!verified){
-    verifyButton = <button className = 'save' onClick = {verify}>VERIFY EMAIL</button>;
-    verifyError = <div className = 'error'><Warning/> Your email is not verified.</div>;
+    verifyButton = <button className = {styles.save} onClick = {verify}>VERIFY EMAIL</button>;
+    verifyError = <div className = {styles.error}><Warning/> Your email is not verified.</div>;
     verifyStyle = {
       '--background-color':'#6F2DBD22',
       '--border-color':'#6F2DBD',
@@ -195,17 +195,17 @@ function EmailSection(props){
     };
   }
   return (
-    <div className = 'sideMenu'>
-      <div className = 'header'>
-        <div className = 'title'>Email</div>
-        <div className = 'description'>Your Email address is where all information involving your account and its security be sent to. No promotional content will be sent to your email.</div>
+    <div className = {styles.sideMenu}>
+      <div className = {styles.header}>
+        <div className = {styles.title}>Email</div>
+        <div className = {styles.description}>Your Email address is where all information involving your account and its security be sent to. No promotional content will be sent to your email.</div>
       </div>
-      <div className = 'content'>
+      <div className = {styles.content}>
         <AnimatedInput title = 'Email' placeholder = {inital} onValueChange = {v => setValue(v)} onRef = {r => setRef(r)} parentStyle = {verifyStyle}/>
         {verifyError}
-        <div className = 'buttons'>
+        <div className = {styles.buttons}>
           {verifyButton}
-          <button className = 'save' disabled = {inital === value || value === ''} onClick = {submit}>SAVE CHANGES</button>
+          <button className = {styles.save} disabled = {inital === value || value === ''} onClick = {submit}>SAVE CHANGES</button>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React, {useRef, useEffect, useState} from 'react';
 
-import './codeInput.css';
+import styles from './codeInput.css';
 
 const AcceptableCharsRegex = new RegExp(/^[1-9a-zA-Z]*$/);
 
@@ -92,7 +92,7 @@ function CodeInput(props){
   }
 
   return (
-    <div className = 'codeInput'>
+    <div className = {styles.codeInput}>
       {digits}
     </div>
   )
@@ -110,7 +110,7 @@ function Digit(props){
   
 
   return(
-    <div className = 'digit'>
+    <div className = {styles.digit}>
       <input ref = {ref}/>
     </div>
   )

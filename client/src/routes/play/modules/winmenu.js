@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import Scrollbar from '../../../assets/components/scrollbar';
 import useSocket from '../../../assets/hooks/useSocket';
 
-import './winmenu.css';
+import styles from './winmenu.css';
 
 const suffixList = ['ST','ND','RD','TH'];
 
@@ -45,15 +45,15 @@ function WinMenu(){
 
   return (
     <Scrollbar>
-      <div className = {'winMenu ' + (display ? 'visible' : 'hidden')} onKeyDown = {e => e.preventDefault()}>
-        <div className = 'listWrapper'>
-          <ul className = 'userList'>
+      <div className = {styles.winMenu + ' ' + (display ? styles.visible : styles.hidden)} onKeyDown = {e => e.preventDefault()}>
+        <div className = {styles.listWrapper}>
+          <ul className = {styles.userList}>
             {playerList.map((player,i) => 
               (
-                <li className = 'userStat' key = {i}>
-                  <div className = 'place'>{(i + 1) + suffixList[Math.min(i,3)]}</div>
-                  <div className = 'username'>{player.username}</div>
-                  <div className = 'lines'>{player.linesSent} LINES SENT<br/>{player.linesReceived} LINES RECEIVED</div>
+                <li className = {styles.userStat} key = {i}>
+                  <div className = {styles.place}>{(i + 1) + suffixList[Math.min(i,3)]}</div>
+                  <div className = {styles.username}>{player.username}</div>
+                  <div className = {styles.lines}>{player.linesSent} LINES SENT<br/>{player.linesReceived} LINES RECEIVED</div>
                 </li>
               )
             )}

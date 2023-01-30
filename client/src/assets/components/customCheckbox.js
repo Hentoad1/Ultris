@@ -2,7 +2,7 @@ import React from 'react';
 
 import { ReactComponent as Checkmark } from '../../assets/svgs/Basic_Checkmark.svg';
 
-import './customCheckbox.css';
+import styles from './customCheckbox.css';
 
 function CustomCheckbox(props){
   let inputFunc = (e) => {
@@ -16,7 +16,7 @@ function CustomCheckbox(props){
   }
 
   return (
-    <div className={'CustomCheckbox ' + (props.className ?? '')} style={props.style}>
+    <div className = {(styles.CustomCheckbox + ' ' + (props.className ?? '')).trimEnd()} style={props.style}>
       <input type='checkbox' onInput={inputFunc} defaultChecked = {props.defaultChecked}/>
       <span />
       <Checkmark />

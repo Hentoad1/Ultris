@@ -10,8 +10,9 @@ import Opponents from './modules/opponents.js';
 import StatMenu from './modules/statmenu.js';
 import WinMenu from './modules/winmenu.js';
 import LobbyMenu from './modules/lobbymenu.js';
-import './gameWrapper.css';
 import useSocket from '../../assets/hooks/useSocket';
+
+import styles from './gameWrapper.css';
 
 const GameModeContext = createContext();
 
@@ -75,9 +76,9 @@ function Wrapper(){
   let offlineWarning = null;
   if (!connected){
     offlineWarning = (
-      <div className = 'offline_warning'>
+      <div className = {styles.offline_warning}>
         <Disconnect/>
-        <div className = 'warning_text'>
+        <div className = {styles.warning_text}>
           <span>You are playing offline</span>
           <span>High scores wont be saved</span>
         </div>
@@ -87,7 +88,7 @@ function Wrapper(){
 
   return (
     <GameModeContext.Provider value = {mode}>
-      <div className = 'main_wrapper page_content'>
+      <div className = {'p ' + styles.main_wrapper}>
         <Game/>
         <StatMenu/>
         {onlineContent}

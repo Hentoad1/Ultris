@@ -1,6 +1,6 @@
 import { Fragment, useState, useCallback, useContext, createContext } from 'react';
 
-import '../styles/alerts.css';
+import styles from '../styles/alerts.css';
 
 const AlertContext = createContext();
 
@@ -36,7 +36,7 @@ function AlertWrapper(props){
   return (
     <Fragment>
       <AlertContext.Provider value={AddAlert}>
-        <div className = 'alerts'>
+        <div className = {styles.alerts}>
           {state.map((info, key) => <Alert key = {key} {...info}></Alert>)}
         </div>
         {props.children}
@@ -56,60 +56,11 @@ function Alert(props){
   
   let options = props.options;
   return (
-    <div className = {'alert ' + options.type ?? ''} onAnimationEnd = {removeFunc}>
+    <div className = {(styles.alert + ' ' + (options.type ?? '')).trimEnd()} onAnimationEnd = {removeFunc}>
       {props.text}
     </div>
   )
 }
-
-
-
-
-
-
-
-/*function useAlerts(){
-  let [, setAlerts] = useContext(AlertContext);
-
-  let add = useCallback((content, options = {}) => {
-    let svg = <Checkmark/>;
-    if (options.type === 'error'){
-      svg = <Warning/>;
-    }
-
-    const newAlert = (
-      <div className = {'alert ' + options.type ?? ''} onAnimationEnd = {() => {}//setAlerts(alerts => alerts.slice(1))}>
-        {svg}
-        <span>
-          {content}
-        </span>
-      </div>
-    );
-
-    setAlerts(alerts => [...alerts, newAlert]);
-  },[setAlerts]);
-
-  return add;
-}
-
-function Alerts(props){
-  const [alerts, setAlerts] = useState([]);
-
-  useEffect(() => {
-    //console.log(alerts);
-  }, [alerts]);
-
-  return (
-    <Fragment>
-      <div className = 'alerts'>
-        {alerts.map((x,i) => <Fragment key = {i}>{x}</Fragment>)}
-      </div>
-      <AlertContext.Provider value={[alerts, setAlerts]}>
-          {props.children}
-      </AlertContext.Provider>
-    </Fragment>
-  )
-}*/
 
 export {AlertWrapper};
 

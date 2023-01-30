@@ -4,7 +4,7 @@ import Scrollbar from '../../assets/components/scrollbar';
 
 import useSession, {useLogout} from '../../assets/hooks/useSession';
 
-import './dashboard.css';
+import styles from './dashboard.css';
 
 function Dashboard(){
   let [session] = useSession();
@@ -13,25 +13,25 @@ function Dashboard(){
   let dashboardHTML = null
   if (!session.guest){
     dashboardHTML = (
-      <div className = 'section'>
+      <div className = {styles.section}>
         <h1>Account Settings</h1>
         <NavLink to = '/dashboard/account/information'>Account Infomation</NavLink>
-        <span onClick = {() => logout()} className = 'nostyle'>Logout</span>
+        <span onClick = {() => logout()} className = 'n'>Logout</span>
       </div>
     );
   }
 
   return (
-    <div className = "page_content dashboard">
-      <div className = 'dashboard-navbar'>
-        <div className = 'section'>
+    <div className = {"p " + styles.dashboard}>
+      <div className = {styles.dashboard_navbar}>
+        <div className = {styles.section}>
           <h1>Game Settings</h1>
           <NavLink to = '/dashboard/settings'>Settings</NavLink>
         </div>
         {dashboardHTML}
       </div>
       <Scrollbar>
-        <div className = 'dashboard-content'>
+        <div className = {styles.dashboard_content}>
           <Outlet />
         </div>
       </Scrollbar>

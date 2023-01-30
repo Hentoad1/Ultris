@@ -351,6 +351,25 @@ module.exports = function (webpackEnv) {
           // match the requirements. When no loader matches it will fall
           // back to the "file" loader at the end of the loader list.
           oneOf: [
+            { //test code to obfuscate class names
+              test: [/\.css$/],
+              use: [
+                {
+                  loader: 'style-loader'
+                },
+                {
+                  loader: 'css-loader',
+                  options: {
+                    importLoaders: 1,
+                    modules: true,
+                    modules : {
+                      localIdentName: '[sha1:hash:hex:4]',
+                    },
+                  }
+                }
+              ]
+            },
+
             // TODO: Merge this config once `image/avif` is in the mime-db
             // https://github.com/jshttp/mime-db
             {

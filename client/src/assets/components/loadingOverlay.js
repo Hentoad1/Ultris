@@ -1,10 +1,10 @@
 import {ReactComponent as Loading} from '../../assets/svgs/Loading.svg';
 
-import './loadingOverlay.css';
+import styles from './loadingOverlay.css';
 
 function LoadingOverlay(){
   return (
-    <div className = 'loadingOverlay'>
+    <div className = {styles.loadingOverlay}>
       <Loading/>
     </div>
   )

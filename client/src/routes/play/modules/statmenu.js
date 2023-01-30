@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Scrollbar from '../../../assets/components/scrollbar';
 import useSocket from '../../../assets/hooks/useSocket';
-import './statmenu.css';
+import styles from './statmenu.css';
 
 const minorStatTitles = [
   'SINGLES',
@@ -81,11 +81,11 @@ function StatMenu(){
   }
 
   return (
-    <div className={'statMenu ' + (display ? 'visible' : 'hidden')}>
-      <span className='primaryStat'>{stats.primaryStat}</span>
-      <span className='primaryStatValue'>{stats.primaryStatValue}</span>
+    <div className={styles.statMenu + ' ' + (display ? styles.visible : styles.hidden)}>
+      <span className = {styles.primaryStat}>{stats.primaryStat}</span>
+      <span className = {styles.primaryStatValue}>{stats.primaryStatValue}</span>
       <Scrollbar>
-        <ul className="minorStats">
+        <ul className = {styles.minorStats}>
           {stats.secondaryStats.map((x, i) => <li key={i}>{x.title}: {x.value}</li>)}
           {minors}
         </ul>

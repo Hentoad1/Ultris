@@ -6,7 +6,7 @@ import CustomCheckbox from '../../assets/components/customCheckbox.js';
 import useAPI from '../../assets/hooks/useAPI.js';
 import LoadingOverlay from '../../assets/components/loadingOverlay.js';
 
-import '../../assets/styles/menu.css';
+import styles from '../../assets/styles/menu.css';
 
 function Register(){
   let [stage, setStage] = useState(0);
@@ -44,8 +44,8 @@ function Register(){
   let loadingContent = loading ? <LoadingOverlay /> : null;
 
   return (
-    <div className = "page_content centered">
-      <div className = "menu">
+    <div className = "p c">
+      <div className = {styles.menu}>
         {stageContent}
         {loadingContent}
       </div>
@@ -82,15 +82,15 @@ function EmailSection(props){
 
   return (
     <React.Fragment>
-      <div className = 'header'>
+      <div className = {styles.header}>
         Enter your Email Address.
       </div>
-      <div className = 'subheader'>
+      <div className = {styles.subheader}>
         This will be used to keep your account secure. No promotional emails will be sent to you.
       </div>
       <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setEmail(ref); ref.current.focus()}} title = 'EMAIL ADDRESS' background = '#0F0F0F11'/>
       <button onClick = {submit}>CONTINUE</button>
-      <span>Already have an account? <Link to = '/login' className = 'link'>Sign in</Link></span>
+      <span>Already have an account? <Link to = '/login'><span>Sign in</span></Link></span>
     </React.Fragment>
   )
 }
@@ -117,17 +117,17 @@ function AccountSection(props){
 
   return (
     <React.Fragment>
-      <div className = 'header'>
+      <div className = {styles.header}>
         Account Info
       </div>
-      <div className = 'subheader'>
+      <div className = {styles.subheader}>
         Enter a Username and Password.
       </div>
       <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setUsername(ref); ref.current.focus()}} title = 'USERNAME' background = '#0F0F0F11'/>
       <AnimatedPasswordInput onKeyUp = {keyHandler} onRef = {ref => setPassword(ref)} title = 'PASSWORD' background = '#0F0F0F11'/>
-      <div className = 'row'>
+      <div className = {styles.row}>
         <CustomCheckbox onInput = {e => setChecked(e.target.checked)} style = {{marginRight:'0.5em'}}/>
-        <span>I agree to the <Link to = '/privacy' className = 'link' tabIndex = '-1'>Privacy Policy</Link></span>
+        <span>I agree to the <Link to = '/privacy' tabIndex = '-1'><span>Privacy Policy</span></Link></span>
       </div>
       <button onClick = {submit} disabled = {!checked}>REGISTER</button>
     </React.Fragment>
@@ -137,10 +137,10 @@ function AccountSection(props){
 function SigninSection(props){
   return (
     <React.Fragment>
-      <div className = 'header'>
+      <div className = {styles.header}>
         This email is already in use.
       </div>
-      <div className = 'subheader'>
+      <div className = {styles.subheader}>
         Would you like to sign in instead?
       </div>
       <Link to = '/login' style = {{width:'100%'}} tabIndex = '-1'><button>SIGN IN</button></Link>

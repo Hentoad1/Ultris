@@ -1,13 +1,12 @@
-
-import './privacy.css';
-
 import Scrollbar from '../../assets/components/scrollbar';
+
+import styles from './privacy.css';
 
 function Privacy(){
   return (
-    <div className = "page_content centered">
+    <div className = "p c">
       <Scrollbar position = "fixed">
-        <div className = 'privacy_policy'>
+        <div className = {styles.privacy_policy}>
           <h1>Privacy Policy</h1>
           <p>Last updated: January 25, 2023</p>
           <h2>I. Introduction</h2>
@@ -16,7 +15,7 @@ function Privacy(){
           <p>When using Ultris the user has the option to remain as a guest where no personal data will be collected.</p>
           <h2>II. Data Collected</h2>
           <p>When the user creates an account the personal information that will be stored consists of</p>
-          <ul className = 'nostyle'>
+          <ul>
             <li>Display Name / Username</li>
             <li>Email Address</li>
           </ul>

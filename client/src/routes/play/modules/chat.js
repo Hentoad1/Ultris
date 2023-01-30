@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import useSocket from '../../../assets/hooks/useSocket';
 
-import './chat.css';
+import styles from './chat.css';
 
 const WhiteSpaceRegex = new RegExp(/^\s*$/);
 
@@ -49,11 +49,11 @@ function Chat(){
   };
 
   return (
-    <div className={'chat' + (inLobby ? ' inLobby' : '')}>
-      <ul className='chatMessages'>
+    <div className = {styles.chat + ' ' + (inLobby ? styles.inLobby : '')}>
+      <ul className = {styles.chatMessages}>
         {messages.map((e, i) => <li className={e.type} key={i}>{e.name}: {e.msg}</li>)}
       </ul>
-      <input className='chatInput' onKeyUp={KeyHandler} onFocus={() => socket.game.removeListeners()} onBlur={() => socket.game.addListeners()} placeholder='Type here to send a message...' />
+      <input className = {styles.chatInput} onKeyUp={KeyHandler} onFocus={() => socket.game.removeListeners()} onBlur={() => socket.game.addListeners()} placeholder='Type here to send a message...' />
     </div>
   )
 }

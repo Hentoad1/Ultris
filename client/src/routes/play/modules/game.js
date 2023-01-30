@@ -2,10 +2,11 @@ import { useRef, useEffect, useContext, useState } from 'react';
 
 import { GameModeContext } from '../gameWrapper';
 
-import initalize from './logic.js'
-import './game.css';
+import initalize from './logic.js';
 import useControls from '../../../assets/hooks/useControls';
 import useSocket from '../../../assets/hooks/useSocket';
+
+import styles from './game.css';
 
 function Game(props){
   let socket = useSocket();
@@ -95,41 +96,41 @@ function Game(props){
   }, [socket, setDisplay])
 
   return (
-    <div className = 'clientWrapper' ref = {wrapperRef} style = {{display}}>
-      <div className = "inner_left_wrapper">
-        <canvas width = '100' height = '100' ref={holdRef} className = "box"></canvas>
-        <div className = "broadcast_wrapper" >
-          <span className = "minor_broadcast" ref={b2bref}/>
-          <span className = "broadcast" ref={broadcastRef}/>
-          <span className = "minor_broadcast" ref={comboRef}/>
+    <div className = {styles.clientWrapper} ref = {wrapperRef} style = {{display}}>
+      <div className = {styles.inner_left_wrapper}>
+        <canvas width = '100' height = '100' ref={holdRef} className = {styles.box}></canvas>
+        <div className = {styles.broadcast_wrapper}>
+          <span className = {styles.minor_broadcast} ref={b2bref}/>
+          <span className = {styles.broadcast} ref={broadcastRef}/>
+          <span className = {styles.minor_broadcast} ref={comboRef}/>
         </div>
-        <div className = "statBox">
+        <div className = {styles.statBox}>
           Score
-          <span className = "statOutput" ref={scoreRef}>0</span>
+          <span className = {styles.statOutput} ref={scoreRef}>0</span>
         </div>
-        <div className = "statBox">
+        <div className = {styles.statBox}>
           Level
-          <span className = "statOutput" ref={levelRef}>1</span>
+          <span className = {styles.statOutput} ref={levelRef}>1</span>
         </div>
-        <div className = "statBox">
+        <div className = {styles.statBox}>
           Lines
-          <span className = "statOutput" ref={linesRef}>0</span>
+          <span className = {styles.statOutput} ref={linesRef}>0</span>
         </div>
-        <div className = "statBox">
+        <div className = {styles.statBox}>
           Time
-          <span className = "statOutput" ref={timeRef}>0:00.000</span>
+          <span className = {styles.statOutput} ref={timeRef}>0:00.000</span>
         </div>
       </div>
       <div>
-        <canvas height = '400' width = '20' ref={meterRef} className = 'meter'></canvas>
+        <canvas height = '400' width = '20' ref={meterRef} className = {styles.meter}></canvas>
       </div>
-      <div className = 'inner_center_wrapper'>
-        <span className = "center_output" ref={titleRef}></span>
-        <canvas height = '400' width = '200' ref={mainRef} className = "box"></canvas>
-        <span className = 'inner_username_wrapper'>PLAYER</span>
+      <div className = {styles.inner_center_wrapper}>
+        <span className = {styles.center_output} ref={titleRef}></span>
+        <canvas height = '400' width = '200' ref={mainRef} className = {styles.box}></canvas>
+        <span className = {styles.inner_username_wrapper}>PLAYER</span>
       </div>
-      <div className = "inner_right_wrapper">
-        <canvas id = "queueDisp" height = '400' width = '100' ref={queueRef} className = "box"></canvas>
+      <div className = {styles.inner_right_wrapper}>
+        <canvas height = '400' width = '100' ref={queueRef} className = {styles.box}></canvas>
       </div>
     </div>
   )

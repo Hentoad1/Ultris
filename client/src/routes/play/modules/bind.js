@@ -1,3 +1,5 @@
+import styles from './game.css';
+
 const cellChangeRate = 5;
 const innerColors = ["#0000", "#D91ED9", "#1E1EBF", "#1EBFBF", "#BF1E1E", "#BF601E", "#1EBF1E", "#D4D421", "#6A6A6A", "#1A1A1A"];
 const outerColors = ["#FFFFFF", "#BF1BBF", "#1B1BA6", "#1BA6A6", "#A61B1B", "#A6551B", "#1BA61B", "#A6A61B", "#5C5C5C", "#090909"];
@@ -27,7 +29,7 @@ function bind(socket, createRef, setUserData) {
       let ref = createRef();
       let data = {
         ref,
-        canvas: <canvas width={size * 10} height={size * 20} className='box' ref={ref}></canvas>,
+        canvas: <canvas width={size * 10} height={size * 20} className = {styles.box} ref={ref}></canvas>,
         username: user.username,
         board: genBlankBoard(),
         pid: user.pid,

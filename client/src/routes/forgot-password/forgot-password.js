@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import {AnimatedInput} from '../../assets/components/animatedInput.js';
 import useAPI from '../../assets/hooks/useAPI.js';
 
-import '../../assets/styles/menu.css';
+import styles from '../../assets/styles/menu.css';
 
 function ForgotPassword(){
   let [stage, setStage] = useState(0);
@@ -26,8 +26,8 @@ function ForgotPassword(){
   }
 
   return (
-    <div className = "page_content centered">
-      <div className = "menu">
+    <div className = "p c">
+      <div className = {styles.menu}>
         {stageContent}
       </div>
     </div>
@@ -39,15 +39,15 @@ function InitalSection(props){
 
   return (
     <Fragment>
-      <div className = 'header'>
+      <div className = {styles.header}>
         Reset your Password
       </div>
-      <div className = 'subheader'>
+      <div className = {styles.subheader}>
         Enter the Email Address that you used to register your account with. You will be sent an email with instructions to reset your password.
       </div>
       <AnimatedInput onValueChange = {e => setEmail(e)} title = 'EMAIL' background = '#0F0F0F11'/>
       <button onClick = {() => props.nextStage(email)} disabled = {!email}>Reset Password</button>
-      <Link to = '/login' className = 'link'>Sign In</Link>
+      <Link to = '/login'><span>Sign In</span></Link>
     </Fragment>
   )
 }
@@ -55,10 +55,10 @@ function InitalSection(props){
 function SecondarySection(props){
   return (
     <Fragment>
-      <div className = 'header'>
+      <div className = {styles.header}>
         Email Sent
       </div>
-      <div className = 'subheader'>
+      <div className = {styles.subheader}>
         An email has been sent to you if the email was linked to your account.
       </div>
     </Fragment>

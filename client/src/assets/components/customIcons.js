@@ -2,7 +2,7 @@ import React from 'react';
 
 import {ReactComponent as Info} from '../../assets/svgs/Info.svg';
 
-import './customIcons.css';
+import styles from './customIcons.css';
 
 class InfoBox extends React.Component {
     constructor(props){
@@ -14,13 +14,13 @@ class InfoBox extends React.Component {
 
     render() {
         let dropdown = this.state.display ?
-        <div className = 'dropdown'>
+        <div className = {styles.dropdown}>
             {this.props.content}
         </div>
         : null;
 
         return (
-            <div className = 'InfoBox' onMouseEnter = {() => this.setState({display:true})} onMouseLeave = {() => this.setState({display:false})}>
+            <div className = {styles.InfoBox} onMouseEnter = {() => this.setState({display:true})} onMouseLeave = {() => this.setState({display:false})}>
                 <Info/>
                 {dropdown}
             </div>

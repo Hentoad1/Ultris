@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import useSession from '../../assets/hooks/useSession.js';
 
-import './navbar.css';
+import styles from './navbar.css';
 
 function Navbar(){
   let [session] = useSession();
@@ -12,7 +12,7 @@ function Navbar(){
 
   return (
     <Fragment>
-      <nav className = 'navbar'>
+      <nav className = {styles.navbar}>
         <Link to="/play">Play</Link>
         <Link to="/leaderboard">Leaderboard</Link>
         <header>Ultris</header>

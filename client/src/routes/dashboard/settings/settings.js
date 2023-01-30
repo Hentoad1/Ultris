@@ -2,52 +2,52 @@ import {Fragment, useState, useRef} from 'react';
 
 import Controls from './controls.js';
 
-import './settings.css';
-import './slider.css';
-import '../../../assets/styles/splitMenu.css';
 import { AnimatedInput } from '../../../assets/components/animatedInput.js';
+
+import menu from '../../../assets/styles/splitMenu.css';
+import styles from './slider.css';
 
 const NumberRegex = new RegExp(/[0-9]/, 'g');
 
 function Settings(){
   return (
-    <div className = 'splitMenu'>
-      <div className = 'headerMenu'>
-        <div className = 'header'>
-          <div className = 'title'>Controls</div>
-          <div className = 'description'>Edit your controls by clicking the corresponding button and then pressing the key you would like to change the binding to.</div>
+    <div className = {menu.splitMenu}>
+      <div className = {menu.headerMenu}>
+        <div className = {menu.header}>
+          <div className = {menu.title}>Controls</div>
+          <div className = {menu.description}>Edit your controls by clicking the corresponding button and then pressing the key you would like to change the binding to.</div>
         </div>
-        <div className = 'content'>
+        <div className = {menu.content}>
           <Controls/>
         </div>
       </div>
 
-      <div className = 'sideMenu'>
-        <div className = 'header'>
-          <div className = 'title'>Delayed Auto Shift</div>
-          <div className = 'description'>The amount of delay until the piece will shift automatically. Increasing this delay will make it slower to start moving pieces, but will help reduce accidental movements.</div>
+      <div className = {menu.sideMenu}>
+        <div className = {menu.header}>
+          <div className = {menu.title}>Delayed Auto Shift</div>
+          <div className = {menu.description}>The amount of delay until the piece will shift automatically. Increasing this delay will make it slower to start moving pieces, but will help reduce accidental movements.</div>
         </div>
-        <div className = 'content'>
+        <div className = {menu.content}>
           <HandlingSection min = {0} max = {334} default = {334} step = {1} dir = 'rtl' name = 'DAS'/>
         </div>
       </div>
 
-      <div className = 'sideMenu'>
-        <div className = 'header'>
-          <div className = 'title'>Auto Refresh Rate</div>
-          <div className = 'description'>The amount of time in between shifts during the Delayed Auto Shift. Increasing this delay will make the piece move slower left and right.</div>
+      <div className = {menu.sideMenu}>
+        <div className = {menu.header}>
+          <div className = {menu.title}>Auto Refresh Rate</div>
+          <div className = {menu.description}>The amount of time in between shifts during the Delayed Auto Shift. Increasing this delay will make the piece move slower left and right.</div>
         </div>
-        <div className = 'content'>
+        <div className = {menu.content}>
           <HandlingSection min = {0} max = {167} default = {167} step = {1} dir = 'rtl' name = 'ARR'/>
         </div>
       </div>
 
-      <div className = 'sideMenu'>
-        <div className = 'header'>
-          <div className = 'title'>Soft Drop Factor</div>
-          <div className = 'description'>The factor that is applied to the soft drop speed. Increasing this will make soft drops faster, but will make it harder to tuck pieces under an overhang.</div>
+      <div className = {menu.sideMenu}>
+        <div className = {menu.header}>
+          <div className = {menu.title}>Soft Drop Factor</div>
+          <div className = {menu.description}>The factor that is applied to the soft drop speed. Increasing this will make soft drops faster, but will make it harder to tuck pieces under an overhang.</div>
         </div>
-        <div className = 'content'>
+        <div className = {menu.content}>
           <HandlingSection min = {2} max = {40} default = {2} step = {1} dir = 'ltr' name = 'SDF'/>
         </div>
       </div>
@@ -131,16 +131,16 @@ function HandlingSection(props){
 
   return (
     <Fragment>
-      <div className = 'sliderTitles'>
+      <div className = {styles.sliderTitles}>
         <span>SLOW</span>
         <span>FAST</span>
       </div>
-      <div className = 'sliderWrapper'>
-        <input type = 'range' onInput = {sliderFunc} className = 'customSlider' ref = {slider} max = {props.max} min = {props.min} step = {props.step} dir = {props.dir} defaultValue = {startingValue} style = {{background:`linear-gradient(90deg,#ccc ${filled * 100}%,0,#fff2)`}}></input>
+      <div className = {styles.sliderWrapper}>
+        <input type = 'range' onInput = {sliderFunc} className = {styles.customSlider} ref = {slider} max = {props.max} min = {props.min} step = {props.step} dir = {props.dir} defaultValue = {startingValue} style = {{background:`linear-gradient(90deg,#ccc ${filled * 100}%,0,#fff2)`}}></input>
       </div>
-      <AnimatedInput title = {props.name} placeholder = {sliderValue} onKeyUp = {inputFunc} onRef = {ref => setInput(ref)} className = 'handlingInput'/>
-      <div className = 'handlingButtons'>
-        <button onClick = {reset} className = 'AlternateColor' disabled = {parseInt(props.default) === parseInt(sliderValue)}>Reset</button>
+      <AnimatedInput title = {props.name} placeholder = {sliderValue} onKeyUp = {inputFunc} onRef = {ref => setInput(ref)} className = {styles.handlingInput}/>
+      <div className = {styles.handlingButtons}>
+        <button onClick = {reset} disabled = {parseInt(props.default) === parseInt(sliderValue)}>Reset</button>
         <button onClick = {save} disabled = {inital + '' === sliderValue + ''}>Save</button>
       </div>
     </Fragment>

@@ -5,7 +5,7 @@ import Scrollbar from '../../../assets/components/scrollbar';
 import useSocket from '../../../assets/hooks/useSocket';
 import useAlerts from '../../../assets/hooks/useAlerts';
 import useSession from '../../../assets/hooks/useSession';
-import './lobbymenu.css';
+import styles from './lobbymenu.css';
 
 function LobbyMenu(){
   let location = useLocation();
@@ -111,21 +111,21 @@ function LobbyMenu(){
 
   const staticContent = (
     <Fragment>
-      <div className = 'countdown'>{countdown}</div>
-      <div className = 'playerInfo'>
+      <div className = {styles.countdown}>{countdown}</div>
+      <div className = {styles.playerInfo}>
         <Scrollbar>
-          <div className = 'userlistWrapper'>
-            <ul className = 'userlist'>
+          <div className = {styles.userlistWrapper}>
+            <ul className = {styles.userlist}>
               {players.map((username,i) => <li key = {i}>{username}</li>)}
-              {spectators.map((username,i) => <li key = {players.length + i} className = 'spectator'>{username ?? 'GUEST'}</li>)}
+              {spectators.map((username,i) => <li key = {players.length + i} className = {styles.spectator}>{username ?? 'GUEST'}</li>)}
             </ul>
           </div>
         </Scrollbar>
-        <button className = 'nostyle playerStatus' onClick = {updateSpectateStatus}>
-          <span className = 'username'>
+        <button className = {'n ' + styles.playerStatus} onClick = {updateSpectateStatus}>
+          <span className = {styles.username}>
             {username}
           </span>
-          <span className = 'status'>
+          <span className = {styles.status}>
             SET TO {lobbyInfo.spectating ? 'SPECTATE' : 'PLAY'} NEXT ROUND
           </span>
         </button>
@@ -137,13 +137,13 @@ function LobbyMenu(){
   if (display){
     if (lobbyInfo.admin){
       content = (
-        <div className = 'lobbymenu'>
-          <div className = 'settings'>
+        <div className = {styles.lobbymenu}>
+          <div className = {styles.settings}>
             <BasicInput placeholder = {lobbyInfo.name} onBlur = {e => UpdateLobbyInfo({name:e.target.value}, e)}/>
-            <div className = 'linkShare' onClick = {() => CopyToClipboard(host + location.pathname)}>
+            <div className = {styles.linkShare} onClick = {() => CopyToClipboard(host + location.pathname)}>
               {host + location.pathname}
             </div>
-            <div className = 'settingsRow'>
+            <div className = {styles.settingsRow}>
               <div title = 'Allow other players to join the lobby without the link.'>
                 <span>Private Lobby</span>
                 <CustomCheckbox defaultChecked = {lobbyInfo.private} onInput = {e => UpdateLobbyInfo({private:e.target.checked})}/>
@@ -160,8 +160,8 @@ function LobbyMenu(){
       );
     }else{
       content = (
-        <div className = 'lobbymenu'>
-          <div className = 'title'>{lobbyInfo.name}</div>
+        <div className = {styles.lobbymenu}>
+          <div className = {styles.title}>{lobbyInfo.name}</div>
           {staticContent}
         </div>
       );
@@ -173,9 +173,9 @@ function LobbyMenu(){
 
 function BasicInput(props){
   return (
-    <div className = {'stylizedInput' + (props.small ? ' small' : '')}>
+    <div className = {styles.stylizedInput + ' ' + (props.small ? styles.small : '')}>
       <input type = 'text' placeholder = ' ' onBlur = {props.onBlur}/>
-      <span className = 'placeholder'>{props.placeholder}</span>
+      <span className = {styles.placeholder}>{props.placeholder}</span>
     </div>
   )
 }

@@ -57,10 +57,6 @@
   background:#fff;
 }
 
-.handlingInput{
-  margin-top:1em;
-}
-
 .handlingButtons{
   display: flex;
   flex-direction:row;

@@ -1,6 +1,6 @@
 import { Fragment, createRef, useState, useEffect } from 'react';
 
-import './opponents.css';
+import styles from './opponents.css';
 
 import { bind } from './bind.js';
 import useSocket from '../../../assets/hooks/useSocket';
@@ -41,18 +41,18 @@ function Opponents(){
 
       return (
           <Fragment>
-              <div className = 'multiplayerWrapper' style = {{order:-1}}>
-                  {left.map(data => <div key = {data.index} name = {data.username} className = 'opponentWrapper'>{data.canvas}<span>{data.username}</span></div>)}
+              <div className = {styles.multiplayerWrapper} style = {{order:-1}}>
+                  {left.map(data => <div key = {data.index} name = {data.username} className = {styles.multiplayerWrapper}>{data.canvas}<span>{data.username}</span></div>)}
               </div>
-              <div className = 'multiplayerWrapper'>
-                  {right.map(data => <div key = {data.index} name = {data.username} className = 'opponentWrapper'>{data.canvas}<span>{data.username}</span></div>)}
+              <div className = {styles.multiplayerWrapper}>
+                  {right.map(data => <div key = {data.index} name = {data.username} className = {styles.opponentWrapper}>{data.canvas}<span>{data.username}</span></div>)}
               </div>
           </Fragment>
       )
   }else{
       return (
-          <div className = 'multiplayerWrapper'>
-              {users.map(data => <div key = {data.index} name = {data.username} className = 'opponentWrapper'>{data.canvas}<span>{data.username}</span></div>)}
+          <div className = {styles.multiplayerWrapper}>
+              {users.map(data => <div key = {data.index} name = {data.username} className = {styles.opponentWrapper}>{data.canvas}<span>{data.username}</span></div>)}
           </div>
       )
   }

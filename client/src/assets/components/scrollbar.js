@@ -1,6 +1,6 @@
 import {Children, Fragment, cloneElement, useRef, useEffect, useState, useCallback} from 'react';
 
-import './scrollbar.css';
+import styles from './scrollbar.css';
 
 function Scrollbar(props){
   let ref = useRef({});
@@ -139,9 +139,9 @@ function Scrollbar(props){
   return (
     <Fragment>
       {cloneElement(child, {...child.props, style:{"overflow":"hidden"},ref})}
-      <div className = 'scrollbar_track' style = {{left:horozontalPos ?? null,top:targetDims.y ?? null,height:targetDims.height ?? null,display:display ? null : 'none'}}>
-        <div className = 'scrollbar_thumb_outer' style = {{top,height}} onMouseDown = {HandleMouseDown}>
-          <div className = 'scrollbar_thumb_inner'></div>
+      <div className = {styles.scrollbar_track} style = {{left:horozontalPos ?? null,top:targetDims.y ?? null,height:targetDims.height ?? null,display:display ? null : 'none'}}>
+        <div className = {styles.scrollbar_thumb_outer} style = {{top,height}} onMouseDown = {HandleMouseDown}>
+          <div className = {styles.scrollbar_thumb_inner}></div>
         </div>
       </div>
     </Fragment>

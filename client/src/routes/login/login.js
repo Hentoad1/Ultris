@@ -5,7 +5,7 @@ import {AnimatedInput,AnimatedPasswordInput} from '../../assets/components/anima
 import useAPI from '../../assets/hooks/useAPI.js';
 import LoadingOverlay from '../../assets/components/loadingOverlay.js';
 
-import '../../assets/styles/menu.css';
+import styles from '../../assets/styles/menu.css';
 
 function Login(props){
   let [loading, setLoading] = useState(false);
@@ -34,19 +34,19 @@ function Login(props){
   let loadingContent = loading ? <LoadingOverlay/> : null;
 
   return (
-    <div className = "page_content centered">
-        <div className = "menu">
-            <div className = 'header'>
+    <div className = "p c">
+        <div className = {styles.menu}>
+            <div className = {styles.header}>
               Account Info
             </div>
-            <div className = 'subheader'>
+            <div className = {styles.subheader}>
               Enter your Email and Password.
             </div>
             <AnimatedInput onKeyUp = {keyHandler} onRef = {ref => {setEmail(ref); ref.current.focus()}} title = 'EMAIL' background = '#0F0F0F11'/>
             <AnimatedPasswordInput onKeyUp = {keyHandler} onRef = {ref => setPassword(ref)} title = 'PASSWORD' background = '#0F0F0F11'/>
             <button onClick = {submit}>LOGIN</button>
-            <span>Don't have an account? <Link to = '/register' className = 'link'>Sign Up</Link></span>
-            <Link to = '/forgot-password' style = {{'marginTop':'-1.5em'}} className = 'link'>Forgot Your Password?</Link>
+            <span>Don't have an account? <Link to = '/register'><span>Sign Up</span></Link></span>
+            <Link to = '/forgot-password' style = {{'marginTop':'-1.5em'}}><span>Forgot Your Password?</span></Link>
             {loadingContent}
         </div>
     </div>

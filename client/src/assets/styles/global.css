@@ -1,4 +1,4 @@
-html, body, #root{
+:global(html), :global(body), :global(#root){
   --background-color:#191919;
   --color:white;
  
@@ -14,60 +14,13 @@ html, body, #root{
   font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-#root{
+:global(#root){
   display:flex;
   flex-flow:column;
-}
-
-li{
-  list-style-type: none;
-}
-
-.App {
-  display:flex;
-  flex-flow:column;
-  
-  background:var(--background-color);
-
-  height:100%;
-  width:100%;
-}
-
-.page_content{
-  overflow:hidden;
-
-  position:relative;
-  height:calc(100% - var(--navbar-height));
-
-  background:var(--background-color);
-  color:var(--color);
-}
-
-.centered{
-  flex-grow:1;
-
-  display:flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.link{
-  color:inherit;
-  text-decoration:underline !important;
-}
-
-.link:hover{
-  color:#2222FF;
-}
-
-.link:active{
-  color:#0000DD;
 }
 
 /* overwriting element defaults */
-
-html *{
+:global(html *){
   margin:0;
   font-size:inherit;
 
@@ -76,11 +29,17 @@ html *{
   font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-html *:focus{
+:global(html *:focus){
   outline:1px solid var(--outline-color,white);
 }
 
-html button.nostyle{
+:global(html input){
+  font-family: inherit;
+  color:inherit;
+}
+
+/*previously nostyle*/
+:global(html button.n){
   color:inherit;
   background:inherit;
   border:none;
@@ -89,32 +48,7 @@ html button.nostyle{
   margin:0;
 }
 
-html input{
-  font-family: inherit;
-  color:inherit;
-}
-
-html a{
-  color: inherit;
-  text-decoration: none;
-}
-
-::-webkit-scrollbar{
-  width:5px;
-	background:transparent;
-  appearance: none;
-}
-
-::-webkit-scrollbar-thumb{
-	background:#FFFFFF88;
-}
-
-:-webkit-any-link {
-  color: inherit;
-  text-decoration: none;
-}
-
-html button:not(.nostyle){
+:global(html button:not(.n)){
   outline:none;
   border:none;
 
@@ -135,14 +69,56 @@ html button:not(.nostyle){
   color:black;
 }
 
-html button:not(.nostyle):focus-visible{
+:global(html button:not(.n):focus-visible){
   box-shadow:0 0 0 5px #ffffff40;
 }
 
-html button:not(.nostyle):disabled{
+:global(html button:not(.n):disabled){
   color:#555;
   box-shadow:0 0 0 2px #555;
 
   background:transparent;
   pointer-events: none;
+}
+
+:global(html li){
+  list-style-type: none;
+}
+
+:global(html a){
+  color:inherit;
+  text-decoration: none;
+}
+
+/*if natural link behaviour is wanted span element can be used.*/
+:global(html a > span){
+  text-decoration: underline;
+}
+
+:global(html a > span:hover){
+  color:#2222FF;
+}
+
+
+
+/*previously page_content*/
+:global(.p){
+  overflow:hidden;
+
+  position:relative;
+  height:calc(100% - var(--navbar-height));
+
+  background:var(--background-color);
+  color:var(--color);
+}
+
+
+/*previously centered*/
+:global(.c){
+  flex-grow:1;
+
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
