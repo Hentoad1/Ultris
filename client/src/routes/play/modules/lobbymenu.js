@@ -1,27 +1,39 @@
 import { Fragment, useState, useEffect } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import CustomCheckbox from '../../../assets/components/customCheckbox';
 import Scrollbar from '../../../assets/components/scrollbar';
-import useSocket from '../../../assets/hooks/useSocket';
+import useSocket, { useConnected } from '../../../assets/hooks/useSocket';
 import useAlerts from '../../../assets/hooks/useAlerts';
 import useSession from '../../../assets/hooks/useSession';
+import {ReactComponent as Crown} from '../../../assets/svgs/Crown.svg';
+
 import styles from './lobbymenu.css';
 
 function LobbyMenu(){
   let location = useLocation();
   let socket = useSocket();
+  let connected = useConnected();
+  let navigate = useNavigate();
   let [{username}] = useSession();
   let [display, setDisplay] = useState(true);
-  let [[players, spectators], setPlayers] = useState([[username], []]);
+  let [[players, spectators], setPlayers] = useState([[{username}], []]);
   let [lobbyInfo, setLobbyInfo] = useState({});
   let [countdown, setCountdown] = useState('');
   let alert = useAlerts();
 
   useEffect(() => {
+    console.log(connected);
+    if (!connected){
+      navigate('/play');
+      alert('Unable to connect to the server.')
+    }
+  }, [connected, navigate, alert])
+
+  useEffect(() => {
     socket.setLobbyInfo = setLobbyInfo;
 
     const updateInfoFunction = function(info){
-      console.log(info);
+      console.log('info', info);
       setLobbyInfo(info);
     }
 
@@ -66,6 +78,19 @@ function LobbyMenu(){
     }
   }, [socket]);
 
+  useEffect(() => {
+    const kickFunction = () => {
+      navigate('/play');
+      alert('You were kicked from the room.');
+    }
+
+    socket.on('kicked',kickFunction);
+
+    return () => {
+      socket.off('kicked',kickFunction);
+    }
+  }, [socket, alert, navigate]);
+
   const UpdateLobbyInfo = (newValue, event) => {
     for (const property in newValue){
       let value = newValue[property];
@@ -105,33 +130,13 @@ function LobbyMenu(){
     alert('Link Copied!');
   }
 
+  function removePlayer(pid){
+    socket.emit('remove player', pid);
+  }
+
   let host = window.location.host;
 
-  console.log(players, spectators);
-
-  const staticContent = (
-    <Fragment>
-      <div className = {styles.countdown}>{countdown}</div>
-      <div className = {styles.playerInfo}>
-        <Scrollbar>
-          <div className = {styles.userlistWrapper}>
-            <ul className = {styles.userlist}>
-              {players.map((username,i) => <li key = {i}>{username}</li>)}
-              {spectators.map((username,i) => <li key = {players.length + i} className = {styles.spectator}>{username ?? 'GUEST'}</li>)}
-            </ul>
-          </div>
-        </Scrollbar>
-        <button className = {'n ' + styles.playerStatus} onClick = {updateSpectateStatus}>
-          <span className = {styles.username}>
-            {username}
-          </span>
-          <span className = {styles.status}>
-            SET TO {lobbyInfo.spectating ? 'SPECTATE' : 'PLAY'} NEXT ROUND
-          </span>
-        </button>
-      </div>
-    </Fragment>
-  );
+  console.log(players, spectators)
 
   let content = null;
   if (display){
@@ -155,20 +160,68 @@ function LobbyMenu(){
             </div>
             <button onClick = {() => socket.emit('start game')}>START</button>
           </div>
-          {staticContent}
+          <div className = {styles.countdown}>{countdown}</div>
+          <div className = {styles.playerInfo}>
+            <Scrollbar>
+              <div className = {styles.userlistWrapper} key = {1}>
+                <ul className = {styles.userlist}>
+                  {players.map((data,i) => {
+                    if (data.owner){
+                      return (<li key = {i}>{data.username}<Crown/></li>);
+                    }else{
+                      return (<li key = {i} onClick = {() => removePlayer(data.pid)} className = {styles.hoverable}>{data.username}</li>);
+                    }
+                  })}
+                  {spectators.map((data,i) => <li key = {players.length + i} className = {styles.spectator + styles.hoverable} onClick = {() => removePlayer(data.pid)}>{data.username ?? 'GUEST'}</li>)}
+                </ul>
+              </div>
+            </Scrollbar>
+            <button className = {'n ' + styles.playerStatus} onClick = {updateSpectateStatus}>
+              <span className = {styles.username}>
+                {username}
+              </span>
+              <span className = {styles.status}>
+                SET TO {lobbyInfo.spectating ? 'SPECTATE' : 'PLAY'} NEXT ROUND
+              </span>
+            </button>
+          </div>
         </div>
       );
     }else{
       content = (
         <div className = {styles.lobbymenu}>
           <div className = {styles.title}>{lobbyInfo.name}</div>
-          {staticContent}
+          <div className = {styles.countdown}>{countdown}</div>
+          <div className = {styles.playerInfo}>
+            <Scrollbar>
+              <div className = {styles.userlistWrapper} key = {1}>
+                <ul className = {styles.userlist}>
+                  {players.map((data,i) => {
+                    if (data.owner){
+                      return (<li key = {i}>{data.username} [owner]</li>);
+                    }else{
+                      return (<li key = {i}>{data.username}</li>);
+                    }
+                  })}
+                  {spectators.map((data,i) => <li key = {players.length + i} className = {styles.spectator} onClick = {() => removePlayer(data.pid)}>{data.username ?? 'GUEST'}</li>)}
+                </ul>
+              </div>
+            </Scrollbar>
+            <button className = {'n ' + styles.playerStatus} onClick = {updateSpectateStatus}>
+              <span className = {styles.username}>
+                {username}
+              </span>
+              <span className = {styles.status}>
+                SET TO {lobbyInfo.spectating ? 'SPECTATE' : 'PLAY'} NEXT ROUND
+              </span>
+            </button>
+          </div>
         </div>
       );
     }
   }
   
-  return content
+  return content;
 }
 
 function BasicInput(props){

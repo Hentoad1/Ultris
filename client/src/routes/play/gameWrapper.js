@@ -10,7 +10,7 @@ import Opponents from './modules/opponents.js';
 import StatMenu from './modules/statmenu.js';
 import WinMenu from './modules/winmenu.js';
 import LobbyMenu from './modules/lobbymenu.js';
-import useSocket from '../../assets/hooks/useSocket';
+import useSocket, {useConnected} from '../../assets/hooks/useSocket';
 
 import styles from './gameWrapper.css';
 
@@ -20,8 +20,8 @@ const singlePlayerModes = new Set(['sprint','blitz','endless']);
 
 function Wrapper(){
   let socket = useSocket();
+  let connected = useConnected();
   let [mode, setMode] = useState();
-  let [connected, setConnected] = useState(socket.connected);
   let params = useParams();
 
   useEffect(() => {
@@ -46,20 +46,6 @@ function Wrapper(){
       window.onbeforeunload = null;
     }
   },[socket])
-
-  useEffect(() => {
-    let connectHandler = () => setConnected(true);
-    let disconnectHandler = () => setConnected(false);
-
-    socket.on('connect', connectHandler);
-    socket.on('disconnect', disconnectHandler);
-
-    return () => {
-      socket.off('connect', connectHandler);
-      socket.off('disconnect', disconnectHandler);
-    }
-  })
-
   
   let onlineContent = null;
   if (mode === 'online'){

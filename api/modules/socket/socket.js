@@ -1,6 +1,8 @@
 const Board = require('./board');
 let addLeaderboardScore = require('./leaderboard');
 
+const { v4 } = require('uuid');
+
 function generateRoomCode(){
   let number = Math.floor(Math.random() * 2176782335);
   let str = number.toString(36).toUpperCase();
@@ -21,8 +23,6 @@ function bind(io){
   const Room = require('./room')(io); //import rooms class
   const rooms = new Map(); //create room map
   const publicRooms = new Set(); //create public rooms set so it can be listed easily in the browse menu
-
-  
 
   const RoomKillFunction = (roomid) => {
     rooms.delete(roomid);
@@ -54,6 +54,9 @@ function bind(io){
     
 		socket.boardData = new Board();
     socket.ownedRoom = null;
+    socket.publicID = v4();
+
+    console.log(socket.publicID);
 
     addUserBinds(socket);
 	}));
@@ -261,6 +264,14 @@ function bind(io){
         socket.broadcast.emit('receive piece',cords,ghost,color,socket.publicID);
       });
 
+      const remove_player = handle((pid) => {
+        currentRoom.totalUsers.forEach(user => {
+          if (user.pid === pid){
+            currentRoom.kickUser(user);
+          }
+        })
+      });
+
       socket.on('update lobby', update_lobby);
       socket.on('start game', start_game);
       socket.on('swap activity', swap_activity);
@@ -273,6 +284,7 @@ function bind(io){
       socket.on('hold', hold);
       socket.on('placed', placed);
       socket.on('send piece', send_piece);
+      socket.on('remove player', remove_player);
 
       join_room_cleanup = () => {
         socket.off('update lobby', update_lobby);
@@ -287,6 +299,7 @@ function bind(io){
         socket.off('hold', hold);
         socket.off('placed', placed);
         socket.off('send piece', send_piece);
+        socket.off('remove player', remove_player);
       }
     });
 
@@ -420,13 +433,13 @@ function bind(io){
         return callback(socket.ownedRoom.id);
       }
 
-
       let roomcode = generateRoomCode();
       let roomInfo = {
         id:roomcode,
         owner:{
           uuid:socket.uuid,
-          username:socket.username
+          username:socket.username,
+          pid:socket.publicID
         },
         automated:false
       };

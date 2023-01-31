@@ -8,7 +8,7 @@ import Navbar from './assets/components/navbar.js';
 
 import './assets/styles/global.css';
 
-function Globals(props){
+function Globals(){
   return (
     <Fragment>
       <AlertWrapper>

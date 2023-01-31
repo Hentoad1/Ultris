@@ -75,20 +75,38 @@
   flex-grow:1;
 	
 	margin:0;
-	padding:0.25em 0;
+	padding:0;
 }
 
 
 .lobbymenu > .playerInfo >  .userlistWrapper > .userlist > li{
-	padding:0.5em;
-	margin:0.25em;
+	padding:0.75em 0;
+	margin:0;
   overflow:hidden;
-	text-align: center;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.lobbymenu > .playerInfo >  .userlistWrapper > .userlist > svg{
+  width:30px;
+  margin-left:0.25em;
+}
+
+
+.lobbymenu > .playerInfo >  .userlistWrapper > .userlist > li.hoverable{
+  cursor: pointer;
+}
+
+.lobbymenu > .playerInfo >  .userlistWrapper > .userlist > li.hoverable:hover{
+	background:#151515;
 }
 
 .lobbymenu > .playerInfo >  .userlistWrapper > .userlist > li.spectator{
   opacity:0.5;
 }
+
+
 
 
 .lobbymenu > .countdown{

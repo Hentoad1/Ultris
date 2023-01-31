@@ -8,7 +8,7 @@ function CustomCheckbox(props){
   let inputFunc = (e) => {
     console.log(e)
     
-    e.target.focus(true);
+    e.target.focus({focusVisible:true});
 
     if (props.onInput){
       props.onInput(e);

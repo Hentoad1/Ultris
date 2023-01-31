@@ -1,4 +1,4 @@
-import { useEffect, useContext, createContext } from 'react';
+import { useEffect, useContext, useState, createContext } from 'react';
 import { useNavigate } from 'react-router';
 import { io } from 'socket.io-client';
 
@@ -18,14 +18,39 @@ function useSocket(){
   return socket;
 }
 
+function useConnected(){
+  let socket = useContext(SocketContext);
+  let [connected, setConnected] = useState(true);
+
+  useEffect(() => {
+    let connect = () => setConnected(true);
+    let disconnect = () => setConnected(false);
+    let error = () => setConnected(socket.connected);
+
+    socket.on('connect', connect);
+    socket.on('disconnect', disconnect);
+    socket.on('connect_error', error);
+
+    return () => {
+      socket.off('connect', connect);
+      socket.off('disconnect', disconnect);
+      socket.off('connect_error', error);
+    }
+  }, [socket, setConnected]);
+  
+  return connected;
+}
 
 function SocketWrapper(props){
   let alert = useAlerts();
   let navigate = useNavigate();
 
   useEffect(() => {
-    let alertFunc = (error) => {
-      console.log(error);
+    let errorFunc = (error) => {
+      if (error.message === 'Unauthorized'){
+        setTimeout(() => socket.connect(), 1000); //reconnect after a second.
+      }
+      //console.log(error);
       if (error.data?.alert){
         alert(error.message, {type:'error'});
       }
@@ -50,13 +75,13 @@ function SocketWrapper(props){
       }
     }
 
-    socket.on('connect_error', alertFunc);
+    socket.on('connect_error', errorFunc);
     socket.on('request_error', requestFunc);
     socket.on('request_notify', notifyFunc);
     socket.on('connect_failed', failFunc);
 
     return () => {
-      socket.off('connect_error', alertFunc);
+      socket.off('connect_error', errorFunc);
       socket.off('request_error', requestFunc);
       socket.off('request_notify', notifyFunc);
       socket.off('connect_failed', failFunc);
@@ -70,6 +95,6 @@ function SocketWrapper(props){
   )
 }
 
-export {SocketWrapper};
+export {SocketWrapper, useConnected};
 
 export default useSocket;

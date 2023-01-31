@@ -1,5 +1,3 @@
-const { v1 } = require('uuid');
-
 function passVars(io){
   return class Room{
     constructor({id,owner,automatic}, onExpire){
@@ -16,6 +14,7 @@ function passVars(io){
       //lobby states
       this.countingDown = false;
       this.breakCountdown = false;
+      this.inMatch = false;
       //game variables
       this.totalUsers = new Set();
       this.spectatingUsers = new Set(); // these are users who are choosing to sit out every round.
@@ -35,7 +34,9 @@ function passVars(io){
       let totalPlayers = totalAlive + totalDead;
       
       
-      if (totalAlive == 1){ //sends over leaderboard data
+      if (totalAlive == 1){
+        this.inMatch = false;
+
         let finalPlayer = Array.from(this.aliveUsers)[0];
         this.playerDeathList.unshift(finalPlayer);
         let playerData = this.playerDeathList.map(user =>
@@ -80,6 +81,8 @@ function passVars(io){
         }
       }
         
+      this.inMatch = true;
+
       this.aliveUsers =  new Set([...this.aliveUsers, ...this.deadUsers]); //reset the alive users to include the dead users.
       this.deadUsers.clear(); //clear the dead users.
       this.playerDeathList = []; //reset the player death list.
@@ -135,10 +138,13 @@ function passVars(io){
   
     //USER FUNCTIONS
     addUser(socket){
-      let pid = this.generatePID();
+      if (this.owner.uuid === socket.uuid){ //if the owner rejoins, then overwrite the old pid with the new one.
+        this.owner.pid = socket.publicID;
+      }
+
       let obj = {
         id:socket.id,
-        pid:pid,
+        pid:socket.publicID,
         username:socket.username,
         socket:socket,
         spectating:false
@@ -147,17 +153,37 @@ function passVars(io){
       this.deadUsers.add(obj);
       //this.resetUser(obj);
 
-      let players = [...this.aliveUsers, ...this.deadUsers].map(e => e.username).sort();
-      let spectators = [...this.spectatingUsers].map(e => e.username).sort();
+      const mapFunc = e => ({username:e.username, pid:e.pid, owner:e.pid === this.owner.pid});
+      const sortFunc = (a,b) => {
+        if (b.owner || a.username > b.username){
+          return 1;
+        }else{
+          return -1;
+        }
+      }
+
+      console.log([...this.aliveUsers, ...this.deadUsers].map(mapFunc));
+      console.log([...this.aliveUsers, ...this.deadUsers].map(mapFunc).sort(sortFunc));
+
+      let players = [...this.aliveUsers, ...this.deadUsers].map(mapFunc).sort(sortFunc);
+      let spectators = [...this.spectatingUsers].map(mapFunc).sort(sortFunc);
       io.in(this.id).emit('update lobby players', players, spectators);
   
       this.update();
 
-      if (this.countingDown){
-        socket.emit('message', 'serverMessage', '[SERVER]', 'Welcome to the room! The next game should begin shortly.');
+      if (!this.inMatch){
+        if (this.automated){
+          socket.emit('message', 'serverMessage', '[SERVER]', 'Welcome to the room! The next game should begin shortly.');
+        }else{
+          socket.emit('message', 'serverMessage', '[SERVER]', 'Welcome to the room! The owner will start the match when they are ready.');
+        }
       }else{
         if (this.totalUsers.size < 2){
-          socket.emit('message', 'serverMessage', '[SERVER]', 'Welcome to the room! There are currently not enough players to start, please wait for more players to join.');
+          if (this.automated){
+            socket.emit('message', 'serverMessage', '[SERVER]', 'Welcome to the room! There are currently not enough players to start, please wait for more players to join.');
+          }else{
+            socket.emit('message', 'serverMessage', '[SERVER]', 'Welcome to the room! The owner will start the match when they are ready.');
+          }
         }else{
           socket.emit('message', 'serverMessage', '[SERVER]', 'Welcome to the room! You have joined during the middle of the match and will be able to play after the current round finishes.');
           
@@ -194,8 +220,17 @@ function passVars(io){
   
       io.in(this.id).emit('remove user', obj.pid);
       
-      let players = [...this.aliveUsers, ...this.deadUsers].map(e => e.username).sort();
-      let spectators = [...this.spectatingUsers].map(e => e.username).sort();
+      const mapFunc = e => ({username:e.username, pid:e.pid, owner:e.pid === this.owner.pid});
+      const sortFunc = (a,b) => {
+        if (b.owner || a.username > b.username){
+          return 1;
+        }else{
+          return -1;
+        }
+      }
+
+      let players = [...this.aliveUsers, ...this.deadUsers].map(mapFunc).sort(sortFunc);
+      let spectators = [...this.spectatingUsers].map(mapFunc).sort(sortFunc);
       io.in(this.id).emit('update lobby players', players, spectators);
       
       if (this.totalUsers.size === 0 && !this.automated){
@@ -205,6 +240,14 @@ function passVars(io){
       this.update();
     }
     
+    kickUser(obj){
+      this.removeUser(obj);
+
+      io.in(this.id).emit('message', 'serverMessage', '[SERVER]', `${obj.socket.username} was kicked from the room.`);
+
+      obj.socket.emit('kicked');
+    }
+
     killUser(obj){
       if (this.aliveUsers.delete(obj)){
         io.in(this.id).emit('remove user', obj.pid);
@@ -226,8 +269,17 @@ function passVars(io){
       
       obj.socket.emit('server message', 'You will now participate in the next match.');
 
-      let players = [...this.aliveUsers, ...this.deadUsers].map(e => e.username).sort();
-      let spectators = [...this.spectatingUsers].map(e => e.username).sort();
+      const mapFunc = e => ({username:e.username, pid:e.pid, owner:e.pid === this.owner.pid});
+      const sortFunc = (a,b) => {
+        if (b.owner || a.username > b.username){
+          return 1;
+        }else{
+          return -1;
+        }
+      }
+      
+      let players = [...this.aliveUsers, ...this.deadUsers].map(mapFunc).sort(sortFunc);
+      let spectators = [...this.spectatingUsers].map(mapFunc).sort(sortFunc);
       io.in(this.id).emit('update lobby players', players, spectators);
       
       this.update();
@@ -242,25 +294,20 @@ function passVars(io){
 
       obj.socket.emit('server message', 'You will now automatically spectate every future match.');
 
-      let players = [...this.aliveUsers, ...this.deadUsers].map(e => e.username).sort();
-      let spectators = [...this.spectatingUsers].map(e => e.username).sort();
+      const mapFunc = e => ({username:e.username, pid:e.pid, owner:e.pid === this.owner.pid});
+      const sortFunc = (a,b) => {
+        if (b.owner || a.username > b.username){
+          return 1;
+        }else{
+          return -1;
+        }
+      }
+      
+      let players = [...this.aliveUsers, ...this.deadUsers].map(mapFunc).sort(sortFunc);
+      let spectators = [...this.spectatingUsers].map(mapFunc).sort(sortFunc);
       io.in(this.id).emit('update lobby players', players, spectators);
 
       this.update();
-    }
-    
-    //MISC FUNCTIONS
-    generatePID(){
-      do {
-        var pid = v1();
-      } while (groupContainsID(this.totalUsers,pid));
-      
-      function groupContainsID(group, id){
-        let match = false;
-        group.forEach(e => match = match || e.pid == id);
-        return match;
-      }
-      return pid;
     }
   }
 }
