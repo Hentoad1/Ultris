@@ -43,8 +43,6 @@ function Scrollbar(props){
     let percentageOfPageVisible = (clientHeight / scrollHeight);
     let thumbHeight = percentageOfPageVisible * clientHeight;
 
-    console.log(thumbHeight);
-
     setHeight(thumbHeight);
 
     updateScrollbarPosition(0);

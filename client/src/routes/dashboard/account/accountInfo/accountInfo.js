@@ -18,7 +18,6 @@ function AccountInfo(){
     QueryAPI('/account/getInfo', null, function(result){
       setLoading(false);
       if (result){
-        console.log(result);
         setInfo(result);
       }
     });

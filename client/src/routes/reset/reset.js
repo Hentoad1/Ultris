@@ -19,11 +19,7 @@ function ResetPassword(){
       token:params.get('token')
     }
     
-    QueryAPI('/user/resetPassword', payload,(result) => {
-      console.log(result);
-    });
-
-    console.log(payload);
+    QueryAPI('/user/resetPassword', payload);
   }
 
   return (

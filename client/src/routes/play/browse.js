@@ -31,7 +31,7 @@ function BrowseMenu(){
         {rooms.map(room => (
           <Link to = {'/play/' + room.id}>
             <div className = {styles.name}>{room.name}</div>
-            <div className = {styles.players}>{room.players.max === null ? room.players.current : room.players.current + ' / ' + room.players.max}</div>
+            <div className = {styles.players}>{(parseInt(room.players.max) === 0 ? room.players.current : room.players.current + ' / ' + room.players.max) + (room.players.spectating === 0 ? '' : ' + ' + room.players.spectating)}</div>
           </Link>
         ))}
       </Fragment>

@@ -307,7 +307,6 @@ function initalize(DOM, socket, gameMode, keybinds) {
   }
 
   let setGravity = (rate) => {
-    console.log(rate);
     onlineFallRate = rate;
   }
   
@@ -320,10 +319,6 @@ function initalize(DOM, socket, gameMode, keybinds) {
     current = new Tetrimino(queue.shift());
 
     displayQueue();
-
-    const letters = ['T','J','I','Z','L','S','O'];
-
-    console.log(queue.map(e => letters[e]));
   }
 
   socket.on('receive garbage', receiveGarbageFunction);

@@ -3,7 +3,7 @@ function passVars(io){
     constructor({id,owner,automatic}, onExpire){
       //room information
       this.id = id;
-      this.owner = owner; //owner should be an object with uuid and username.
+      this.owner = owner; //owner should be an object with uuid, pid, and username.
       this.automated = automatic;
       //customizable settings (name in here because all of these are the vars that can be changed by the owner, nothing else)
       this.settings = {
@@ -24,8 +24,10 @@ function passVars(io){
       this.playerDeathList = [];
       //set the onExpire function
       this.onExpire = onExpire;
-      //gravity timeout
-      this.timeoutID = 0;
+      //IDs for setTimeout
+      this.gravityID = null;
+      this.expireID = null;
+      this.ownerID = null;
     }
     
     update(){
@@ -50,7 +52,7 @@ function passVars(io){
         this.deadUsers.add(finalPlayer);
         this.aliveUsers.clear();
 
-        clearTimeout(this.timeoutID);
+        clearTimeout(this.gravityID);
       }
       
       
@@ -111,35 +113,60 @@ function passVars(io){
       rate *= 0.9;
       delay *= 1.05;
 
-      this.timeoutID = setTimeout(() => this.startGravity(delay, rate), delay)
+      this.gravityID = setTimeout(() => this.startGravity(delay, rate), delay);
     }
 
     expire(){
-      if (typeof this.killExpire === 'function'){
-        this.killExpire();
-      }
-  
-      new Promise((resolve) => {
-        setTimeout(resolve,30 * 1000,true);
-        this.killExpire = (() => {
-          resolve(false);
-        });
-      }).then((result) => {
-        if (result){
-          if (this.totalUsers.size !== 0){
-            //failsafe for expire somehow going through even though there still ppl in it
-            return;
-          }
-          this.killExpire = null;
-          this.onExpire(this.id); //call the onExpire function
+      clearTimeout(this.expireID);
+
+      this.expireID = setTimeout(() => {
+        if (this.totalUsers.size !== 0){
+          //failsafe for expire somehow going through even though there still players in it
+          return;
         }
-      });
+
+        this.onExpire(this.id); //call the onExpire function
+      }, 30 * 1000); // 30 seconds.
     }
   
+    newOwner(){
+      //wait 1 second if user still has not returned then add a new owner.
+
+      this.ownerID = setTimeout(() => {
+        let earliestJoin = null;
+        let correspondingUser = null;
+
+        this.totalUsers.forEach(user => {
+          if (earliestJoin === null || user.joinDate < earliestJoin){
+            earliestJoin = user.joinDate;
+            correspondingUser = user;
+          }
+        })
+
+        if (correspondingUser === null){
+          return;
+        }
+
+        this.owner = {
+          username:correspondingUser.username,
+          uuid:correspondingUser.socket.uuid,
+          pid:correspondingUser.pid
+        }
+
+        this.broadcastPlayerInfo();
+        this.broadcastRoomInfo();
+
+        correspondingUser.socket.emit('message', 'serverMessage', '[SERVER]', 'The previous owner has left, you have been transferred the room ownership.');
+
+      }, 1000) //1 second.
+    }
+
     //USER FUNCTIONS
     addUser(socket){
       if (this.owner.uuid === socket.uuid){ //if the owner rejoins, then overwrite the old pid with the new one.
         this.owner.pid = socket.publicID;
+
+        clearTimeout(this.ownerID) //clear timeout that will swap new owner as well.
       }
 
       let obj = {
@@ -147,27 +174,14 @@ function passVars(io){
         pid:socket.publicID,
         username:socket.username,
         socket:socket,
-        spectating:false
+        spectating:false,
+        joinDate:Date.now()
       };
       this.totalUsers.add(obj);
       this.deadUsers.add(obj);
       //this.resetUser(obj);
 
-      const mapFunc = e => ({username:e.username, pid:e.pid, owner:e.pid === this.owner.pid});
-      const sortFunc = (a,b) => {
-        if (b.owner || a.username > b.username){
-          return 1;
-        }else{
-          return -1;
-        }
-      }
-
-      console.log([...this.aliveUsers, ...this.deadUsers].map(mapFunc));
-      console.log([...this.aliveUsers, ...this.deadUsers].map(mapFunc).sort(sortFunc));
-
-      let players = [...this.aliveUsers, ...this.deadUsers].map(mapFunc).sort(sortFunc);
-      let spectators = [...this.spectatingUsers].map(mapFunc).sort(sortFunc);
-      io.in(this.id).emit('update lobby players', players, spectators);
+      this.broadcastPlayerInfo();
   
       this.update();
 
@@ -205,9 +219,7 @@ function passVars(io){
         }
       }
 
-      if (typeof this.killExpire === 'function'){
-        this.killExpire();
-      }
+      clearTimeout(this.expireID);
   
       return obj;
     }
@@ -220,23 +232,16 @@ function passVars(io){
   
       io.in(this.id).emit('remove user', obj.pid);
       
-      const mapFunc = e => ({username:e.username, pid:e.pid, owner:e.pid === this.owner.pid});
-      const sortFunc = (a,b) => {
-        if (b.owner || a.username > b.username){
-          return 1;
-        }else{
-          return -1;
-        }
-      }
-
-      let players = [...this.aliveUsers, ...this.deadUsers].map(mapFunc).sort(sortFunc);
-      let spectators = [...this.spectatingUsers].map(mapFunc).sort(sortFunc);
-      io.in(this.id).emit('update lobby players', players, spectators);
+      this.broadcastPlayerInfo();
       
       if (this.totalUsers.size === 0 && !this.automated){
         this.expire();
       }
   
+      if (this.owner.uuid === obj.socket.uuid){
+        this.newOwner();
+      }
+
       this.update();
     }
     
@@ -269,18 +274,7 @@ function passVars(io){
       
       obj.socket.emit('server message', 'You will now participate in the next match.');
 
-      const mapFunc = e => ({username:e.username, pid:e.pid, owner:e.pid === this.owner.pid});
-      const sortFunc = (a,b) => {
-        if (b.owner || a.username > b.username){
-          return 1;
-        }else{
-          return -1;
-        }
-      }
-      
-      let players = [...this.aliveUsers, ...this.deadUsers].map(mapFunc).sort(sortFunc);
-      let spectators = [...this.spectatingUsers].map(mapFunc).sort(sortFunc);
-      io.in(this.id).emit('update lobby players', players, spectators);
+      this.broadcastPlayerInfo();
       
       this.update();
     }
@@ -294,6 +288,12 @@ function passVars(io){
 
       obj.socket.emit('server message', 'You will now automatically spectate every future match.');
 
+      this.broadcastPlayerInfo();
+
+      this.update();
+    }
+
+    broadcastPlayerInfo(){
       const mapFunc = e => ({username:e.username, pid:e.pid, owner:e.pid === this.owner.pid});
       const sortFunc = (a,b) => {
         if (b.owner || a.username > b.username){
@@ -302,12 +302,24 @@ function passVars(io){
           return -1;
         }
       }
-      
+
       let players = [...this.aliveUsers, ...this.deadUsers].map(mapFunc).sort(sortFunc);
       let spectators = [...this.spectatingUsers].map(mapFunc).sort(sortFunc);
       io.in(this.id).emit('update lobby players', players, spectators);
+    }
 
-      this.update();
+    broadcastRoomInfo(settings = this.settings){
+      this.settings = settings;
+
+      this.totalUsers.forEach(user => {
+        let socket = user.socket;
+
+        
+        let outgoingData = Object.assign({},settings);
+        outgoingData.admin = (this.owner.uuid === socket.uuid);
+        outgoingData.spectating = user.spectating;
+        socket.emit('update lobby info', outgoingData);
+      });
     }
   }
 }

@@ -22,7 +22,6 @@ function LobbyMenu(){
   let alert = useAlerts();
 
   useEffect(() => {
-    console.log(connected);
     if (!connected){
       navigate('/play');
       alert('Unable to connect to the server.')
@@ -33,7 +32,6 @@ function LobbyMenu(){
     socket.setLobbyInfo = setLobbyInfo;
 
     const updateInfoFunction = function(info){
-      console.log('info', info);
       setLobbyInfo(info);
     }
 
@@ -108,7 +106,6 @@ function LobbyMenu(){
     let newLobbyInfo = Object.assign({}, lobbyInfo, newValue);
 
     socket.emit('update lobby', newLobbyInfo, info => {
-      console.log(info);
       setLobbyInfo(info);
     });
 
@@ -119,7 +116,6 @@ function LobbyMenu(){
 
   const updateSpectateStatus = () => {
     socket.emit('swap activity', info => {
-      console.log(info);
       setLobbyInfo(info);
     });
   }
@@ -136,8 +132,6 @@ function LobbyMenu(){
 
   let host = window.location.host;
 
-  console.log(players, spectators)
-
   let content = null;
   if (display){
     if (lobbyInfo.admin){
@@ -149,7 +143,7 @@ function LobbyMenu(){
               {host + location.pathname}
             </div>
             <div className = {styles.settingsRow}>
-              <div title = 'Allow other players to join the lobby without the link.'>
+              <div title = 'Allow other players to join through the room browser.'>
                 <span>Private Lobby</span>
                 <CustomCheckbox defaultChecked = {lobbyInfo.private} onInput = {e => UpdateLobbyInfo({private:e.target.checked})}/>
               </div>
@@ -198,7 +192,7 @@ function LobbyMenu(){
                 <ul className = {styles.userlist}>
                   {players.map((data,i) => {
                     if (data.owner){
-                      return (<li key = {i}>{data.username} [owner]</li>);
+                      return (<li key = {i}>{data.username}<Crown/></li>);
                     }else{
                       return (<li key = {i}>{data.username}</li>);
                     }

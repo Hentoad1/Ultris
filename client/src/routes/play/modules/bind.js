@@ -152,7 +152,6 @@ function bind(socket, createRef, setUserData) {
 
   
   let resize = function(forceRedraw = false) {
-    console.log('resize called');
     const margin = 10;
     const textHeight = 30;
 

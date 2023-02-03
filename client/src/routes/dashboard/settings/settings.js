@@ -110,8 +110,6 @@ function HandlingSection(props){
 
   let sliderValue = slider.current?.value ?? startingValue;
 
-  console.log(sliderValue, props.name);
-
   if (props.name === 'SDF' && parseInt(sliderValue) === 40){
     sliderValue = 'Instant';
   }

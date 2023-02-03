@@ -50,7 +50,6 @@ function SocketWrapper(props){
       if (error.message === 'Unauthorized'){
         setTimeout(() => socket.connect(), 1000); //reconnect after a second.
       }
-      //console.log(error);
       if (error.data?.alert){
         alert(error.message, {type:'error'});
       }

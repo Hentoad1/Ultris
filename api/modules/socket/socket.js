@@ -56,8 +56,6 @@ function bind(io){
     socket.ownedRoom = null;
     socket.publicID = v4();
 
-    console.log(socket.publicID);
-
     addUserBinds(socket);
 	}));
 
@@ -120,15 +118,7 @@ function bind(io){
           publicRooms.add(roomcode);
         }
 
-        currentRoom.totalUsers.forEach(user => {
-          let socket = user.socket;
-
-          
-          let outgoingData = Object.assign({},settings);
-          outgoingData.admin = (currentRoom.owner.uuid === socket.uuid);
-          outgoingData.spectating = user.spectating;
-          socket.emit('update lobby info', outgoingData);
-        })
+        currentRoom.broadcastRoomInfo(settings);
       })
 
       const start_game = handle(() => {
@@ -463,7 +453,8 @@ function bind(io){
           id,
           name:room.settings.name,
           players:{
-            current:room.totalUsers.size,
+            current:room.aliveUsers.size + room.deadUsers.size,
+            spectating:room.spectatingUsers.size,
             max:room.settings.maxPlayers
           }
         };

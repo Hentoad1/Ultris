@@ -88,7 +88,7 @@
   align-items:center;
   justify-content:center;
 }
-.lobbymenu > .playerInfo >  .userlistWrapper > .userlist > svg{
+.lobbymenu > .playerInfo >  .userlistWrapper > .userlist > li > svg{
   width:30px;
   margin-left:0.25em;
 }

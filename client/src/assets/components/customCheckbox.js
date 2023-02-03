@@ -6,8 +6,6 @@ import styles from './customCheckbox.css';
 
 function CustomCheckbox(props){
   let inputFunc = (e) => {
-    console.log(e)
-    
     e.target.focus({focusVisible:true});
 
     if (props.onInput){
