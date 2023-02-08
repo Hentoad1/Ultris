@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node ./bin/www",
-    "build": "cd client/ && npm install && npm run build"
+    "build": "cd client/ && npm ci && npm run build"
   },
   "cacheDirectories": [
     "node_modules",
