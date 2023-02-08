@@ -65,7 +65,7 @@ let QueryAPI = function(path, callback){
     callback(null);
   };
 
-  fetch('http://localhost:9000' + path, {method: 'POST'})
+  fetch(window.location.protocol + window.location.host + path, {method: 'POST'})
   .then(res => res.json())
   .then(callback)
   .catch(handleError);

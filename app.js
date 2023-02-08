@@ -19,7 +19,7 @@ let dir = path.resolve(__dirname + '/client/build');
 app.use(express.static(dir));
 
 const corsOptions = {
-  origin: 'http://localhost:9000',  //Your Client, do not write '*'
+  origin: process.env.ORIGIN,  //Your Client, do not write '*'
   credentials: true,
 };
 

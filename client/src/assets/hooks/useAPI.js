@@ -45,7 +45,7 @@ function useAPI(){
       callback(null);
     };
 
-    fetch('http://localhost:9000' + path, options)
+    fetch(window.location.protocol + window.location.host + path, options)
     .then(res => res.json())
     .then(processResponse)
     .catch(handleError);

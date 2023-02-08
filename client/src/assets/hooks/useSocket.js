@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 
 import useAlerts from './useAlerts';
 
-const socket = io('localhost:9000', {
+const socket = io(window.location.host, {
   'reconnection': true,
   'reconnectionDelay': 500,
   'reconnectionAttempts': 3
