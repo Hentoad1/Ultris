@@ -4,3 +4,6 @@
 
 # production
 /client/build
+
+# enviroment vars
+.env
