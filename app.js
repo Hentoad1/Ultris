@@ -12,14 +12,11 @@ var app = express();
 
 require('dotenv').config();
 
-require('./modules/email');
-
 app.set("trust proxy", 1);
 
 // direct to build folder
-let dir = path.resolve(__dirname + '/../client/build');
+let dir = path.resolve(__dirname + '/client/build');
 app.use(express.static(dir));
-
 
 const corsOptions = {
   origin: 'http://localhost:9000',  //Your Client, do not write '*'
@@ -31,7 +28,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 const db_options = {
 	host: "localhost",
