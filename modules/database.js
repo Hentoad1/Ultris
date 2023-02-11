@@ -36,14 +36,31 @@ function queryDB(...query){
   }
 
   return new Promise((resolve, reject) => {
-
-    let connection = mysql.createConnection(options);
+    
+    
+    mysql.createConnection(options).then(connection => {
+      connection.query(...query, function(err, result) {
+        connection.end();
+        if (err) return reject (err);
+  
+        resolve(result);
+      });
+    });
+    
+    
+    
+    
+    /*let connection = mysql.createConnection(options);
     connection.query(...query, function(err, result) {
       connection.end();
       if (err) return reject (err);
 
       resolve(result);
-    });
+    });*/
+
+
+
+
   });
 }
 
