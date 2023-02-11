@@ -1,4 +1,4 @@
-var mysql = require('mysql2');
+var mysql = require('mysql2/promise');
 var uuid = require("uuid");
 
 const options = {
@@ -36,18 +36,22 @@ function queryDB(...query){
   }
 
   return new Promise((resolve, reject) => {
-    
-    
     mysql.createConnection(options).then(connection => {
+      connection.query(...query).then(result => {
+        connection.end().then(() => {
+          resolve(...result);
+        }).catch(reject);
+      }).catch(reject);
+    }).catch(reject);
+    
+    /*mysql.createConnection(options).then(connection => {
       connection.query(...query, function(err, result) {
         connection.end();
         if (err) return reject (err);
   
         resolve(result);
       });
-    });
-    
-    
+    }).catch(reject);*/
     
     
     /*let connection = mysql.createConnection(options);
@@ -57,6 +61,8 @@ function queryDB(...query){
 
       resolve(result);
     });*/
+    
+
 
 
 
