@@ -2,8 +2,8 @@ var mysql = require('mysql2');
 var uuid = require("uuid");
 
 const options = {
-	host: "localhost",
-	user: "root",
+	host: process.env.DATABASE_HOST,
+	user: process.env.DATABASE_USER,
 	password: process.env.DATABASE_PASSWORD,
 	database:'main',
 	port:'3306'

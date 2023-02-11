@@ -30,8 +30,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const db_options = {
-	host: "localhost",
-	user: "root",
+	host: process.env.DATABASE_HOST,
+	user: process.env.DATABASE_USER,
 	password: process.env.DATABASE_PASSWORD,
 	database:'session',
 	port:'3306'
