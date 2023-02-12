@@ -37,6 +37,8 @@ const db_options = {
 	port:'3306'
 }
 
+console.log(db_options);
+
 var connection = mysql2.createPool(db_options);
 var sessionStore = new MySQLStore({}, connection);
 
