@@ -48,7 +48,7 @@ const session_options = {
   saveUninitialized:false,
   store:sessionStore,
   cookie: {
-    httpOnly:true,
+    httpOnly:false,
     maxAge:1000 * 60 * 60 * 24 * 30,
     secure:false, //true only will work if HTTPS being used.
     sameSite:true,
