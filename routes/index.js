@@ -6,8 +6,6 @@ var {genUUID} = require('../modules/database.js');
 
 //INITALIZE SESSION IF NONE IS THERE
 router.use(function(req,res,next){
-  console.log(req.path);
-
   if (req.session.initalized){
     return next();
   }

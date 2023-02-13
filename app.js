@@ -39,8 +39,6 @@ const db_options = {
   ssl: 'Amazon RDS'
 }
 
-console.log(db_options);
-
 var connection = mysql2.createPool(db_options);
 var sessionStore = new MySQLStore({}, connection);
 
