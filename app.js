@@ -62,7 +62,7 @@ let sessionMiddleware = session(session_options);
 app.use(sessionMiddleware);
 
 var router = require('./routes/index');
-app.use('/', router);
+app.use('*', router);
 
 let wrapMiddleware = (io) => {
   io.use(sharedSession(sessionMiddleware,{
