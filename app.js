@@ -51,7 +51,7 @@ const session_options = {
     httpOnly:false,
     maxAge:1000 * 60 * 60 * 24 * 30,
     secure:false, //true only will work if HTTPS being used.
-    sameSite:true,
+    sameSite:false,
   }
 };
 
