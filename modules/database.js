@@ -6,7 +6,8 @@ const options = {
 	user: process.env.DATABASE_USER,
 	password: process.env.DATABASE_PASSWORD,
 	database:'main',
-	port:'3306'
+	port:'3306',
+  ssl: 'Amazon RDS'
 }
 
 function genUUID(callback){

@@ -9,6 +9,7 @@ var sharedSession = require('express-socket.io-session');
 var logger = require('morgan');
 var cors = require("cors");
 var app = express();
+var fs = require('fs');
 
 require('dotenv').config();
 
@@ -34,7 +35,8 @@ const db_options = {
 	user: process.env.DATABASE_USER,
 	password: process.env.DATABASE_PASSWORD,
 	database:'session',
-	port:'3306'
+	port:'3306',
+  ssl: 'Amazon RDS'
 }
 
 console.log(db_options);
