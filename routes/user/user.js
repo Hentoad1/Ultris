@@ -141,7 +141,7 @@ router.post('/forgot-password', function(req,res,next){
 
     queryDB('DELETE FROM resettoken WHERE uuid = ?', uuid).then(() => {
       queryDB('INSERT INTO resettoken SET ?', data).then(() => {
-        let link = `${req.protocol}://${req.get('host')}/reset?token=${token}`;
+        let link = `${req.protocol}://${req.hostname}/reset?token=${token}`;
 
         emailResetLink({link,username:info.username,to:email}).then(() => {
           res.send({result:true});

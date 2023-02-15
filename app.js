@@ -55,14 +55,6 @@ const session_options = {
   }
 };
 
-app.use(function(req, res, next) {
-  console.log(req.protocol);
-  console.log(req.host);
-  console.log(req.hostname);
-  
-  next();
-});
-
 let sessionMiddleware = session(session_options);
 
 app.use(sessionMiddleware);
