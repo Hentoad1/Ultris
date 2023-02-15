@@ -13,7 +13,7 @@ var fs = require('fs');
 
 require('dotenv').config();
 
-app.set("trust proxy", 1);
+app.enable('trust proxy');
 
 // direct to build folder
 let dir = path.resolve(__dirname + '/client/build');
