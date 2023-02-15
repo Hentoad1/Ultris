@@ -48,9 +48,9 @@ const session_options = {
   saveUninitialized:false,
   store:sessionStore,
   cookie: {
-    httpOnly:false,
+    httpOnly:true,
     maxAge:1000 * 60 * 60 * 24 * 30,
-    secure:false, //true only will work if HTTPS being used.
+    secure:process.env.ENVIRONMENT === 'production', //true only will work if HTTPS being used.
     sameSite:false,
   }
 };
