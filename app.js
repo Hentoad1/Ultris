@@ -9,7 +9,6 @@ var sharedSession = require('express-socket.io-session');
 var logger = require('morgan');
 var cors = require("cors");
 var app = express();
-var fs = require('fs');
 
 require('dotenv').config();
 
