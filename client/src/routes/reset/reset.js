@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { AnimatedPasswordInput } from '../../assets/components/animatedInput';
 import useAPI from '../../assets/hooks/useAPI';
 
+import menu from '../../assets/styles/menu.css';
 import styles from './reset.css';
 
 function ResetPassword(){
@@ -24,7 +25,7 @@ function ResetPassword(){
 
   return (
     <div className = 'p c'>
-      <div className = {styles.menu}>  
+      <div className = {menu.menu}>  
         <div className = {styles.header}>Enter a new password.</div>
         <div className = {styles.subheader}>Your password must be at least 8 characters long.</div>
         <AnimatedPasswordInput title = 'PASSWORD' onValueChange = {e => setPassword(e)}/>

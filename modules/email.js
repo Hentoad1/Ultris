@@ -10,8 +10,6 @@ function emailVerifyLink(options){
     if (options.link === undefined){
       reject(new Error('link is undefined'));
     }
-    
-    console.log(options.link);
 
     let payload = {
       to: (options.to),
@@ -64,8 +62,6 @@ function emailResetLink(options){
     if (options.link === undefined){
       reject(new Error('link is undefined'));
     }
-    
-    console.log(options.link);
 
     let payload = {
       to: (options.to),
