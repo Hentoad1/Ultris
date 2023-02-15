@@ -148,7 +148,7 @@ router.post('/verify', function(req,res,next){
 
     queryDB('DELETE FROM verifytoken WHERE uuid = ?', req.session.user.uuid).then(function(){
       queryDB('INSERT INTO verifytoken SET ?', data).then(function(result){
-        let link = `${req.get('host')}/verify?token=${token}`;
+        let link = `${req.protocol}://${req.get('host')}/verify?token=${token}`;
         
         emailVerifyLink({link,username:req.session.user.username,to:req.session.user.email}).then(() => {
           res.send({alert:`A verification email has been sent to ${hideEmail(email)}`});
