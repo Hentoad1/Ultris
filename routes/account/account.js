@@ -137,7 +137,7 @@ router.post('/verify', function(req,res,next){
     let token = generateToken(50);
 
     let expiration = new Date();
-    date.setDate(date.getDate() + 1);
+    expiration.setDate(expiration.getDate() + 1);
 
     let data = {
       uuid:req.session.user.uuid,
