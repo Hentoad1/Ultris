@@ -7,7 +7,7 @@ function Scrollbar(props){
   let [top, setTop] = useState(null);
   let [height, setHeight] = useState(null);
   let [display, setDisplay] = useState(true);
-  let [targetDims, setTargetDims] = useState({});
+  let [targetDims, setTargetDims] = useState(null);
 
   let updateScrollbarPosition = useCallback((deltaY) => {
     let elem = ref.current;
@@ -126,19 +126,38 @@ function Scrollbar(props){
       setTargetDims(ref.current.getBoundingClientRect());
     }
   }, [setTargetDims]);
+  
+  let barDisplay = display ? null : 'none';
 
-  //could be optimized with the use of a useEffect
+  let barLeft = null;
+  let barTop = null;
+  let barHeight = null;
 
-  let position = ['aligned', 'fixed'].includes(props.position) ? props.position : 'aligned';
-  let horozontalPos = position === 'aligned' ? targetDims.right - 10 : window.innerWidth - 10; //subtracting ten due to it being the width of the slider.
+  if (targetDims === null){
+    barLeft = null;
+    barTop = null;
+    barHeight = null;
+  }else{
+    barTop = targetDims.y;
+    barHeight = targetDims.height;
+    if (props.position === 'fixed'){
+      barLeft = window.innerWidth - 10;
+    }else{ //default to aligned
+      barLeft = targetDims.right - 10;
+    }
+  }
 
+  let thumbTop = isNaN(top) ? null : top;
+  let thumbHeight = isNaN(height) ? null : height;
+  
 
   let child = Children.only(props.children);
+
   return (
     <Fragment>
       {cloneElement(child, {...child.props, style:{"overflow":"hidden"},ref})}
-      <div className = {styles.scrollbar_track} style = {{left:horozontalPos ?? null,top:targetDims.y ?? null,height:targetDims.height ?? null,display:display ? null : 'none'}}>
-        <div className = {styles.scrollbar_thumb_outer} style = {{top,height}} onMouseDown = {HandleMouseDown}>
+      <div className = {styles.scrollbar_track} style = {{left:barLeft,top:barTop,height:barHeight,display:barDisplay}}>
+        <div className = {styles.scrollbar_thumb_outer} style = {{top:thumbTop,height:thumbHeight}} onMouseDown = {HandleMouseDown}>
           <div className = {styles.scrollbar_thumb_inner}></div>
         </div>
       </div>
