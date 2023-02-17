@@ -175,7 +175,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
         this.state = newState;
         this.genShadowY();
         lastMovement = "rotate";
-        DAS = Math.max(DAS, handling.DCD);
+        //DAS = Math.max(DAS, handling.DCD); //with dcd removed this is now commented out, used to cause a delay when shifting a piece against a wall which im not even sure is what DCD is supposed to do.
         falling = this.shift(0, -1, null, true);
         return;
       }
@@ -188,7 +188,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
           this.kick3 = (i === 3);
           this.genShadowY();
           lastMovement = "rotate";
-          DAS = Math.max(DAS, handling.DCD);
+          //DAS = Math.max(DAS, handling.DCD);
           falling = this.shift(0, -1, null, true);
           return;
         }
@@ -360,6 +360,8 @@ function initalize(DOM, socket, gameMode, keybinds) {
       key: keybinds.left,
       function: function () {
         if (gameRunning) {
+          current.shift(-1, 0);
+          display();
           DAS = handling.DAS;
         }
       },
@@ -369,6 +371,8 @@ function initalize(DOM, socket, gameMode, keybinds) {
       key: keybinds.right,
       function: function () {
         if (gameRunning) {
+          current.shift(1, 0);
+          display();
           DAS = handling.DAS;
         }
       },
@@ -429,7 +433,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
           }
           place();
           display();
-          DAS = Math.max(DAS, handling.DCD);
+          //DAS = Math.max(DAS, handling.DCD);
         }
       },
       held: false
@@ -727,22 +731,28 @@ function initalize(DOM, socket, gameMode, keybinds) {
 
     if (gameRunning) {
       if (leftDown || rightDown) {
-        if (DAS === handling.DAS || DAS <= 0) {
-          if (leftDown) {
-            while (current.shift(-1, 0) && DAS <= -handling.ARR) { //it will guarentee one move
-              DAS += handling.ARR;
+        if (DAS <= 0) {
+          const movementDirection = leftDown ? -1 : 1;
+
+          while(true){
+            let movementSuccess = current.shift(movementDirection, 0);
+            let DASRemaining = DAS - handling.ARR;
+
+            if (movementSuccess && DASRemaining >= 0){
+              DAS = DASRemaining;
+            }else{
+              break;
             }
-          } else {
-            while (current.shift(1, 0) && DAS <= -handling.ARR) {
-              DAS += handling.ARR;
-            }
+
           }
           display();
-          DAS = Math.max(handling.ARR, handling.DAS);
+          DAS = handling.ARR;
         }
         DAS -= currentFrame - previousFrame;
+        console.log(currentFrame - previousFrame);
       } else {
         DAS = handling.DAS;
+        console.log(handling.DAS);
       }
 
       if (downDown && handling.ISDF) {
@@ -752,6 +762,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
         }
         display();
       } else {
+        //natural falling of piece
         const SDFmultiplier = downDown ? handling.SDF : 1;
           fallTimer -= (currentFrame - previousFrame) * SDFmultiplier;
           while (fallTimer <= 0) {
