@@ -14,7 +14,7 @@ function emailVerifyLink(options){
     let payload = {
       to: (options.to),
       from: {
-        email:"support-noreply@ultris.app",
+        email:"support-noreply@ultris.io",
         name:"Ultris Support"
       },
       templateId:'d-6846f78b00f841d88b2700adedc5fc78',
@@ -39,7 +39,7 @@ function emailVerifyCode(options){
     let payload = {
       to: (options.to),
       from: {
-        email:"support-noreply@ultris.app",
+        email:"support-noreply@ultris.io",
         name:"Ultris Support"
       },
       templateId:'d-6ae9ea96ca3c47c9a0fe0ebf7303a696',
@@ -66,7 +66,7 @@ function emailResetLink(options){
     let payload = {
       to: (options.to),
       from: {
-        email:"support-noreply@ultris.app",
+        email:"support-noreply@ultris.io",
         name:"Ultris Support"
       },
       templateId:'d-078438ab6240482bb71205a8087a901b',
