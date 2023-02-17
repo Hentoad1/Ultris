@@ -47,7 +47,6 @@ var b2bMax = 0;
 
 //HANDLING
 const fallSpeed = 1000;
-var handling = { DAS: localStorage.getItem('DAS') ?? 133, ARR: localStorage.getItem('ARR') ?? 167, SDF: localStorage.getItem('SDF') ?? 2, ISDF: localStorage.getItem('SDF') === 'Instant' };
 var DAS = 10;
 
 //PIECES
@@ -92,8 +91,6 @@ let currentAnimation = null;
 
 //EXPORTS
 function initalize(DOM, socket, gameMode, keybinds) {
-  
-
   class Tetrimino {
     constructor(p) {
       this.pType = pTypes[p];
@@ -266,6 +263,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
       }
     }
   }
+  var handling = { DAS: localStorage.getItem('DAS') ?? 133, ARR: localStorage.getItem('ARR') ?? 167, SDF: localStorage.getItem('SDF') ?? 2, ISDF: localStorage.getItem('SDF') === 'Instant' }
 
   DOM.full.current.style = null; // makes it so it will cancel the animation if it is still running.
   refreshDOM(DOM.full);
@@ -1092,7 +1090,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
 
   
 
-  function addListeners() {
+  function addListeners() {    
     document.addEventListener('keydown', keyDownHandler, false);
     document.addEventListener('keyup', keyUpHandler, false);
   }
