@@ -87,6 +87,9 @@ var cancelGarbageFunction;
 var endFunction;
 var startFunction;
 
+//ANIMATION
+let currentAnimation = null;
+
 //EXPORTS
 function initalize(DOM, socket, gameMode, keybinds) {
   
@@ -489,7 +492,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
 
       let elem = DOM.title.current;
 
-      elem.style.animation = "";
+      elem.classList.remove(currentAnimation);
       refreshDOM(elem); //refresh;
       elem.style.fontSize = "60px";
       elem.style.opacity = 1;
@@ -504,7 +507,8 @@ function initalize(DOM, socket, gameMode, keybinds) {
         }
       }
       elem.innerHTML = "GO!";
-      elem.style.animation = "fadeOut 1s linear";
+      elem.classList.add('fadeOut');
+      currentAnimation = 'fadeOut';
       elem.style.opacity = 0;
       
       window.removeEventListener("killCountdown", rejectFunc);
@@ -749,10 +753,8 @@ function initalize(DOM, socket, gameMode, keybinds) {
           DAS = handling.ARR;
         }
         DAS -= currentFrame - previousFrame;
-        console.log(currentFrame - previousFrame);
       } else {
         DAS = handling.DAS;
-        console.log(handling.DAS);
       }
 
       if (downDown && handling.ISDF) {
@@ -926,9 +928,10 @@ function initalize(DOM, socket, gameMode, keybinds) {
       let title = DOM.title.current;
 
       title.innerHTML = "ALL<br>CLEAR";
-      title.style.animation = "";
+      title.classList.remove(currentAnimation);
       refreshDOM(title);
-      title.style.animation = "allClear 5s 1 linear";
+      title.classList.add('allClear');
+      currentAnimation = 'allClear';
       pcCount++;
     }
     if (current.tSpin) {
@@ -960,9 +963,9 @@ function initalize(DOM, socket, gameMode, keybinds) {
     }
     DOM.b2b.current.innerHTML = "B2B x" + b2bCounter;
     if (combo > 0) {
-      DOM.combo.innerHTML = "Combo x" + combo;
+      comboElem.innerHTML = "Combo x" + combo;
     } else {
-      DOM.combo.innerHTML = "";
+      comboElem.innerHTML = "";
     }
     score.innerHTML = parseInt(score.innerHTML) + ((Math.floor(points * spinMultiplier * b2bMultiplier / 100) * 100) + pcBonus + combo * 50) * parseInt(level.innerHTML);
 
@@ -1036,9 +1039,10 @@ function initalize(DOM, socket, gameMode, keybinds) {
       socket.playerAlive(false);
       socket.emit('defeat');
 
-      full.style = null;
+      full.classList.remove(currentAnimation);
       refreshDOM(full);
-      full.style.animation = "spectateAnimation 1s linear";
+      full.classList.add('spectateAnimation');
+      currentAnimation = 'spectateAnimation';
 
       full.onanimationend = function () {
         full.style.display = 'none';
@@ -1046,9 +1050,11 @@ function initalize(DOM, socket, gameMode, keybinds) {
     } else {
       socket.openStatMenu(stats);
 
-      full.style = null;
+      full.style.opacity = null;
+      full.classList.remove(currentAnimation);
       refreshDOM(full);
-      full.style.animation = "gameEnd 5s linear";
+      full.classList.add('gameEnd');
+      currentAnimation = 'gameEnd';
       full.style.opacity = "0";
     }
 

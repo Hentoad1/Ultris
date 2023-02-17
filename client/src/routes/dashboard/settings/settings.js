@@ -48,7 +48,7 @@ function Settings(){
           <div className = {menu.description}>The factor that is applied to the soft drop speed. Increasing this will make soft drops faster, but will make it harder to tuck pieces under an overhang.</div>
         </div>
         <div className = {menu.content}>
-          <HandlingSection min = {2} max = {40} default = {2} step = {1} dir = 'ltr' name = 'SDF'/>
+          <HandlingSection min = {5} max = {40} default = {5} step = {1} dir = 'ltr' name = 'SDF'/>
         </div>
       </div>
 

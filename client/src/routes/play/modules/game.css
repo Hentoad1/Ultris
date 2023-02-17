@@ -103,7 +103,44 @@
   text-align: center;
 }
 
+:global(.fadeOut){
+  animation: fadeOut 1s linear;
+  -webkit-animation: fadeOut 1s linear;
+}
+
+:global(.gameEnd){
+  animation: gameEnd 5s linear;
+  -webkit-animation: gameEnd 5s linear;
+}
+
+:global(.allClear){
+  animation: allClear 5s 1 linear;
+  -webkit-animation: allClear 5s 1 linear;
+}
+
+:global(.spectateAnimation){
+  animation: spectateAnimation 1s linear;
+  -webkit-animation: spectateAnimation 1s linear;
+}
+
 @keyframes gameEnd {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  60% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes gameEnd {
   0% {
     transform: scale(1);
     opacity: 1;
@@ -130,7 +167,27 @@
   }
 }
 
+@-webkit-keyframes spectateAnimation {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
 @keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes fadeOut {
   0% {
     opacity: 1;
   }
@@ -147,5 +204,37 @@
 
   100% {
     opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/*all clear currently unused.*/
+
+@keyframes allClear {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes allClear {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
   }
 }
