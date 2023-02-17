@@ -314,7 +314,7 @@ function bind(io){
         if (synced){
           if (valid){
             totalLinesCleared += pointInfo.lines;
-            if (totalLinesCleared >= 1){
+            if (totalLinesCleared >= 40){
               let timePassed = Date.now() - startDate;
               let seconds = timePassed / 1000;
               let formattedMinutes = (Math.floor(seconds / 60));
@@ -368,7 +368,7 @@ function bind(io){
               totalPoints += fallPoints;
             }
   
-            if (Date.now() - startDate < 1000 * 60 * 20){
+            if (Date.now() - startDate < 1000 * 60 * 2){ //2 minutes
               totalPoints += calcPoints(pointInfo);
             };
           }else{
