@@ -107,7 +107,8 @@ function passVars(io){
     }
 
     startGravity(delay = 10000, rate = 1000){
-      
+      rate = Math.max(rate, 5); // 5 is hard minimum for rate.
+
       io.in(this.id).emit('gravity', rate);
 
       rate *= 0.9;

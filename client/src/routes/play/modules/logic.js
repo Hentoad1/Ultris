@@ -463,7 +463,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
     clearInterval(TimerID);
     DOM.time.current.innerHTML = "0:00.000";
     DOM.score.current.innerHTML = 0;
-    DOM.level.current.innerHTML = 1;
+    DOM.level.current.innerHTML = 0;
     DOM.lines.current.innerHTML = 0;
     gameRunning = false;
 
@@ -729,7 +729,7 @@ function initalize(DOM, socket, gameMode, keybinds) {
     var leftDown = controls.left.held;
     var rightDown = controls.right.held;
     var downDown = controls.soft.held;
-    let fallMultiplier = Math.pow(0.8, DOM.level.current.innerHTML);
+    let fallMultiplier = Math.max(Math.pow(0.8, DOM.level.current.innerHTML), 0.005);
 
     if (gameRunning) {
       if (leftDown || rightDown) {
