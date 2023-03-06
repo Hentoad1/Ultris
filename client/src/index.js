@@ -31,7 +31,7 @@ root.render(
       <BrowserRouter>
         <Routes>
           <Route path='/' element = {<Globals />}>
-            <Route index element = {<Navigate to = 'play'/>} />
+            <Route index element = {<Navigate to = 'play' replace = {true}/>} />
             <Route path='register' element = {<Register />} />
             <Route path='login' element = {<Login />} />
             <Route path='forgot-password' element = {<ForgotPassword />} />
