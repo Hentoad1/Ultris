@@ -1,3 +1,3 @@
 # Ultris
 
-An Online Tetramino Battle Game.
+An Online Tetromino Battle Game.
